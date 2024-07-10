@@ -1,19 +1,15 @@
 package com.people;
-import com.trainmate.DatabaseUtil;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-
-import static com.people.Constants.ACCESSCODE;
 
 public class PersonalTrainer {
     private int id;
     private String username;
     private String password;
     private String email;
-    private String accessCode;
 
-    //Un personal trainer dev'essere creabile solamente facendo il login: non posso creare un oggetto pt che non sia nel database
+    //Questa classe è una classe di oggetti temporanei: i dati restano sempre salvati nel database e solo al momento del login
+    //voglio compiere un'azione allora viene creato un oggetto Personal trainer che, essendo il costruttore package private,
+    //può essere chiamato solo all'interno dello stesso package da altri metodi (nel nostro caso solo dal metodo per il login).
+
     PersonalTrainer(int id, String username, String password, String email) {
         this.id = id;
         this.username = username;
@@ -21,12 +17,11 @@ public class PersonalTrainer {
         this.email = email;
     }
 
+    //TODO: I metodi di set devono essere o tolti o implementati in modo che cambino i dati anche nel database.
+
+    //L'id non può essere cambiato
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getUsername() {

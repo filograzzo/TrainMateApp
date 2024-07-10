@@ -6,6 +6,12 @@ public class User {
     private String password;
     private String email;
 
+
+    //Questa classe è una classe di oggetti temporanei: i dati restano sempre salvati nel database e solo al momento del login
+    //voglio compiere un'azione allora viene creato un oggetto User che, essendo il costruttore package private,
+    //può essere chiamato solo all'interno dello stesso package da altri metodi (nel nostro caso solo dal metodo per il login).
+
+
     User(int id, String username, String password, String email) {
         this.id = id;
         this.username = username;
@@ -13,12 +19,11 @@ public class User {
         this.email = email;
     }
 
+    //TODO: I metodi di set devono essere o tolti o implementati in modo che cambino i dati anche nel database.
+
+    //L'id non può essere cambiato
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getUsername() {
