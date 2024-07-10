@@ -96,6 +96,42 @@ public class PersonalTrainerService {
             return false;
         }
     }
+
+    public boolean updatePersonalTrainerUsername(int id, String newUsername) {
+        String query = "UPDATE PersonalTrainer SET username = ? WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, newUsername);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean updatePersonalTrainerPassword(int id, String newPassword) {
+        String query = "UPDATE PersonalTrainer SET password = ? WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, newPassword);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean updatePersonalTrainerEmail(int id, String newEmail) {
+        String query = "UPDATE PersonalTrainer SET email = ? WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, newEmail);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
 
 

@@ -5,7 +5,11 @@ public class User {
     private String username;
     private String password;
     private String email;
+    private static UserService userService;
 
+    public static void setUserService(UserService service) {
+        userService = service;
+    }
 
     //Questa classe è una classe di oggetti temporanei: i dati restano sempre salvati nel database e solo al momento del login
     //voglio compiere un'azione allora viene creato un oggetto User che, essendo il costruttore package private,
@@ -19,7 +23,7 @@ public class User {
         this.email = email;
     }
 
-    //TODO: I metodi di set devono essere o tolti o implementati in modo che cambino i dati anche nel database.
+    //TODO: Controllare che i nuovi metodi di set funzionino
 
     //L'id non può essere cambiato
     public int getId() {
@@ -31,7 +35,11 @@ public class User {
     }
 
     public void setUsername(String username) {
-        this.username = username;
+        if (userService != null && userService.updateUserUsername(this.id, username)) {
+            this.username = username;
+        } else {
+            System.err.println("Failed to update username in the database.");
+        }
     }
 
     public String getPassword() {
@@ -39,7 +47,11 @@ public class User {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        if (userService != null && userService.updateUserPassword(this.id, password)) {
+            this.password = password;
+        } else {
+            System.err.println("Failed to update password in the database.");
+        }
     }
 
     public String getEmail() {
@@ -47,6 +59,10 @@ public class User {
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        if (userService != null && userService.updateUserEmail(this.id, email)) {
+            this.email = email;
+        } else {
+            System.err.println("Failed to update email in the database.");
+        }
     }
 }
