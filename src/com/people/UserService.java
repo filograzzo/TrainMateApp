@@ -8,6 +8,8 @@ import java.sql.SQLException;
 public class UserService {
     private final Connection connection;
 
+    //todo: fare questa classe singleton (?)
+
     public UserService(Connection connection) {
         this.connection = connection;
     }

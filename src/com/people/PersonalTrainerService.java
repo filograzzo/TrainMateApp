@@ -10,6 +10,8 @@ import static com.people.Constants.ACCESSCODE;
 public class PersonalTrainerService {
     private final Connection connection;
 
+    //todo: fare questa classe singleton (?)
+
     public PersonalTrainerService(Connection connection) {
         this.connection = connection;
     }
