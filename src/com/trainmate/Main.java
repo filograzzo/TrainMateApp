@@ -47,9 +47,12 @@ public class Main {
 
                             User user = userService.loginUser(username, password);
                             if (user != null) {
-                                System.out.println("Login avvenuto con successo. I dati dell'user sono: "
+                                System.out.println("Login avvenuto con successo.");
+                                System.out.println("I dati dell'user sono: "
                                         + user.getId() + " " + user.getUsername() + " "
                                         + user.getPassword() + " " + user.getEmail());
+                                User.setUserService(userService);
+                                handleUserActions(user, scanner);
                             } else {
                                 System.out.println("Errore durante il login. Username o password errati.");
                             }
@@ -82,9 +85,12 @@ public class Main {
 
                             PersonalTrainer pt = personalTrainerService.loginPersonalTrainer(username, password);
                             if (pt != null) {
-                                System.out.println("Login avvenuto con successo. I dati del personal trainer sono: "
+                                System.out.println("Login avvenuto con successo.");
+                                System.out.println("I dati del personal trainer sono: "
                                         + pt.getId() + " " + pt.getUsername() + " "
                                         + pt.getPassword() + " " + pt.getEmail());
+                                PersonalTrainer.setPersonalTrainerService(personalTrainerService);
+                                handlePersonalTrainerActions(pt, scanner);
                             } else {
                                 System.out.println("Errore durante il login. Username o password errati.");
                             }
@@ -99,6 +105,82 @@ public class Main {
 
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    private static void handleUserActions(User user, Scanner scanner) {
+        while (true) {
+            System.out.println("Scegli un'azione: (1) Visualizza username (2) Cambia username (3) Visualizza password (4) Cambia password (5) Visualizza email (6) Cambia email (7) Esci");
+            String action = scanner.nextLine();
+
+            switch (action) {
+                case "1":
+                    System.out.println("Username: " + user.getUsername());
+                    break;
+                case "2":
+                    System.out.print("Inserisci nuovo username: ");
+                    String newUsername = scanner.nextLine();
+                    user.setUsername(newUsername);
+                    break;
+                case "3":
+                    System.out.println("Password: " + user.getPassword());
+                    break;
+                case "4":
+                    System.out.print("Inserisci nuova password: ");
+                    String newPassword = scanner.nextLine();
+                    user.setPassword(newPassword);
+                    break;
+                case "5":
+                    System.out.println("Email: " + user.getEmail());
+                    break;
+                case "6":
+                    System.out.print("Inserisci nuova email: ");
+                    String newEmail = scanner.nextLine();
+                    user.setEmail(newEmail);
+                    break;
+                case "7":
+                    return;
+                default:
+                    System.out.println("Azione non valida. Per favore inserisci un numero da 1 a 7.");
+            }
+        }
+    }
+
+    private static void handlePersonalTrainerActions(PersonalTrainer pt, Scanner scanner) {
+        while (true) {
+            System.out.println("Scegli un'azione: (1) Visualizza username (2) Cambia username (3) Visualizza password (4) Cambia password (5) Visualizza email (6) Cambia email (7) Esci");
+            String action = scanner.nextLine();
+
+            switch (action) {
+                case "1":
+                    System.out.println("Username: " + pt.getUsername());
+                    break;
+                case "2":
+                    System.out.print("Inserisci nuovo username: ");
+                    String newUsername = scanner.nextLine();
+                    pt.setUsername(newUsername);
+                    break;
+                case "3":
+                    System.out.println("Password: " + pt.getPassword());
+                    break;
+                case "4":
+                    System.out.print("Inserisci nuova password: ");
+                    String newPassword = scanner.nextLine();
+                    pt.setPassword(newPassword);
+                    break;
+                case "5":
+                    System.out.println("Email: " + pt.getEmail());
+                    break;
+                case "6":
+                    System.out.print("Inserisci nuova email: ");
+                    String newEmail = scanner.nextLine();
+                    pt.setEmail(newEmail);
+                    break;
+                case "7":
+                    return;
+                default:
+                    System.out.println("Azione non valida. Per favore inserisci un numero da 1 a 7.");
+            }
         }
     }
 }

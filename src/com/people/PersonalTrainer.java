@@ -22,8 +22,6 @@ public class PersonalTrainer {
         this.email = email;
     }
 
-    //TODO: controllare che i metodi di set funzionino bene
-
     //L'id non può essere cambiato
     public int getId() {
         return id;

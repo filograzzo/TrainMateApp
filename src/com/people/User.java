@@ -23,8 +23,6 @@ public class User {
         this.email = email;
     }
 
-    //TODO: Controllare che i nuovi metodi di set funzionino
-
     //L'id non può essere cambiato
     public int getId() {
         return id;
