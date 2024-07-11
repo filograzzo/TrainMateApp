@@ -22,13 +22,11 @@ public class UserService {
                     System.err.println("The user you are trying to create already exists.");
                     return false;
                 } else {
-                    int newId = UserIdCounter.getNextId();
-                    String query1 = "INSERT INTO User (id, username, password, email) VALUES (?, ?, ?, ?)";
+                    String query1 = "INSERT INTO User (username, password, email) VALUES ( ?, ?, ?)";
                     try (PreparedStatement stmt1 = connection.prepareStatement(query1)) {
-                        stmt1.setInt(1, newId);
-                        stmt1.setString(2, username);
-                        stmt1.setString(3, password);
-                        stmt1.setString(4, email);
+                        stmt1.setString(1, username);
+                        stmt1.setString(2, password);
+                        stmt1.setString(3, email);
                         int rows = stmt1.executeUpdate();
                         if (rows > 0) {
                             System.out.println("The user has been registered successfully.");
@@ -119,13 +117,5 @@ public class UserService {
             e.printStackTrace();
             return false;
         }
-    }
-}
-
-class UserIdCounter {
-    private static int counter = 1;
-
-    public static synchronized int getNextId() {
-        return counter++;
     }
 }

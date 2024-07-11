@@ -28,13 +28,11 @@ public class PersonalTrainerService {
                     return false;
                 }else{
                     if(ACCESSCODE.equals(accessCode)) { //controllo che l'accesscode sia corretto
-                        int newId = PtIdCounter.getNextId();
-                        String query1 = "INSERT INTO PersonalTrainer ( id, username, password, email) VALUES (?, ?, ?, ?)";
+                        String query1 = "INSERT INTO PersonalTrainer (  username, password, email) VALUES ( ?, ?, ?)";
                         try (PreparedStatement stmt1 = connection.prepareStatement(query1)) {
-                            stmt1.setInt(1, newId);
-                            stmt1.setString(2, username);
-                            stmt1.setString(3, password);
-                            stmt1.setString(4, email);
+                            stmt1.setString(1, username);
+                            stmt1.setString(2, password);
+                            stmt1.setString(3, email);
                             int rows = stmt1.executeUpdate();//executeupdate serve per aggiornare i dati nel database
                             if(rows>0)
                                 System.out.println("The personal trainer has been registered successfully.");
@@ -135,10 +133,3 @@ public class PersonalTrainerService {
 }
 
 
-class PtIdCounter {
-    private static int counter = 1;
-
-    public static synchronized int getNextId() {
-        return counter++;
-    }
-}
