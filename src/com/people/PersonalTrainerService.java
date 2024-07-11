@@ -7,6 +7,10 @@ import java.sql.SQLException;
 
 import static com.people.Constants.ACCESSCODE;
 
+//todo: dividere in service e dao
+
+//todo:dividere le classi in perople, service e dao
+
 public class PersonalTrainerService {
     private final Connection connection;
 

@@ -5,6 +5,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+//todo:dividere in service e dao
+
+//todo:dividere le classi in perople, service e dao
+
 public class UserService {
     private final Connection connection;
 
