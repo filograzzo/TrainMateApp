@@ -4,13 +4,20 @@ package com.trainmate;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Scanner;
-import com.people.*;
+
+import com.backend.PersonalTrainerDAO;
+import com.backend.UserDAO;
+import com.businessLogic.PersonalTrainerService;
+import com.businessLogic.UserService;
+import com.domainModel.*;
 
 public class Main {
     public static void main(String[] args) {
         try (Connection connection = DatabaseUtil.getConnection()) {
-            UserService userService = new UserService(connection);
-            PersonalTrainerService personalTrainerService = new PersonalTrainerService(connection);
+            UserDAO userDAO = new UserDAO(connection);
+            PersonalTrainerDAO ptDAO = new PersonalTrainerDAO(connection);
+            UserService userService = new UserService(userDAO);
+            PersonalTrainerService personalTrainerService = new PersonalTrainerService(ptDAO);
             Scanner scanner = new Scanner(System.in);
 
             while (true) {

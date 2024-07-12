@@ -1,4 +1,6 @@
-package com.people;
+package com.domainModel;
+
+import com.businessLogic.UserService;
 
 public class User {
     private int id;
@@ -16,7 +18,8 @@ public class User {
     //può essere chiamato solo all'interno dello stesso package da altri metodi (nel nostro caso solo dal metodo per il login).
 
 
-    User(int id, String username, String password, String email) {
+    //fixme: trovare un metodo per rendere questo costruttore non pubblico ma allo stesso tempo accedibile solo da service e dao
+    public User(int id, String username, String password, String email) {
         this.id = id;
         this.username = username;
         this.password = password;

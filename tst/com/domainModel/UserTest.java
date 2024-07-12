@@ -1,4 +1,4 @@
-package com.people;
+package com.domainModel;
 
 public class UserTest {
 }

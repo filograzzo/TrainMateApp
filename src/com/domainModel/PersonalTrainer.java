@@ -1,4 +1,7 @@
-package com.people;
+package com.domainModel;
+
+import com.backend.PersonalTrainerDAO;
+import com.businessLogic.PersonalTrainerService;
 
 public class PersonalTrainer {
     private int id;
@@ -15,12 +18,17 @@ public class PersonalTrainer {
     //voglio compiere un'azione allora viene creato un oggetto Personal trainer che, essendo il costruttore package private,
     //può essere chiamato solo all'interno dello stesso package da altri metodi (nel nostro caso solo dal metodo per il login).
 
-    PersonalTrainer(int id, String username, String password, String email) {
+    //fixme: trovare un metodo per rendere questo costruttore non pubblico ma allo stesso tempo accedibile solo da service e dao
+    public PersonalTrainer(int id, String username, String password, String email) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.email = email;
     }
+
+    //public PersonalTrainer create(int id, String username, String password, String email, PersonalTrainerDAO dao){
+    //    return new PersonalTrainer(id, username, password, email);
+    //}
 
     //L'id non può essere cambiato
     public int getId() {
