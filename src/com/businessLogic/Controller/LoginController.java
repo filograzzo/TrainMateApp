@@ -53,9 +53,11 @@ public class LoginController extends BaseController {
                 if (loginType == 1) {
                     state.setLoggedUser(loginUser(username, password, state));
                     loggedIn = true;
+                    navigationManager.switchToController(NavigationManager.ControllerId.CUSTOMER_HOME);
                 } else if (loginType == 2) {
                     state.setLoggedUser(loginPersonalTrainer(username, password, state));
                     loggedIn = true;
+                    navigationManager.switchToController(NavigationManager.ControllerId.PT_HOME);
                 }
             }
         }

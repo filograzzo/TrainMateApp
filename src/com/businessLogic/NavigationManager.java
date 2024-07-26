@@ -1,10 +1,11 @@
 package com.businessLogic;
 
-import com.businessLogic.Controller.BaseController;
-import com.businessLogic.Controller.LoginController;
-import com.businessLogic.Controller.RegistrationController;
+import com.businessLogic.Controller.*;
+import com.businessLogic.Controller.Customer.*;
+import com.businessLogic.Controller.PersonalTrainer.AgendaController;
+import com.businessLogic.Controller.PersonalTrainer.PersonalTrainerHomeController;
+import com.businessLogic.Controller.PersonalTrainer.ProfilePTController;
 import com.trainmate.DatabaseUtil;
-import com.businessLogic.State;
 
 import java.util.HashMap;
 
@@ -17,7 +18,15 @@ public class NavigationManager {
     public enum ControllerId {
         LOGIN,
         REGISTRATION,
-        HOME,
+        CUSTOMER_HOME,
+        PT_HOME,
+        WORKOUTS,
+        BOOK_COURSE,
+        PROGRESS,
+        BOOK_PT,
+        CUSTOMER_PROFILE,
+        PT_PROFILE,
+        PT_AGENDA
     }
     private final HashMap<ControllerId, BaseController> controllers;
     private final Stack<BaseController> states;
@@ -32,8 +41,20 @@ public class NavigationManager {
             System.out.println("Error while connecting to the database");
         }
         controllers = new HashMap<>();
+        //general
         controllers.put(ControllerId.LOGIN, new LoginController());
         controllers.put(ControllerId.REGISTRATION, new RegistrationController());
+        //customer
+        controllers.put(ControllerId.CUSTOMER_HOME, new CustomerHomeController());
+        controllers.put(ControllerId.CUSTOMER_PROFILE, new ProfileController());
+        controllers.put(ControllerId.BOOK_COURSE, new BookCourseController());
+        controllers.put(ControllerId.BOOK_PT, new BookAppointmentController());
+        controllers.put(ControllerId.WORKOUTS, new WorkoutController());
+        //personaltrainer
+        controllers.put(ControllerId.PT_HOME, new PersonalTrainerHomeController());
+        controllers.put(ControllerId.PT_AGENDA, new AgendaController());
+        controllers.put(ControllerId.PT_PROFILE, new ProfilePTController());
+
         for (BaseController c : controllers.values()) {
             c.setNavigationManager(this);
         }
