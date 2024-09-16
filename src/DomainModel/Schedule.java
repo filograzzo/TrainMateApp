@@ -3,10 +3,11 @@ package DomainModel;
 import java.sql.Timestamp;
 
 public class Schedule {
+    //#TODO:giorno,id esercizi
     private int id;
-    private String activity;
-    private Timestamp startTime;
-    private Timestamp endTime;
+    private String activity;//togliere
+    private Timestamp startTime;//#TODO:spostare nel training
+    private Timestamp endTime;//spostare in training
 
     public Schedule(int id, String activity, Timestamp startTime, Timestamp endTime) {
         this.id = id;

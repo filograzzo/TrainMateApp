@@ -67,6 +67,8 @@ public class ServiceManager {
 
 
         userService = new UserService(customerDAO, personalTrainerDAO);
+        profilePTService= new ProfilePTService(personalTrainerDAO);
+
         //#TODO:costruire i vari service e assegnare qui i loro DAO
     }
 

@@ -1,7 +1,9 @@
 package BusinessLogic.Service;
 
+import BusinessLogic.Service.PersonalTrainer.ProfilePTService;
 import DAO.CustomerDAO;
 import DAO.PersonalTrainerDAO;
+import DomainModel.BaseUser;
 import DomainModel.Constants;
 import DomainModel.Customer;
 import DomainModel.PersonalTrainer;
@@ -11,6 +13,8 @@ import java.sql.SQLException;
 public class UserService {
     public CustomerDAO customerDAO;
     public PersonalTrainerDAO personalTrainerDAO;
+    private BaseUser currentUser;
+    private ProfilePTService profilePTService;
     public UserService(CustomerDAO customerDAO, PersonalTrainerDAO personalTrainerDAO) {
         this.customerDAO = customerDAO;
         this.personalTrainerDAO = personalTrainerDAO;
@@ -33,7 +37,9 @@ public class UserService {
 
     public PersonalTrainer loginPersonalTrainer(String username, String password) {
         try {
-            return personalTrainerDAO.getPersonalTrainer(username, password);
+            currentUser = personalTrainerDAO.getPersonalTrainer(username, password);
+            profilePTService.setPersonalTrainer(currentUser);
+            return (PersonalTrainer) currentUser;
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -61,8 +67,12 @@ public class UserService {
                 return false;
             } else {
                 if (Constants.ACCESSCODE.equals(accessCode)) {
-                        System.out.println("The personal trainer has been registered successfully.");
-                        return true;
+                    if(personalTrainerDAO.create(username, password, email)) {
+                        currentUser = personalTrainerDAO.getPersonalTrainer(username, password);
+                        profilePTService.setPersonalTrainer(currentUser);
+                    }
+                    System.out.println("The personal trainer has been registered successfully.");
+                    return true;
                 } else {
                     System.err.println("The access code you entered is incorrect. No personal trainer was registered.");
                     return false;
@@ -73,5 +83,8 @@ public class UserService {
             e.printStackTrace();
             return false;
         }
+    }
+    public BaseUser getCurrentUser() {
+        return currentUser ;
     }
 }

@@ -1,5 +1,5 @@
 package DomainModel;
-
+//#TODO:modificare info e aggiungerne altre
 public class ExerciseDetail {
     private int id;
     private String name;
