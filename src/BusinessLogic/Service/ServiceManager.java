@@ -11,12 +11,9 @@ import java.sql.SQLException;
 public class ServiceManager {
     private final Connection connection;
     private static ServiceManager instance;
-    private CustomerHomeService customerHomeService;
     private ProfileService profileService;
     private BookCourseService bookCourseService;
     private BookAppointmentService bookAppointmentService;
-    private WorkoutService workoutService;
-    private PersonalTrainerHomeService personalTrainerHomeService;
     private AgendaService agendaService;
     private ProfilePTService profilePTService;
     private UserService userService;
@@ -30,17 +27,8 @@ public class ServiceManager {
     public ProfilePTService getProfilePTService() {
         return profilePTService;
     }
-    public PersonalTrainerHomeService getPersonalTrainerHomeService() {
-        return personalTrainerHomeService;
-    }
-    public CustomerHomeService getCustomerHomeService() {
-        return customerHomeService;
-    }
     public BookAppointmentService getBookAppointmentService() {
         return bookAppointmentService;
-    }
-    public WorkoutService getWorkoutService() {
-        return workoutService;
     }
 
     public BookCourseService getBookCourseService() {
@@ -64,10 +52,17 @@ public class ServiceManager {
         ScheduleDAO scheduleDAO = new ScheduleDAO(connection);
         SignedDAO signedDAO = new SignedDAO(connection);
         TrainingDAO trainingDAO = new TrainingDAO(connection);
+        CourseDAO courseDAO = new CourseDAO(connection);
+        PersonalDataClientDAO personalDataClientDAO = new PersonalDataClientDAO(connection);
+        AppointmentDAO appointmentDAO = new AppointmentDAO(connection);
 
 
         userService = new UserService(customerDAO, personalTrainerDAO);
         profilePTService= new ProfilePTService(personalTrainerDAO);
+        agendaService = new AgendaService(personalTrainerDAO,courseDAO, scheduleDAO);
+        profileService= new ProfileService(customerDAO,personalDataClientDAO);
+        bookCourseService = new BookCourseService(courseDAO, signedDAO);
+        bookAppointmentService = new BookAppointmentService(appointmentDAO);
 
         //#TODO:costruire i vari service e assegnare qui i loro DAO
     }

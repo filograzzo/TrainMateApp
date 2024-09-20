@@ -15,13 +15,13 @@ public class MachineDAO {
         this.connection = connection;
     }
 
-    public Machine getMachine(int id) throws SQLException {
-        String query = "SELECT * FROM Machine WHERE id = ?";
+    public Machine getMachine(String name) throws SQLException {
+        String query = "SELECT * FROM Machine WHERE name = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, id);
+            stmt.setString(1, name);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return new Machine(rs.getInt("id"), rs.getString("name"), rs.getString("description"));
+                    return new Machine(rs.getInt("id"), rs.getString("name"), rs.getString("description"), rs.getString("state"));
                 } else {
                     return null;
                 }
@@ -29,20 +29,20 @@ public class MachineDAO {
         }
     }
 
-    public boolean addMachine(int id, String name, String description) throws SQLException {
-        String query = "INSERT INTO Machine (id, name, description) VALUES (?, ?, ?)";
+    public boolean addMachine(String name, String description, String state) throws SQLException {
+        String query = "INSERT INTO Machine (name, description, state) VALUES (?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, id);
-            stmt.setString(2, name);
-            stmt.setString(3, description);
+            stmt.setString(1, name);
+            stmt.setString(2, description);
+            stmt.setString(3, state);
             return stmt.executeUpdate() > 0;
         }
     }
 
-    public boolean removeMachine(int id) throws SQLException {
-        String query = "DELETE FROM Machine WHERE id = ?";
+    public boolean removeMachine(String name) throws SQLException {
+        String query = "DELETE FROM Machine WHERE name = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, id);
+            stmt.setString(1, name);
             return stmt.executeUpdate() > 0;
         }
     }

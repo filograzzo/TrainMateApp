@@ -4,11 +4,13 @@ public class Machine {
     private int id;
     private String name;
     private String description;
+    private String state;
 
-    public Machine(int id, String name, String description) {
+    public Machine(int id, String name, String description, String state) {
         this.id = id;
         this.name = name;
         this.description = description;
+        this.state = state;
     }
 
     // Getter e Setter
@@ -35,4 +37,8 @@ public class Machine {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public String getState() { return state; }
+
+    public void setState(String state) { this.state = state; }
 }

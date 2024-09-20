@@ -2,7 +2,7 @@ package DAO;
 /**
  * DAO class for ExerciseDetail:Il personal trainer aggiunge,rimuove,modifica gli esercizi da assegnare ai clienti:get,add,remove
  */
-import DomainModel.ExerciseDetail;
+import DomainModel.Exercise;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,14 +14,13 @@ public class ExerciseDetailDAO {
     public ExerciseDetailDAO(Connection connection) {
         this.connection = connection;
     }
-
-    public ExerciseDetail getExerciseDetail(int id) throws SQLException {
-        String query = "SELECT * FROM ExerciseDetail WHERE id = ?";
+    public Exercise getExerciseDetail(String name) throws SQLException {
+        String query = "SELECT * FROM ExerciseDetail WHERE name = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, id);
+            stmt.setString(1, name);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return new ExerciseDetail(rs.getInt("id"), rs.getString("name"), rs.getString("description"));
+                    return new Exercise(rs.getInt("id"), rs.getInt("serie"), rs.getInt("reps"), rs.getInt("weight"), rs.getInt("swcheduleId"), rs.getString("name"), rs.getString("description"));
                 } else {
                     return null;
                 }
@@ -29,12 +28,15 @@ public class ExerciseDetailDAO {
         }
     }
 
-    public boolean addExerciseDetail(int id, String name, String description) throws SQLException {
-        String query = "INSERT INTO ExerciseDetail (id, name, description) VALUES (?, ?, ?)";
+    public boolean addExerciseDetail(int serie, int reps, int weight, int scheduleId, String name, String description) throws SQLException {
+        String query = "INSERT INTO ExerciseDetail (serie, reps, weight, scheduleId, name, description) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, id);
-            stmt.setString(2, name);
-            stmt.setString(3, description);
+            stmt.setInt(1, serie);
+            stmt.setInt(2, reps);
+            stmt.setInt(3, weight);
+            stmt.setInt(4, scheduleId);
+            stmt.setString(5, name);
+            stmt.setString(6, description);
             return stmt.executeUpdate() > 0;
         }
     }

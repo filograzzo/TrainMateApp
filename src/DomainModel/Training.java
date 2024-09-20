@@ -1,14 +1,24 @@
 package DomainModel;
 
+import java.sql.Date;
+import java.sql.Timestamp;
+
+//allnamento cliente
 public class Training {
     private int id;
-    private int customerId;//il piano allenamento è univocamente identificato da id del cliente e id della scheda
-    private String plan;
+    private Date date;
+    private Timestamp startTime;
+    private Timestamp endTime;
+    private String note;
+    private int scheduleId;
 
-    public Training(int id, int customerId, String plan) {
+    public Training(int id, Date date, Timestamp startTime, Timestamp endTime, String note, int scheduleId) {
         this.id = id;
-        this.customerId = customerId;
-        this.plan = plan;
+        this.date = date;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.note = note;
+        this.scheduleId = scheduleId;
     }
 
     // Getter e Setter
@@ -20,19 +30,43 @@ public class Training {
         this.id = id;
     }
 
-    public int getCustomerId() {
-        return customerId;
+    public Date getDate() {
+        return date;
     }
 
-    public void setCustomerId(int customerId) {
-        this.customerId = customerId;
+    public void setDate(Date date) {
+        this.date = date;
     }
 
-    public String getPlan() {
-        return plan;
+    public Timestamp getStartTime() {
+        return startTime;
     }
 
-    public void setPlan(String plan) {
-        this.plan = plan;
+    public void setStartTime(Timestamp startTime) {
+        this.startTime = startTime;
+    }
+
+    public Timestamp getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Timestamp endTime) {
+        this.endTime = endTime;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public int getScheduleId() {
+        return scheduleId;
+    }
+
+    public void setScheduleId(int scheduleId) {
+        this.scheduleId = scheduleId;
     }
 }
