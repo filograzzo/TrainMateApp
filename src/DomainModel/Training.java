@@ -10,15 +10,16 @@ public class Training {
     private Timestamp startTime;
     private Timestamp endTime;
     private String note;
-    private int scheduleId;
+    private Schedule schedule = new Schedule();
 
-    public Training(int id, Date date, Timestamp startTime, Timestamp endTime, String note, int scheduleId) {
+    public Training(int id, Date date, Timestamp startTime, Timestamp endTime, String note, Schedule schedule) {
         this.id = id;
         this.date = date;
         this.startTime = startTime;
         this.endTime = endTime;
         this.note = note;
-        this.scheduleId = scheduleId;
+        this.schedule = schedule;
+
     }
 
     // Getter e Setter
@@ -62,11 +63,11 @@ public class Training {
         this.note = note;
     }
 
-    public int getScheduleId() {
-        return scheduleId;
+    public Schedule getSchedule() {
+        return schedule;
     }
 
-    public void setScheduleId(int scheduleId) {
-        this.scheduleId = scheduleId;
+    public void setSchedule(Schedule schedule) {
+        this.schedule = schedule;
     }
 }

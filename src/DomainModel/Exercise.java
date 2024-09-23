@@ -1,78 +1,49 @@
 package DomainModel;
-//#TODO:modificare info e aggiungerne altre,alcuni di questi verranno aggiunti alla schedule del cliente
-public class Exercise {
-    private int id;
-    private int serie;
-    private int reps;
-    private int weight;
-    private int scheduleId;
-    private String name;
-    private String description;
 
-    public Exercise(int id, int serie, int reps, int weight, int scheduleId, String name, String description) {
-        this.id = id;
-        this.serie = serie;
-        this.reps = reps;
-        this.weight = weight;
-        this.scheduleId = scheduleId;
+public class Exercise {
+    private static int count = 0;
+    private int id;
+    private String name;
+    private Category category;
+    private Machine machine;
+
+    public Exercise(String name, Category category, Machine machine) {
+        this.id = ++count;
         this.name = name;
-        this.description = description;
+        this.category = category;
+        this.machine = machine;
     }
 
-    // Getter e Setter
     public int getId() {
         return id;
     }
-
     public void setId(int id) {
         this.id = id;
-    }
-
-    public int getSerie() {
-        return serie;
-    }
-
-    public void setSerie(int serie) {
-        this.serie = serie;
-    }
-
-    public int getReps() {
-        return reps;
-    }
-
-    public void setRepd(int reps) {
-        this.reps = reps;
-    }
-
-    public int getweight() {
-        return weight;
-    }
-
-    public void setWeight(int weight) {
-        this.weight = weight;
-    }
-
-    public int getScheduleId() {
-        return scheduleId;
-    }
-
-    public void setScheduleId(int idSchedule) {
-        this.scheduleId = scheduleId;
     }
 
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
+    public Category getCategory() {
+        return category;
+    }
+    public void setCategory(Category category) {
+        if (Category.getCategories().contains(category)) {
+            this.category = category;
+        } else {
+            throw new IllegalArgumentException("Invalid category");
+        }
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+
+    public Machine getMachine() {
+        return machine;
+    }
+    public void setMachine(Machine machine) {
+        this.machine = machine;
     }
 }
