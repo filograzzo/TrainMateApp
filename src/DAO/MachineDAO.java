@@ -1,7 +1,5 @@
 package DAO;
-/**
- * DAO class for Machine:Il personal trainer aggiunge informazioni sulle macchine presenti in palestra:get,add,remove
- */
+
 import DomainModel.Machine;
 
 import java.sql.Connection;
@@ -15,13 +13,31 @@ public class MachineDAO {
         this.connection = connection;
     }
 
-    public Machine getMachine(String name) throws SQLException {
-        String query = "SELECT * FROM Machine WHERE name = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setString(1, name);
+    public Machine getMachine(Machine machine) throws SQLException {
+        StringBuilder query = new StringBuilder("SELECT * FROM Machine WHERE 1=1");
+
+        if (machine.getName() != null && !machine.getName().isEmpty()) {
+            query.append(" AND name = ?");
+        }
+        if (machine.getDescription() != null && !machine.getDescription().isEmpty()) {
+            query.append(" AND description = ?");
+        }
+        query.append(" AND state = ?");
+
+        try (PreparedStatement stmt = connection.prepareStatement(query.toString())) {
+            int index = 1;
+
+            if (machine.getName() != null && !machine.getName().isEmpty()) {
+                stmt.setString(index++, machine.getName());
+            }
+            if (machine.getDescription() != null && !machine.getDescription().isEmpty()) {
+                stmt.setString(index++, machine.getDescription());
+            }
+            stmt.setBoolean(index, machine.getState());
+
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return new Machine(rs.getInt("id"), rs.getString("name"), rs.getString("description"), rs.getString("state"));
+                    return new Machine(rs.getInt("id"), rs.getString("name"), rs.getString("description"), rs.getBoolean("state"));
                 } else {
                     return null;
                 }
@@ -29,20 +45,21 @@ public class MachineDAO {
         }
     }
 
-    public boolean addMachine(String name, String description, String state) throws SQLException {
-        String query = "INSERT INTO Machine (name, description, state) VALUES (?, ?, ?)";
+    public boolean addMachine(Machine machine) throws SQLException {
+        String query = "INSERT INTO Machine (id, name, description, state) VALUES (?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setString(1, name);
-            stmt.setString(2, description);
-            stmt.setString(3, state);
+            stmt.setInt(1, machine.getId());
+            stmt.setString(2, machine.getName());
+            stmt.setString(3, machine.getDescription());
+            stmt.setBoolean(4, machine.getState());
             return stmt.executeUpdate() > 0;
         }
     }
 
-    public boolean removeMachine(String name) throws SQLException {
-        String query = "DELETE FROM Machine WHERE name = ?";
+    public boolean removeMachine(Machine machine) throws SQLException {
+        String query = "DELETE FROM Machine WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setString(1, name);
+            stmt.setInt(1, machine.getId());
             return stmt.executeUpdate() > 0;
         }
     }

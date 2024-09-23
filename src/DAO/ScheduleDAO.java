@@ -1,13 +1,12 @@
 package DAO;
 
-import DomainModel.Schedule;
-import DomainModel.Training;
-import DomainModel.ExerciseDetail;
+import DomainModel.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -85,8 +84,18 @@ public class ScheduleDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     Schedule schedule = new Schedule(rs.getString("name"));
-                    schedule.addTraining(getTrainingsForSchedule(scheduleId));
-                    schedule.addExercise(getExercisesForSchedule(scheduleId));
+
+                    // Popola i trainings associati
+                    List<Training> trainings = getTrainingsForSchedule(scheduleId);
+                    for (Training training : trainings) {
+                        schedule.addTraining(training);
+                    }
+
+                    // Popola gli exercises associati
+                    List<ExerciseDetail> exercises = getExercisesForSchedule(scheduleId);
+                    for (ExerciseDetail exercise : exercises) {
+                        schedule.addExercise(exercise);
+                    }
                     return schedule;
                 }
             }
@@ -95,7 +104,6 @@ public class ScheduleDAO {
     }
 
     // Metodi ausiliari per gestire le relazioni Training <-> Schedule
-
     private void addScheduleTraining(int scheduleId, int trainingId) throws SQLException {
         String query = "INSERT INTO schedule_training (schedule_id, training_id) VALUES (?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -112,7 +120,14 @@ public class ScheduleDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 List<Training> trainings = new ArrayList<>();
                 while (rs.next()) {
-                    trainings.add(new Training(rs.getInt("id"), rs.getString("name"))); // Aggiusta i campi secondo il modello Training
+                    trainings.add(new Training(
+                            rs.getInt("id"),
+                            rs.getDate("date"),
+                            rs.getTimestamp("startTime"),
+                            rs.getTimestamp("endTime"),
+                            rs.getString("note"),
+                            new Schedule( rs.getString("name"))
+                    ));
                 }
                 return trainings;
             }
@@ -128,7 +143,6 @@ public class ScheduleDAO {
     }
 
     // Metodi ausiliari per gestire le relazioni ExerciseDetail <-> Schedule
-
     private void addScheduleExercise(int scheduleId, int exerciseId) throws SQLException {
         String query = "INSERT INTO schedule_exercise_detail (schedule_id, exercise_detail_id) VALUES (?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -139,18 +153,54 @@ public class ScheduleDAO {
     }
 
     private List<ExerciseDetail> getExercisesForSchedule(int scheduleId) throws SQLException {
-        String query = "SELECT * FROM ExerciseDetail e JOIN schedule_exercise_detail se ON e.id = se.exercise_detail_id WHERE se.schedule_id = ?";
+        String query = """
+        SELECT e.id AS exercise_id, e.serie, e.reps, e.weight, 
+               s.id AS schedule_id, s.name AS schedule_name, 
+               ex.id AS exercise_id, ex.name AS exercise_name, 
+               c.id AS category_id, c.name AS category_name, 
+               m.id AS machine_id, m.name AS machine_name
+        FROM ExerciseDetail e
+        JOIN schedule_exercise_detail se ON e.id = se.exercise_detail_id
+        JOIN Schedule s ON se.schedule_id = s.id
+        JOIN Exercise ex ON e.exercise_id = ex.id
+        JOIN Category c ON ex.category_id = c.id
+        JOIN Machine m ON ex.machine_id = m.id
+        WHERE se.schedule_id = ?
+    """;
+
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, scheduleId);
             try (ResultSet rs = stmt.executeQuery()) {
                 List<ExerciseDetail> exercises = new ArrayList<>();
                 while (rs.next()) {
-                    exercises.add(new ExerciseDetail(rs.getInt("id"), rs.getString("description"))); // Aggiusta i campi secondo il modello ExerciseDetail
+                    // Creazione oggetto Category
+                    Category category = new Category(rs.getInt("category_id"), rs.getString("category_name"));
+
+                    // Creazione oggetto Machine
+                    Machine machine = new Machine(rs.getInt("machine_id"), rs.getString("machine_name"));
+
+                    // Creazione oggetto Exercise
+                    Exercise exercise = new Exercise(rs.getString("exercise_name"), category, machine);
+                    exercise.setId(rs.getInt("exercise_id")); // Setta l'ID manualmente
+
+                    // Creazione oggetto Schedule
+                    Schedule schedule = new Schedule(rs.getInt("schedule_id"), rs.getString("schedule_name"));
+
+                    // Creazione e aggiunta di ExerciseDetail
+                    exercises.add(new ExerciseDetail(
+                            rs.getInt("id"),         // id
+                            rs.getInt("serie"),      // serie
+                            rs.getInt("reps"),       // reps
+                            rs.getInt("weight"),     // weight
+                            schedule,                // Schedule
+                            exercise                 // Exercise
+                    ));
                 }
                 return exercises;
             }
         }
     }
+
 
     private void removeAllScheduleExercises(int scheduleId) throws SQLException {
         String query = "DELETE FROM schedule_exercise_detail WHERE schedule_id = ?";

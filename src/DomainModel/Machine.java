@@ -5,10 +5,18 @@ public class Machine {
     private int id;
     private String name;
     private String description;
-    private String state;
+    private boolean state;
 
-    public Machine(int id, String name, String description, String state) {
+
+    public Machine(String name, String description, boolean state) {
         this.id = ++count;
+        this.name = name;
+        this.description = description;
+        this.state = state;
+    }
+
+    public Machine(int id, String name, String description, boolean state) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.state = state;
@@ -36,6 +44,6 @@ public class Machine {
         this.description = description;
     }
 
-    public String getState() { return state; }
-    public void setState(String state) { this.state = state; }
+    public boolean getState() { return state; }
+    public void setState(boolean state) { this.state = state; }
 }
