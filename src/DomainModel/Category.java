@@ -18,8 +18,6 @@ public class Category {
             }
             i++;
         }
-
-        // Lancia un'eccezione se il nome non è valido
         if (!found) {
             throw new IllegalArgumentException("Invalid category name: " + name);
         }
@@ -28,6 +26,27 @@ public class Category {
 
     public static List<String> getCategories() {
         return categories;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public boolean setName(String name) {
+        boolean found = false;
+        int i = 0;
+        while (!found && i < categories.size()) {
+            if (Objects.equals(name, categories.get(i))) {
+                found = true;
+                this.name = categories.get(i);
+                return true;
+            }
+            i++;
+        }
+        if (!found) {
+            throw new IllegalArgumentException("Invalid category name: " + name);
+        }
+        return false;
     }
 }
 
