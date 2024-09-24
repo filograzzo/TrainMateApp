@@ -1,15 +1,10 @@
 package DAO;
 
 import DomainModel.Schedule;
-import DomainModel.Training;
-import DomainModel.ExerciseDetail;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ScheduleDAO {
     private final Connection connection;
@@ -26,6 +21,8 @@ public class ScheduleDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     Schedule schedule = new Schedule(rs.getString("name"));
+                    //TODO: nel service dovrà essere aggiunta la lista di exerciseDetail che appaiono in questa scheda cercando nel database
+                    //TODO: database di ExerciseDetail per scheduleId usando la foreign key (schedule_id).
                     return schedule;
                 } else {
                     return null;

@@ -1,6 +1,5 @@
 package DomainModel;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,8 +8,8 @@ public class Schedule {
     private static int counter = 0;
     private int id;
     private String name;
-    private List<Training> trainings = new ArrayList<>();
-    private List<ExerciseDetail> exercises = new ArrayList<>();
+    //tolta la lista di trainings perché è possibile vedere in quali allenamenti è stata usata questa scheda semplicemente con una query sulla foreign key che c'è in training.
+    private List<ExerciseDetail> exerciseDetails = new ArrayList<>();
 
     public Schedule() {
         this.id = ++counter;
@@ -21,11 +20,10 @@ public class Schedule {
         this.name = name;
     }
 
-    public Schedule(int id, String name, List<Training> trainings, List<ExerciseDetail> exercises) {
+    public Schedule(int id, String name, List<ExerciseDetail> exercises) {
         this.id = id;
         this.name = name;
-        this.trainings = trainings;
-        this.exercises = exercises;
+        this.exerciseDetails = exercises;
     }
 
     public int getId() {
@@ -39,30 +37,16 @@ public class Schedule {
     }
 
 
-    public void setTrainings(List<Training> trainings) {
-        this.trainings = trainings;
-    }
-    public List<Training> getTrainings() {
-        return trainings;
-    }
-    public void addTraining(Training training) {
-        trainings.add(training);
-    }
-    public void removeTraining(Training training) {
-        trainings.remove(training);
-    }
-
-
     public void setExercises(List<ExerciseDetail> exercises) {
-        this.exercises = exercises;
+        this.exerciseDetails = exercises;
     }
     public List<ExerciseDetail> getExercises() {
-        return exercises;
+        return exerciseDetails;
     }
     public void addExercise(ExerciseDetail exercise) {
-        exercises.add(exercise);
+        exerciseDetails.add(exercise);
     }
     public void removeExercise(ExerciseDetail exercise) {
-        exercises.remove(exercise);
+        exerciseDetails.remove(exercise);
     }
 }
