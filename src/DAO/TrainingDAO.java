@@ -1,14 +1,11 @@
 package DAO;
 
 import DomainModel.Training;
-import DomainModel.Schedule;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.sql.Date;
 
 public class TrainingDAO {
     private final Connection connection;
@@ -25,7 +22,6 @@ public class TrainingDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     ScheduleDAO scheduleDAO = new ScheduleDAO(connection);
-                    Schedule schedule = scheduleDAO.getScheduleById(rs.getInt("schedule_id"));
 
                     return new Training(
                             rs.getInt("id"),
@@ -33,7 +29,7 @@ public class TrainingDAO {
                             rs.getTimestamp("start_time"),
                             rs.getTimestamp("end_time"),
                             rs.getString("note"),
-                            schedule
+                            rs.getInt("schedule_id")
                     );
                 } else {
                     return null;
@@ -51,7 +47,7 @@ public class TrainingDAO {
             stmt.setTimestamp(3, training.getStartTime());
             stmt.setTimestamp(4, training.getEndTime());
             stmt.setString(5, training.getNote());
-            stmt.setInt(6, training.getSchedule().getId());
+            stmt.setInt(6, training.getSchedule());
 
             return stmt.executeUpdate() > 0;
         }
@@ -65,28 +61,5 @@ public class TrainingDAO {
         }
     }
 
-    public Training getTrainingByDate(Date date) throws SQLException {
-        String query = "SELECT * FROM Training WHERE date = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setDate(1, date);
 
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    ScheduleDAO scheduleDAO = new ScheduleDAO(connection);
-                    Schedule schedule = scheduleDAO.getScheduleById(rs.getInt("schedule_id"));
-
-                    return new Training(
-                            rs.getInt("id"),
-                            rs.getDate("date"),
-                            rs.getTimestamp("start_time"),
-                            rs.getTimestamp("end_time"),
-                            rs.getString("note"),
-                            schedule
-                    );
-                } else {
-                    return null; // No training found on the given date
-                }
-            }
-        }
-    }
 }
