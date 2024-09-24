@@ -16,19 +16,18 @@ public class ExerciseDAO {
         this.connection = connection;
     }
 
-    // Metodo per ottenere un Exercise tramite id
     public Exercise getExerciseById(int id) throws SQLException {
-        String query = "SELECT e.id, e.name, c.id as categoryId, c.name as categoryName, m.id as machineId, m.name as machineName " +
-                "FROM Exercise e " +
-                "JOIN Category c ON e.categoryId = c.id " +
-                "JOIN Machine m ON e.machineId = m.id " +
-                "WHERE e.id = ?";
+        String query = "SELECT * FROM Exercise WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    Category category = new Category(rs.getInt("categoryId"), rs.getString("categoryName"));
-                    Machine machine = new Machine(rs.getInt("machineId"), rs.getString("machineName"));
+                    CategoryDAO categoryDAO = new CategoryDAO(connection);
+                    MachineDAO machineDAO = new MachineDAO(connection);
+
+                    Category category = categoryDAO.getCategory(rs.getString("category_name"));
+                    Machine machine = machineDAO.getMachine(rs.getInt("id"));
+
                     return new Exercise(rs.getInt("id"), rs.getString("name"), category, machine);
                 } else {
                     return null;
@@ -37,35 +36,43 @@ public class ExerciseDAO {
         }
     }
 
-    // Metodo per aggiungere un nuovo Exercise
     public boolean addExercise(Exercise exercise) throws SQLException {
-        String query = "INSERT INTO Exercise (name, categoryId, machineId) VALUES (?, ?, ?)";
+        String query = "INSERT INTO Exercise (id, name, category_name, machine_id) VALUES (?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setString(1, exercise.getName());
-            stmt.setInt(2, exercise.getCategory().getId());
-            stmt.setInt(3, exercise.getMachine().getId());
+            stmt.setInt(1, exercise.getId());
+            stmt.setString(2, exercise.getName());
+            stmt.setString(3, exercise.getCategory().getName());
+            stmt.setInt(4, exercise.getMachine().getId());
             return stmt.executeUpdate() > 0;
         }
     }
 
-    // Metodo per aggiornare un Exercise esistente
-    public boolean updateExercise(Exercise exercise) throws SQLException {
-        String query = "UPDATE Exercise SET name = ?, categoryId = ?, machineId = ? WHERE id = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setString(1, exercise.getName());
-            stmt.setInt(2, exercise.getCategory().getId());
-            stmt.setInt(3, exercise.getMachine().getId());
-            stmt.setInt(4, exercise.getId());
-            return stmt.executeUpdate() > 0;
-        }
-    }
-
-    // Metodo per eliminare un Exercise tramite id
-    public boolean deleteExercise(int id) throws SQLException {
+    public boolean removeExercise(Exercise exercise) throws SQLException {
         String query = "DELETE FROM Exercise WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, id);
+            stmt.setInt(1, exercise.getId());
             return stmt.executeUpdate() > 0;
+        }
+    }
+
+    //TODO: forse da togliere
+    public Exercise getExerciseByName(String name) throws SQLException {
+        String query = "SELECT * FROM Exercise WHERE name = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, name);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    CategoryDAO categoryDAO = new CategoryDAO(connection);
+                    MachineDAO machineDAO = new MachineDAO(connection);
+
+                    Category category = categoryDAO.getCategory(rs.getString("category_name"));
+                    Machine machine = machineDAO.getMachine(rs.getInt("id"));
+
+                    return new Exercise(rs.getInt("id"), rs.getString("name"), category, machine);
+                } else {
+                    return null;
+                }
+            }
         }
     }
 }

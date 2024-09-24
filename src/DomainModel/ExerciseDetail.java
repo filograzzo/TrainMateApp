@@ -1,6 +1,7 @@
 package DomainModel;
 
 public class ExerciseDetail {
+    private static int count = 0;
     private int id;
     private int serie;
     private int reps;
@@ -8,8 +9,19 @@ public class ExerciseDetail {
     private Schedule schedule = new Schedule();
     private Exercise exercise = new Exercise();
 
+    public ExerciseDetail() {
+        this.id = ++count;
+    }
 
-    // Costruttore completo
+    public ExerciseDetail(int serie, int reps, int weight, Schedule schedule, Exercise exercise) {
+        this.id = ++count;
+        this.serie = serie;
+        this.reps = reps;
+        this.weight = weight;
+        this.schedule = schedule;
+        this.exercise = exercise;
+    }
+
     public ExerciseDetail(int id, int serie, int reps, int weight, Schedule schedule, Exercise exercise) {
         this.id = id;
         this.serie = serie;

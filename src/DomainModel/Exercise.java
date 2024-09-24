@@ -7,11 +7,22 @@ public class Exercise {
     private Category category;
     private Machine machine;
 
+    public Exercise(int id, String name, Category category, Machine machine) {
+        this.id = id;
+        this.name = name;
+        this.category = category;
+        this.machine = machine;
+    }
+
     public Exercise(String name, Category category, Machine machine) {
         this.id = ++count;
         this.name = name;
         this.category = category;
         this.machine = machine;
+    }
+
+    public Exercise() {
+        this.id = ++count;
     }
 
     public int getId() {

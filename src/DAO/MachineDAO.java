@@ -13,37 +13,27 @@ public class MachineDAO {
         this.connection = connection;
     }
 
-    public Machine getMachine(Machine machine) throws SQLException {
-        StringBuilder query = new StringBuilder("SELECT * FROM Machine WHERE 1=1");
+    public Machine getMachine(int machineId) throws SQLException {
+        String query = "SELECT * FROM Machine WHERE id = ?";
 
-        if (machine.getName() != null && !machine.getName().isEmpty()) {
-            query.append(" AND name = ?");
-        }
-        if (machine.getDescription() != null && !machine.getDescription().isEmpty()) {
-            query.append(" AND description = ?");
-        }
-        query.append(" AND state = ?");
-
-        try (PreparedStatement stmt = connection.prepareStatement(query.toString())) {
-            int index = 1;
-
-            if (machine.getName() != null && !machine.getName().isEmpty()) {
-                stmt.setString(index++, machine.getName());
-            }
-            if (machine.getDescription() != null && !machine.getDescription().isEmpty()) {
-                stmt.setString(index++, machine.getDescription());
-            }
-            stmt.setBoolean(index, machine.getState());
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, machineId);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return new Machine(rs.getInt("id"), rs.getString("name"), rs.getString("description"), rs.getBoolean("state"));
+                    return new Machine(
+                            rs.getInt("id"),
+                            rs.getString("name"),
+                            rs.getString("description"),
+                            rs.getBoolean("state")
+                    );
                 } else {
                     return null;
                 }
             }
         }
     }
+
 
     public boolean addMachine(Machine machine) throws SQLException {
         String query = "INSERT INTO Machine (id, name, description, state) VALUES (?, ?, ?, ?)";
