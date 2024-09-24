@@ -6,29 +6,29 @@ public class ExerciseDetail {
     private int serie;
     private int reps;
     private int weight;
-    private Schedule schedule = new Schedule();
-    private Exercise exercise = new Exercise();
+    private int scheduleId; //foreign key
+    private int exerciseId; //foreign key
 
     public ExerciseDetail() {
         this.id = ++count;
     }
 
-    public ExerciseDetail(int serie, int reps, int weight, Schedule schedule, Exercise exercise) {
+    public ExerciseDetail(int serie, int reps, int weight, int scheduleId, int exerciseId) {
         this.id = ++count;
         this.serie = serie;
         this.reps = reps;
         this.weight = weight;
-        this.schedule = schedule;
-        this.exercise = exercise;
+        this.scheduleId = scheduleId;
+        this.exerciseId = exerciseId;
     }
 
-    public ExerciseDetail(int id, int serie, int reps, int weight, Schedule schedule, Exercise exercise) {
+    public ExerciseDetail(int id, int serie, int reps, int weight, int scheduleId, int exerciseId) {
         this.id = id;
         this.serie = serie;
         this.reps = reps;
         this.weight = weight;
-        this.schedule = schedule;
-        this.exercise = exercise;
+        this.scheduleId = scheduleId;
+        this.exerciseId = exerciseId;
     }
 
     // Getter e setter per ogni campo
@@ -64,19 +64,19 @@ public class ExerciseDetail {
         this.weight = weight;
     }
 
-    public Schedule getSchedule() {
-        return schedule;
+    public int getSchedule() {
+        return scheduleId;
     }
 
-    public void setSchedule(Schedule schedule) {
-        this.schedule = schedule;
+    public void setSchedule(int scheduleId) {
+        this.scheduleId = scheduleId;
     }
 
-    public Exercise getExercise() {
-        return exercise;
+    public int getExercise() {
+        return exerciseId;
     }
 
-    public void setExercise(Exercise exercise) {
-        this.exercise = exercise;
+    public void setExercise(int exerciseId) {
+        this.exerciseId = exerciseId;
     }
 }

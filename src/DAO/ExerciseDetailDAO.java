@@ -21,8 +21,8 @@ public class ExerciseDetailDAO {
             stmt.setInt(1, exerciseDetail.getSerie());
             stmt.setInt(2, exerciseDetail.getReps());
             stmt.setInt(3, exerciseDetail.getWeight());
-            stmt.setInt(4, exerciseDetail.getSchedule().getId());
-            stmt.setInt(5, exerciseDetail.getExercise().getId());
+            stmt.setInt(4, exerciseDetail.getSchedule());
+            stmt.setInt(5, exerciseDetail.getExercise());
             return stmt.executeUpdate() > 0;
         }
     }
@@ -33,8 +33,8 @@ public class ExerciseDetailDAO {
             stmt.setInt(1, exerciseDetail.getSerie());
             stmt.setInt(2, exerciseDetail.getReps());
             stmt.setInt(3, exerciseDetail.getWeight());
-            stmt.setInt(4, exerciseDetail.getSchedule().getId());
-            stmt.setInt(5, exerciseDetail.getExercise().getId());
+            stmt.setInt(4, exerciseDetail.getSchedule());
+            stmt.setInt(5, exerciseDetail.getExercise());
             stmt.setInt(6, exerciseDetail.getId());
             return stmt.executeUpdate() > 0;
         }
@@ -48,47 +48,5 @@ public class ExerciseDetailDAO {
         }
     }
 
-    public ExerciseDetail getExerciseDetail(ExerciseDetail exerciseDetail) throws SQLException {
-        String query = "SELECT * FROM ExerciseDetail WHERE id = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, exerciseDetail.getId());
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return mapResultSetToExerciseDetail(rs);//TODO: da cambiare, cosi mette solo l'id nell'esercise e nello schedule
-                }
-            }
-        }
-        return null;
-    }
 
-    // Metodo per ottenere tutti gli ExerciseDetail
-    public List<ExerciseDetail> getAllExerciseDetails() throws SQLException {
-        List<ExerciseDetail> exerciseDetails = new ArrayList<>();
-        String query = "SELECT * FROM ExerciseDetail";
-        try (Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery(query)) {
-            while (rs.next()) {
-                exerciseDetails.add(mapResultSetToExerciseDetail(rs));
-            }
-        }
-        return exerciseDetails;
-    }
-
-    // Metodo di mapping per convertire il ResultSet in un oggetto ExerciseDetail
-    private ExerciseDetail mapResultSetToExerciseDetail(ResultSet rs) throws SQLException {
-        int id = rs.getInt("id");
-        int serie = rs.getInt("serie");
-        int reps = rs.getInt("reps");
-        int weight = rs.getInt("weight");
-
-        // Utilizza ScheduleDAO per ottenere l'oggetto Schedule
-        ScheduleDAO scheduleDAO = new ScheduleDAO(connection);
-        Schedule schedule = scheduleDAO.getSchedule(rs.getInt("schedule_id"));
-
-        // Utilizza ExerciseDAO per ottenere l'oggetto Exercise
-        ExerciseDAO exerciseDAO = new ExerciseDAO(connection);
-        Exercise exercise = exerciseDAO.getExercise(rs.getInt("exercise_id"));
-
-        return new ExerciseDetail(id, serie, reps, weight, schedule, exercise);
-    }
 }

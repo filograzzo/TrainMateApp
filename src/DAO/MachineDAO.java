@@ -26,6 +26,8 @@ public class MachineDAO {
                             rs.getString("name"),
                             rs.getString("description"),
                             rs.getBoolean("state")
+                            //TODO: nel service dovrà essere aggiunta la lista di esercizi che utilizzano il macchinario andando a cercare nel
+                            //TODO: database di exercise e cercando per nome di macchinario usando la foreign key (machine_name).
                     );
                 } else {
                     return null;
