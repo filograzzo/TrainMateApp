@@ -2,8 +2,6 @@ package DAO;
 
 import DomainModel.ExerciseDetail;
 import DomainModel.Exercise;
-import DomainModel.Machine;
-import DomainModel.Category;
 import DomainModel.Schedule;
 
 import java.sql.*;

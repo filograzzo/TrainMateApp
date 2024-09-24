@@ -1,28 +1,34 @@
 package DomainModel;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+
 public class Exercise {
     private static int count = 0;
     private int id;
     private String name;
-    private Category category;
-    private Machine machine;
+    private String category;
+    private String machine;
 
-    public Exercise(int id, String name, Category category, Machine machine) {
+    private static final List<String> validCategories = Arrays.asList("Legs", "Arms", "Abdomen", "Back", "Chest");
+
+    public Exercise(int id, String name, String category, String machine) {
         this.id = id;
         this.name = name;
-        this.category = category;
+        setCategory(category); // Validate category
         this.machine = machine;
     }
 
-    public Exercise(int id, String name){
+    public Exercise(int id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public Exercise(String name, Category category, Machine machine) {
+    public Exercise(String name, String category, String machine) {
         this.id = ++count;
         this.name = name;
-        this.category = category;
+        setCategory(category); // Validate category
         this.machine = machine;
     }
 
@@ -30,6 +36,7 @@ public class Exercise {
         this.id = ++count;
     }
 
+    // Getter and Setter for id
     public int getId() {
         return id;
     }
@@ -37,6 +44,7 @@ public class Exercise {
         this.id = id;
     }
 
+    // Getter and Setter for name
     public String getName() {
         return name;
     }
@@ -44,22 +52,29 @@ public class Exercise {
         this.name = name;
     }
 
-    public Category getCategory() {
+    // Getter and Setter for category with validation
+    public String getCategory() {
         return category;
     }
-    public void setCategory(Category category) {
-        if (Category.getCategories().contains(category)) {
+
+    public void setCategory(String category) {
+        if (validCategories.contains(category)) {
             this.category = category;
         } else {
-            throw new IllegalArgumentException("Invalid category");
+            throw new IllegalArgumentException("Invalid category name: " + category);
         }
     }
 
-
-    public Machine getMachine() {
+    // Getter and Setter for machine
+    public String getMachine() {
         return machine;
     }
-    public void setMachine(Machine machine) {
+    public void setMachine(String machine) {
         this.machine = machine;
+    }
+
+    // Static method to get all valid categories
+    public static List<String> getValidCategories() {
+        return validCategories;
     }
 }
