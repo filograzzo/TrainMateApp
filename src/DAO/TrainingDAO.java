@@ -1,13 +1,15 @@
 package DAO;
 
 import DomainModel.Training;
+import DomainModel.Schedule;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.sql.Date;
 
-/**
- * DAO class for Training:Il personal trainer aggiunge,rimuove,modifica i piani di allenamento dei clienti:add,remove e update training
- * il cliente deve poter accedere al suo piano di allenamento:get training
- */
 public class TrainingDAO {
     private final Connection connection;
 
@@ -15,13 +17,24 @@ public class TrainingDAO {
         this.connection = connection;
     }
 
-    public Training getTraining(Date date) throws SQLException {
-        String query = "SELECT * FROM Training WHERE date = ?";
+    public Training getTrainingById(int trainingId) throws SQLException {
+        String query = "SELECT * FROM Training WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setDate(1, date);
+            stmt.setInt(1, trainingId);
+
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return new Training(rs.getInt("id"), rs.getDate("date"), rs.getTimestamp("startTime"), rs.getTimestamp("endTime"), rs.getString("note"), rs.getInt("scheduleId"));
+                    ScheduleDAO scheduleDAO = new ScheduleDAO(connection);
+                    Schedule schedule = scheduleDAO.getScheduleById(rs.getInt("schedule_id"));
+
+                    return new Training(
+                            rs.getInt("id"),
+                            rs.getDate("date"),
+                            rs.getTimestamp("start_time"),
+                            rs.getTimestamp("end_time"),
+                            rs.getString("note"),
+                            schedule
+                    );
                 } else {
                     return null;
                 }
@@ -29,14 +42,17 @@ public class TrainingDAO {
         }
     }
 
-    public boolean addTraining(Date date, Timestamp startTime, Timestamp endTime, String note, int scheduleId) throws SQLException {
-        String query = "INSERT INTO Training (date, startTime, endTime, note, scheduleId) VALUES (?, ?, ?, ?, ?)";
+
+    public boolean addTraining(Training training) throws SQLException {
+        String query = "INSERT INTO Training (id, date, start_time, end_time, note, schedule_id) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setDate(1, date);
-            stmt.setTimestamp(2, startTime);
-            stmt.setTimestamp(3, endTime);
-            stmt.setString(4, note);
-            stmt.setInt(5, scheduleId);
+            stmt.setInt(1, training.getId());
+            stmt.setDate(2, training.getDate());
+            stmt.setTimestamp(3, training.getStartTime());
+            stmt.setTimestamp(4, training.getEndTime());
+            stmt.setString(5, training.getNote());
+            stmt.setInt(6, training.getSchedule().getId());
+
             return stmt.executeUpdate() > 0;
         }
     }
@@ -49,15 +65,28 @@ public class TrainingDAO {
         }
     }
 
-    public boolean updateTraining(int id, Date newDate, Timestamp newStartTime, Timestamp newEndTime, String newNote) throws SQLException {
-        String query = "UPDATE Training SET date = ?, startTine = ?, endTime = ?, note = ? WHERE id = ?";
+    public Training getTrainingByDate(Date date) throws SQLException {
+        String query = "SELECT * FROM Training WHERE date = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setDate(1, newDate);
-            stmt.setTimestamp(2, newStartTime);
-            stmt.setTimestamp(3, newEndTime);
-            stmt.setString(4, newNote);
-            stmt.setInt(5, id);
-            return stmt.executeUpdate() > 0;
+            stmt.setDate(1, date);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    ScheduleDAO scheduleDAO = new ScheduleDAO(connection);
+                    Schedule schedule = scheduleDAO.getScheduleById(rs.getInt("schedule_id"));
+
+                    return new Training(
+                            rs.getInt("id"),
+                            rs.getDate("date"),
+                            rs.getTimestamp("start_time"),
+                            rs.getTimestamp("end_time"),
+                            rs.getString("note"),
+                            schedule
+                    );
+                } else {
+                    return null; // No training found on the given date
+                }
+            }
         }
     }
 }

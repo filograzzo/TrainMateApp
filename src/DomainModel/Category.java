@@ -37,7 +37,6 @@ public class Category {
         int i = 0;
         while (!found && i < categories.size()) {
             if (Objects.equals(name, categories.get(i))) {
-                found = true;
                 this.name = categories.get(i);
                 return true;
             }

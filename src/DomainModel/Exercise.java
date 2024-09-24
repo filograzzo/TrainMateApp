@@ -14,6 +14,11 @@ public class Exercise {
         this.machine = machine;
     }
 
+    public Exercise(int id, String name){
+        this.id = id;
+        this.name = name;
+    }
+
     public Exercise(String name, Category category, Machine machine) {
         this.id = ++count;
         this.name = name;

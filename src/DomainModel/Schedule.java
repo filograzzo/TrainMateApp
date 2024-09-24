@@ -21,6 +21,13 @@ public class Schedule {
         this.name = name;
     }
 
+    public Schedule(int id, String name, List<Training> trainings, List<ExerciseDetail> exercises) {
+        this.id = id;
+        this.name = name;
+        this.trainings = trainings;
+        this.exercises = exercises;
+    }
+
     public int getId() {
         return id;
     }
@@ -32,6 +39,9 @@ public class Schedule {
     }
 
 
+    public void setTrainings(List<Training> trainings) {
+        this.trainings = trainings;
+    }
     public List<Training> getTrainings() {
         return trainings;
     }
@@ -43,6 +53,9 @@ public class Schedule {
     }
 
 
+    public void setExercises(List<ExerciseDetail> exercises) {
+        this.exercises = exercises;
+    }
     public List<ExerciseDetail> getExercises() {
         return exercises;
     }

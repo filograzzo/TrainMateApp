@@ -1,11 +1,14 @@
 package DomainModel;
 
+import java.util.List;
+
 public class Machine {
     private static int count = 0;
     private int id;
     private String name;
     private String description;
     private boolean state;
+    private List<Exercise> exercises;
 
 
     public Machine(String name, String description, boolean state) {

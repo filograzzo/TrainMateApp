@@ -24,11 +24,7 @@ public class ExerciseDAO {
                 if (rs.next()) {
                     CategoryDAO categoryDAO = new CategoryDAO(connection);
                     MachineDAO machineDAO = new MachineDAO(connection);
-
-                    Category category = categoryDAO.getCategory(rs.getString("category_name"));
-                    Machine machine = machineDAO.getMachine(rs.getInt("id"));
-
-                    return new Exercise(rs.getInt("id"), rs.getString("name"), category, machine);
+                    return new Exercise(rs.getInt("id"), rs.getString("name"));
                 } else {
                     return null;
                 }
@@ -55,24 +51,5 @@ public class ExerciseDAO {
         }
     }
 
-    //TODO: forse da togliere
-    public Exercise getExerciseByName(String name) throws SQLException {
-        String query = "SELECT * FROM Exercise WHERE name = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setString(1, name);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    CategoryDAO categoryDAO = new CategoryDAO(connection);
-                    MachineDAO machineDAO = new MachineDAO(connection);
 
-                    Category category = categoryDAO.getCategory(rs.getString("category_name"));
-                    Machine machine = machineDAO.getMachine(rs.getInt("id"));
-
-                    return new Exercise(rs.getInt("id"), rs.getString("name"), category, machine);
-                } else {
-                    return null;
-                }
-            }
-        }
-    }
 }
