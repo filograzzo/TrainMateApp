@@ -1,13 +1,8 @@
 package DAO;
 
 import DomainModel.ExerciseDetail;
-import DomainModel.Exercise;
-import DomainModel.Schedule;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-
 public class ExerciseDetailDAO {
     private final Connection connection;
 
@@ -15,14 +10,14 @@ public class ExerciseDetailDAO {
         this.connection = connection;
     }
 
-    public boolean addExerciseDetail(ExerciseDetail exerciseDetail) throws SQLException {
+    public boolean addExerciseDetail(int serie, int reps, int weight, int schedule_id, int exercise_id) throws SQLException {
         String query = "INSERT INTO ExerciseDetail (serie, reps, weight, schedule_id, exercise_id) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, exerciseDetail.getSerie());
-            stmt.setInt(2, exerciseDetail.getReps());
-            stmt.setInt(3, exerciseDetail.getWeight());
-            stmt.setInt(4, exerciseDetail.getSchedule());
-            stmt.setInt(5, exerciseDetail.getExercise());
+            stmt.setInt(1, serie);
+            stmt.setInt(2, reps);
+            stmt.setInt(3, weight);
+            stmt.setInt(4, schedule_id);
+            stmt.setInt(5, exercise_id);
             return stmt.executeUpdate() > 0;
         }
     }
@@ -40,10 +35,10 @@ public class ExerciseDetailDAO {
         }
     }
 
-    public boolean deleteExerciseDetail(ExerciseDetail exerciseDetail) throws SQLException {
+    public boolean deleteExerciseDetailById(int id) throws SQLException {
         String query = "DELETE FROM ExerciseDetail WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, exerciseDetail.getId());
+            stmt.setInt(1, id);
             return stmt.executeUpdate() > 0;
         }
     }

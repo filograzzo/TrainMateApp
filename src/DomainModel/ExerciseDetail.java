@@ -1,26 +1,12 @@
 package DomainModel;
 
 public class ExerciseDetail {
-    private static int count = 0;
     private int id;
     private int serie;
     private int reps;
     private int weight;
     private int scheduleId; //foreign key
     private int exerciseId; //foreign key
-
-    public ExerciseDetail() {
-        this.id = ++count;
-    }
-
-    public ExerciseDetail(int serie, int reps, int weight, int scheduleId, int exerciseId) {
-        this.id = ++count;
-        this.serie = serie;
-        this.reps = reps;
-        this.weight = weight;
-        this.scheduleId = scheduleId;
-        this.exerciseId = exerciseId;
-    }
 
     public ExerciseDetail(int id, int serie, int reps, int weight, int scheduleId, int exerciseId) {
         this.id = id;
