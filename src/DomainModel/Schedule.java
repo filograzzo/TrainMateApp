@@ -5,18 +5,13 @@ import java.util.List;
 
 //
 public class Schedule {
-    private static int counter = 0;
     private int id;
     private String name;
     //tolta la lista di trainings perché è possibile vedere in quali allenamenti è stata usata questa scheda semplicemente con una query sulla foreign key che c'è in training.
     private List<ExerciseDetail> exerciseDetails = new ArrayList<>();
 
-    public Schedule() {
-        this.id = ++counter;
-    }
-
-    public Schedule(String name) {
-        this.id = ++counter; // Incrementa e assegna l'ID univoco
+    public Schedule (int id, String name){
+        this.id = id;
         this.name = name;
     }
 

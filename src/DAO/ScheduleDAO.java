@@ -20,7 +20,7 @@ public class ScheduleDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    Schedule schedule = new Schedule(rs.getString("name"));
+                    Schedule schedule = new Schedule(rs. getInt("id"), rs.getString("name"));
                     //TODO: nel service dovrà essere aggiunta la lista di exerciseDetail che appaiono in questa scheda cercando nel database
                     //TODO: database di ExerciseDetail per scheduleId usando la foreign key (schedule_id).
                     return schedule;
@@ -32,22 +32,39 @@ public class ScheduleDAO {
     }
 
 
-    public boolean addSchedule(Schedule schedule) throws SQLException {
+    public boolean addSchedule(int id, String name) throws SQLException {
         String query = "INSERT INTO Schedule (id, name) VALUES (?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, schedule.getId());
-            stmt.setString(2, schedule.getName());
+            stmt.setInt(1, id);
+            stmt.setString(2, name);
             return stmt.executeUpdate() > 0;
         }
     }
 
-    public boolean removeSchedule(int scheduleId) throws SQLException {
+    public boolean removeScheduleById(int scheduleId) throws SQLException {
         String query = "DELETE FROM Schedule WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, scheduleId);
             return stmt.executeUpdate() > 0;
         }
     }
+
+    public boolean removeScheduleByName(String name) throws SQLException {
+        String query = "DELETE FROM Schedule WHERE name = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, name);
+            return stmt.executeUpdate() > 0;
+        }
+    }
+    public boolean updateSchedule(Schedule schedule) throws SQLException {
+        String query = "UPDATE Schedule SET name = ? WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, schedule.getName());
+            stmt.setInt(2, schedule.getId());
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
 
 
 }
