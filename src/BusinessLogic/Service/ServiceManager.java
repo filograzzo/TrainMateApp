@@ -16,10 +16,10 @@ public class ServiceManager {
     private BookAppointmentService bookAppointmentService;
     private AgendaService agendaService;
     private ProfilePTService profilePTService;
-    private UserService userService;
+    private BaseUserService baseUserService;
     private BaseUser user;
-    public UserService getUserService() {
-        return userService;
+    public BaseUserService getUserService() {
+        return baseUserService;
     }
     public AgendaService getAgendaService() {
         return agendaService;
@@ -57,7 +57,7 @@ public class ServiceManager {
         AppointmentDAO appointmentDAO = new AppointmentDAO(connection);
 
 
-        userService = new UserService(customerDAO, personalTrainerDAO);
+        baseUserService = new BaseUserService(customerDAO, personalTrainerDAO, scheduleDAO, excerciseDetailDAO);
         profilePTService= new ProfilePTService(personalTrainerDAO);
         agendaService = new AgendaService(personalTrainerDAO,courseDAO, scheduleDAO);
         profileService= new ProfileService(customerDAO,personalDataClientDAO);

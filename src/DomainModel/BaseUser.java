@@ -17,6 +17,11 @@ public abstract class BaseUser {
         this.password = password;
         this.email = email;
     }
+
+    public boolean isValid() {
+        return !username.isEmpty() && !password.isEmpty() && !email.isEmpty();
+    }
+
     public int getId() {
         return id;
     }

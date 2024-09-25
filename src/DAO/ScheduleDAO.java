@@ -20,7 +20,25 @@ public class ScheduleDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    Schedule schedule = new Schedule(rs. getInt("id"), rs.getString("name"));
+                    Schedule schedule = new Schedule(rs. getInt("id"), rs.getString("name"), rs.getString("customer"));
+                    //TODO: nel service dovrà essere aggiunta la lista di exerciseDetail che appaiono in questa scheda cercando nel database
+                    //TODO: database di ExerciseDetail per scheduleId usando la foreign key (schedule_id).
+                    return schedule;
+                } else {
+                    return null;
+                }
+            }
+        }
+    }
+
+    public Schedule getScheduleByUsername(String name) throws SQLException {
+        String query = "SELECT * FROM Schedule WHERE name = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, name);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Schedule schedule = new Schedule(rs. getInt("id"), rs.getString("name"), rs.getString("customer"));
                     //TODO: nel service dovrà essere aggiunta la lista di exerciseDetail che appaiono in questa scheda cercando nel database
                     //TODO: database di ExerciseDetail per scheduleId usando la foreign key (schedule_id).
                     return schedule;
@@ -32,11 +50,10 @@ public class ScheduleDAO {
     }
 
 
-    public boolean addSchedule(int id, String name) throws SQLException {
-        String query = "INSERT INTO Schedule (id, name) VALUES (?, ?)";
+    public boolean addSchedule(String name) throws SQLException {
+        String query = "INSERT INTO Schedule (name) VALUES (?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, id);
-            stmt.setString(2, name);
+            stmt.setString(1, name);
             return stmt.executeUpdate() > 0;
         }
     }

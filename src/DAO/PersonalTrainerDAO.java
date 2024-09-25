@@ -6,6 +6,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PersonalTrainerDAO {
     private final Connection connection;
@@ -51,11 +53,22 @@ public class PersonalTrainerDAO {
         }
     }
 
-    public boolean delete(String username, String password) throws SQLException {
+    public boolean deletePersonalTrainer(String username, String password) throws SQLException {
         String query = "DELETE FROM PersonalTrainer WHERE username = ? AND password = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, username);
             stmt.setString(2, password);
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
+    public boolean updatePersonalTrainer(PersonalTrainer personalTrainer) throws SQLException {
+        String query = "UPDATE PersonalTrainer SET username = ?, password = ?, email = ? WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, personalTrainer.getUsername());
+            stmt.setString(2, personalTrainer.getPassword());
+            stmt.setString(3, personalTrainer.getEmail());
+            stmt.setInt(4, personalTrainer.getId());
             return stmt.executeUpdate() > 0;
         }
     }
@@ -85,6 +98,30 @@ public class PersonalTrainerDAO {
             stmt.setInt(2, id);
             return stmt.executeUpdate() > 0;
         }
+    }
+
+    public List<PersonalTrainer> getAllPersonalTrainers() throws SQLException {
+        String query = "SELECT * FROM PersonalTrainer";
+        List<PersonalTrainer> personalTrainers = new ArrayList<>();
+
+        try (PreparedStatement stmt = connection.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                PersonalTrainer personalTrainer = new PersonalTrainer(
+                        rs.getInt("id"),
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        rs.getString("email")
+                );
+                personalTrainers.add(personalTrainer);  // Aggiunge ogni personal trainer alla lista
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;  // Rilancia l'eccezione per gestirla a livello superiore
+        }
+
+        return personalTrainers;  // Restituisce la lista di personal trainer
     }
 
     //queste due funzioni verranno attivate quando sarà creato Agenda nel model

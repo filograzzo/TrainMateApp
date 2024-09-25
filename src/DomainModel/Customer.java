@@ -10,6 +10,7 @@ public class Customer extends BaseUser {
     private PersonalDataClient personalDataClient;
     private AppointmentList appointmentList;
     private ArrayList<Course> courses;
+    private PersonalTrainer personalTrainer;
 
     public Customer(int id, String username, String password, String email) {
       super(id,username, password, email);

@@ -1,6 +1,11 @@
 package DomainModel;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PersonalTrainer extends BaseUser {
+
+    List<Customer> customers = new ArrayList<Customer>();
 
     //Questa classe è una classe di oggetti temporanei: i dati restano sempre salvati nel database e solo al momento del login
     //voglio compiere un'azione allora viene creato un oggetto Personal trainer che, essendo il costruttore package private,

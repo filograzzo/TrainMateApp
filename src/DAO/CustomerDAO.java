@@ -5,6 +5,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CustomerDAO {
     private final Connection connection;
@@ -58,10 +60,21 @@ public class CustomerDAO {
         }
     }
 
-    public boolean updateUsername(int id, String newUsername) throws SQLException {
+    public boolean updateCustomer(Customer customer) throws SQLException {
+        String query = "UPDATE User SET username = ?, password = ?, email = ? WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, customer.getUsername());
+            stmt.setString(2, customer.getPassword());
+            stmt.setString(3, customer.getEmail());
+            stmt.setInt(4, customer.getId());
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
+    public boolean updateUsername(int id, String username) throws SQLException {
         String query = "UPDATE User SET username = ? WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setString(1, newUsername);
+            stmt.setString(1, username);
             stmt.setInt(2, id);
             return stmt.executeUpdate() > 0;
         }
@@ -96,8 +109,6 @@ public class CustomerDAO {
         }
     }
 
-
-
     public boolean modifyData(int id, int newHeight, int newWeight, String newGoal) throws SQLException {
         String query = "UPDATE Customer SET height = ?, weight = ?, goal = ? WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -108,4 +119,29 @@ public class CustomerDAO {
             return stmt.executeUpdate() > 0;
         }
     }
+
+    public List<Customer> getAllCustomers() throws SQLException {
+        String query = "SELECT * FROM User";
+        List<Customer> customers = new ArrayList<>();
+
+        try (PreparedStatement stmt = connection.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Customer customer = new Customer(
+                        rs.getInt("id"),
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        rs.getString("email")
+                );
+                customers.add(customer);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+
+        return customers;
+    }
+
 }

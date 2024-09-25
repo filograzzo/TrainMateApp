@@ -3,6 +3,9 @@ package DAO;
 import DomainModel.ExerciseDetail;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
 public class ExerciseDetailDAO {
     private final Connection connection;
 
@@ -43,5 +46,28 @@ public class ExerciseDetailDAO {
         }
     }
 
+    public List<ExerciseDetail> getExerciseDetailsByScheduleId(int scheduleId) throws SQLException {
+        String query = "SELECT * FROM ExerciseDetail WHERE schedule_id = ?";
+        List<ExerciseDetail> exerciseDetails = new ArrayList<>();
+
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, scheduleId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    ExerciseDetail exerciseDetail = new ExerciseDetail(
+                            rs.getInt("id"),
+                            rs.getInt("serie"),
+                            rs.getInt("reps"),
+                            rs.getInt("weight"),
+                            rs.getInt("schedule_id"),
+                            rs.getInt("exercise_id")
+                    );
+                    exerciseDetails.add(exerciseDetail);
+                }
+            }
+        }
+        return exerciseDetails;
+    }
 
 }
