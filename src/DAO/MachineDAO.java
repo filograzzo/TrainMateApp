@@ -36,23 +36,43 @@ public class MachineDAO {
         }
     }
 
-
-    public boolean addMachine(Machine machine) throws SQLException {
-        String query = "INSERT INTO Machine (id, name, description, state) VALUES (?, ?, ?, ?)";
+    public boolean updateMachine(int id, Machine machine) throws SQLException {
+        String query = "UPDATE Machine SET name = ?, description = ?, state = ? WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, machine.getId());
-            stmt.setString(2, machine.getName());
-            stmt.setString(3, machine.getDescription());
-            stmt.setBoolean(4, machine.getState());
+            stmt.setString(1, machine.getName());
+            stmt.setString(2, machine.getDescription());
+            stmt.setBoolean(3, machine.getState());
+            stmt.setInt(4, id);
+
+            return stmt.executeUpdate() > 0;  // Restituisce true se almeno una riga è stata aggiornata
+        }
+    }
+
+    public boolean addMachine(String name, String description, Boolean state) throws SQLException {
+        String query = "INSERT INTO Machine ( name, description, state) VALUES ( ?, ?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, name);
+            stmt.setString(2, description);
+            stmt.setBoolean(3, state);
             return stmt.executeUpdate() > 0;
         }
     }
 
-    public boolean removeMachine(Machine machine) throws SQLException {
+    public boolean removeMachineById(int id) throws SQLException {
         String query = "DELETE FROM Machine WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, machine.getId());
+            stmt.setInt(1, id);
             return stmt.executeUpdate() > 0;
         }
     }
+
+    public boolean removeMachineByName(String name) throws SQLException {
+        String query = "DELETE FROM Machine WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, name);
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
+
 }

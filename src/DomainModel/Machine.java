@@ -3,20 +3,11 @@ package DomainModel;
 import java.util.List;
 
 public class Machine {
-    private static int count = 0;
     private int id;
     private String name;
     private String description;
     private boolean state;
     private List<Exercise> exercises;
-
-
-    public Machine(String name, String description, boolean state) {
-        this.id = ++count;
-        this.name = name;
-        this.description = description;
-        this.state = state;
-    }
 
     public Machine(int id, String name, String description, boolean state) {
         this.id = id;
@@ -25,7 +16,6 @@ public class Machine {
         this.state = state;
     }
 
-    // Getter e Setter
     public int getId() {
         return id;
     }
