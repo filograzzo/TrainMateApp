@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Objects;
 
 public class Exercise {
-    private static int count = 0;
     private int id;
     private String name;
     private String category;
@@ -23,17 +22,6 @@ public class Exercise {
     public Exercise(int id, String name) {
         this.id = id;
         this.name = name;
-    }
-
-    public Exercise(String name, String category, String machine) {
-        this.id = ++count;
-        this.name = name;
-        setCategory(category); // Validate category
-        this.machine = machine;
-    }
-
-    public Exercise() {
-        this.id = ++count;
     }
 
     // Getter and Setter for id

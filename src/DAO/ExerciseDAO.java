@@ -35,22 +35,28 @@ public class ExerciseDAO {
         }
     }
 
-    public boolean addExercise(Exercise exercise) throws SQLException {
-        String query = "INSERT INTO Exercise (id, name, category_name, machine_name) VALUES (?, ?, ?, ?)";
+    public boolean addExercise(String name, String category, String machine) throws SQLException {
+        String query = "INSERT INTO Exercise ( name, category_name, machine_name) VALUES ( ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, exercise.getId());
-            stmt.setString(2, exercise.getName());
-            stmt.setString(3, exercise.getCategory()); // Now category is directly stored as a string
-            stmt.setString(4, exercise.getMachine());
+            stmt.setString(1, name);
+            stmt.setString(2, category);
+            stmt.setString(3, machine);
             return stmt.executeUpdate() > 0;
         }
     }
 
-    // Remove Exercise from the database
-    public boolean removeExercise(Exercise exercise) throws SQLException {
+    public boolean removeExerciseById(int id) throws SQLException {
         String query = "DELETE FROM Exercise WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, exercise.getId());
+            stmt.setInt(1, id);
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
+    public boolean removeExerciseByName(String name) throws SQLException {
+        String query = "DELETE FROM Exercise WHERE name = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, name);
             return stmt.executeUpdate() > 0;
         }
     }
