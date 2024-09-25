@@ -2,10 +2,7 @@ package DAO;
 
 import DomainModel.Training;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class TrainingDAO {
     private final Connection connection;
@@ -39,16 +36,14 @@ public class TrainingDAO {
     }
 
 
-    public boolean addTraining(Training training) throws SQLException {
-        String query = "INSERT INTO Training (id, date, start_time, end_time, note, schedule_id) VALUES (?, ?, ?, ?, ?, ?)";
+    public boolean addTraining(Date date, Timestamp startTime, Timestamp endTime, String note, int scheduleId) throws SQLException {
+        String query = "INSERT INTO Training (date, start_time, end_time, note, schedule_id) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, training.getId());
-            stmt.setDate(2, training.getDate());
-            stmt.setTimestamp(3, training.getStartTime());
-            stmt.setTimestamp(4, training.getEndTime());
-            stmt.setString(5, training.getNote());
-            stmt.setInt(6, training.getSchedule());
-
+            stmt.setDate(1, date);
+            stmt.setTimestamp(2, startTime);
+            stmt.setTimestamp(3, endTime);
+            stmt.setString(4, note);
+            stmt.setInt(5, scheduleId);
             return stmt.executeUpdate() > 0;
         }
     }

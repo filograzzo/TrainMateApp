@@ -5,26 +5,12 @@ import java.sql.Timestamp;
 
 //allnamento cliente
 public class Training {
-    private static int count = 0;
     private int id;
     private Date date;
     private Timestamp startTime;
     private Timestamp endTime;
     private String note;
     private int scheduleId;
-
-    public Training(){
-        this.id = ++count;
-    }
-
-    public Training(Date date, Timestamp startTime, Timestamp endTime, String note, int scheduleId) {
-        this.id = ++count;
-        this.date = date;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.note = note;
-        this.scheduleId = scheduleId;
-    }
 
     public Training(int id, Date date, Timestamp startTime, Timestamp endTime, String note, int scheduleId) {
         this.id = id;
