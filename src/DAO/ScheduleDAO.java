@@ -5,6 +5,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ScheduleDAO {
     private final Connection connection;
@@ -21,8 +23,6 @@ public class ScheduleDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     Schedule schedule = new Schedule(rs. getInt("id"), rs.getString("name"), rs.getString("customer"));
-                    //TODO: nel service dovrà essere aggiunta la lista di exerciseDetail che appaiono in questa scheda cercando nel database
-                    //TODO: database di ExerciseDetail per scheduleId usando la foreign key (schedule_id).
                     return schedule;
                 } else {
                     return null;
@@ -31,7 +31,7 @@ public class ScheduleDAO {
         }
     }
 
-    public Schedule getScheduleByUsername(String name) throws SQLException {
+    public Schedule getScheduleByName(String name) throws SQLException {
         String query = "SELECT * FROM Schedule WHERE name = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, name);
@@ -39,8 +39,6 @@ public class ScheduleDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     Schedule schedule = new Schedule(rs. getInt("id"), rs.getString("name"), rs.getString("customer"));
-                    //TODO: nel service dovrà essere aggiunta la lista di exerciseDetail che appaiono in questa scheda cercando nel database
-                    //TODO: database di ExerciseDetail per scheduleId usando la foreign key (schedule_id).
                     return schedule;
                 } else {
                     return null;
@@ -49,11 +47,34 @@ public class ScheduleDAO {
         }
     }
 
+    public List<Schedule> getSchedulesByUsername(String username) throws SQLException {
+        String query = "SELECT * FROM Schedule WHERE customer = ?";
+        List<Schedule> schedules = new ArrayList<>(); // Lista per contenere i risultati
 
-    public boolean addSchedule(String name) throws SQLException {
-        String query = "INSERT INTO Schedule (name) VALUES (?)";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, username);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Schedule schedule = new Schedule(
+                            rs.getInt("id"),
+                            rs.getString("name"),
+                            rs.getString("customer")
+                    );
+                    schedules.add(schedule); // Aggiungi alla lista
+                }
+            }
+        }
+
+        return schedules;
+    }
+
+
+    public boolean addSchedule(String name, String customerUser) throws SQLException {
+        String query = "INSERT INTO Schedule (name, customer) VALUES (?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, name);
+            stmt.setString(2, customerUser);
             return stmt.executeUpdate() > 0;
         }
     }

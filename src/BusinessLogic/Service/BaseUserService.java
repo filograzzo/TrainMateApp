@@ -165,32 +165,5 @@ public class BaseUserService {
     }
 
     //creation of a schedule
-    public boolean createSchedule(BaseUser baseUser) throws SQLException {
-        if(!baseUser.isValid()){
-            throw new IllegalArgumentException("The user is not valid.");
-        }
-        System.out.println("What you want to call your new Schedule?");
-        String scheduleName = input.nextLine();
-
-        scheduleDAO.addSchedule(scheduleName);
-        Schedule schedule = scheduleDAO.getScheduleByUsername(baseUser.getUsername());
-
-        if (schedule != null) {
-            List<ExerciseDetail> exerciseDetails = exerciseDetailDAO.getExerciseDetailsByScheduleId(schedule.getId());
-            schedule.setExercises(exerciseDetails);
-            return true;
-        } else {
-            System.out.println("Error creating the schedule.");
-            return false;
-        }
-    }
-
-    //update of a schedule
-    public boolean updateSchedule(BaseUser baseUser, Schedule schedule) throws SQLException {
-        if(!baseUser.isValid()){
-            throw new IllegalArgumentException("The user is not valid.");
-        }
-        //TODO: continua
-    }
 
 }
