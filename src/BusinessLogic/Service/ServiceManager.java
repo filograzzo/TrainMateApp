@@ -18,6 +18,7 @@ public class ServiceManager {
     private ProfilePTService profilePTService;
     private BaseUserService baseUserService;
     private ScheduleService scheduleService;
+    private TrainingService trainingService;
 
     private BaseUser user;
     public BaseUserService getUserService() {
@@ -39,6 +40,7 @@ public class ServiceManager {
         return profileService;
     }
     public ScheduleService getScheduleService(){return scheduleService;}
+    public TrainingService getTrainingService(){return trainingService;}
 
     private ServiceManager()  {
         try {
@@ -66,6 +68,7 @@ public class ServiceManager {
         bookCourseService = new BookCourseService(courseDAO, signedDAO);
         bookAppointmentService = new BookAppointmentService(appointmentDAO);
         scheduleService = new ScheduleService(scheduleDAO, excerciseDetailDAO);
+        trainingService = new TrainingService(trainingDAO);
 
         //#TODO:costruire i vari service e assegnare qui i loro DAO
     }

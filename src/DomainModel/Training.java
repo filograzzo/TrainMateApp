@@ -11,14 +11,16 @@ public class Training {
     private Timestamp endTime;
     private String note;
     private int scheduleId;
+    private String username;
 
-    public Training(int id, Date date, Timestamp startTime, Timestamp endTime, String note, int scheduleId) {
+    public Training(int id, Date date, Timestamp startTime, Timestamp endTime, String note, int scheduleId, String username) {
         this.id = id;
         this.date = date;
         this.startTime = startTime;
         this.endTime = endTime;
         this.note = note;
         this.scheduleId = scheduleId;
+        this.username = username;
     }
 
     // Getter e Setter
@@ -68,5 +70,13 @@ public class Training {
 
     public void setSchedule(int scheduleId) {
         this.scheduleId = scheduleId;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }
