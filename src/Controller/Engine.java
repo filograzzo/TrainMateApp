@@ -1,10 +1,12 @@
 package Controller;
 
+import BusinessLogic.Service.ExerciseDetailService;
 import BusinessLogic.Service.PersonalTrainer.ProfilePTService;
 import BusinessLogic.Service.ScheduleService;
 import BusinessLogic.Service.ServiceFactory;
 import BusinessLogic.Service.TrainingService;
 import DomainModel.BaseUser;
+import DomainModel.ExerciseDetail;
 import DomainModel.Schedule;
 import DomainModel.Training;
 
@@ -229,5 +231,150 @@ public class Engine {
         }
         return null;
     }
+
+    //EXERCISEDETAIL
+
+    public void createExerciseDetail(BaseUser baseUser, Schedule schedule) {
+        if (baseUser.isValid()) {
+            ExerciseDetailService exerciseDetailService = (ExerciseDetailService) sf.getService(sf.EXERCISEDETAIL_SERVICE   );
+            try {
+                // Richiesta dati per l'ExerciseDetail
+                System.out.println("Enter the number of series:");
+                int serie = Integer.parseInt(input.nextLine());
+
+                System.out.println("Enter the number of repetitions:");
+                int reps = Integer.parseInt(input.nextLine());
+
+                System.out.println("Enter the weight:");
+                int weight = Integer.parseInt(input.nextLine());
+
+                int scheduleID = schedule.getId();
+
+                boolean ok = false;
+                int exerciseID = 0;
+                while(!ok) {
+                    System.out.println("Enter the new exercise name:");
+                    String exerciseName = input.nextLine();
+
+                    exerciseID = exerciseDetailService.getExerciseIdByName(exerciseName);
+                    if (exerciseID == -1) {
+                        throw new CustomizedException("The exercise name you entered does not match any existing exercise name.");
+                    }else ok = true;
+                }
+                boolean done = false;
+                if(exerciseID == 0)
+                    throw new CustomizedException("There has been some problem with the acquisition of the exercise id");
+                else {
+                    done = exerciseDetailService.createExerciseDetail(serie, reps, weight, scheduleID, exerciseID);
+                }
+
+                if (!done) {
+                    throw new RuntimeException("There has been an error in the creation of the exercise detail.");
+                } else {
+                    System.out.println("ExerciseDetail successfully created.");
+                }
+
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (NumberFormatException e) {
+                System.err.println("Invalid input. Please enter valid numbers for serie, reps, weight, scheduleID, and exerciseID.");
+            } catch (CustomizedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public void deleteExerciseDetail(BaseUser baseUser, ExerciseDetail exerciseDetail) {
+        if (baseUser.isValid()) {
+            ExerciseDetailService exerciseDetailService = (ExerciseDetailService) sf.getService(sf.EXERCISEDETAIL_SERVICE   );
+
+            try {
+                boolean done = exerciseDetailService.removeExerciseDetail(exerciseDetail);
+                if (!done) {
+                    throw new RuntimeException("There has been an error in the deletion of the exercise detail.");
+                } else {
+                    System.out.println("ExerciseDetail successfully deleted.");
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public void updateExerciseDetail(BaseUser baseUser, ExerciseDetail exerciseDetail) {
+        if (baseUser.isValid()) {
+            ExerciseDetailService exerciseDetailService = (ExerciseDetailService) sf.getService(sf.EXERCISEDETAIL_SERVICE   );
+            try {
+                System.out.println("Enter the new number of series:");
+                int serie = Integer.parseInt(input.nextLine());
+
+                System.out.println("Enter the new number of repetitions:");
+                int reps = Integer.parseInt(input.nextLine());
+
+                System.out.println("Enter the new weight:");
+                int weight = Integer.parseInt(input.nextLine());
+
+                boolean ok = false;
+                int exerciseID = 0;
+                while(!ok) {
+                    System.out.println("Enter the new exercise name:");
+                    String exerciseName = input.nextLine();
+
+                    exerciseID = exerciseDetailService.getExerciseIdByName(exerciseName);
+                    if (exerciseID == -1) {
+                        throw new CustomizedException("The exercise name you entered does not match any existing exercise name.");
+                    }else ok = true;
+                }
+                boolean done = false;
+                if(exerciseID == 0)
+                    throw new CustomizedException("There has been some problem with the acquisition of the exercise id");
+                else {
+                    done = exerciseDetailService.updateExerciseDetail(exerciseDetail.getId(), serie, reps, weight, exerciseID);
+                }
+
+                if (!done) {
+                    throw new RuntimeException("There has been an error in the update of the exercise detail.");
+                } else {
+                    System.out.println("ExerciseDetail successfully updated.");
+                }
+
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (NumberFormatException e) {
+                System.err.println("Invalid input. Please enter valid numbers for serie, reps, weight, scheduleID, and exerciseID.");
+            } catch (CustomizedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public void getExerciseDetailById(BaseUser baseUser, int exerciseDetailID) {
+        if (baseUser.isValid()) {
+            ExerciseDetailService exerciseDetailService = (ExerciseDetailService) sf.getService(sf.EXERCISEDETAIL_SERVICE   );
+
+            try {
+                ExerciseDetail exerciseDetail = exerciseDetailService.getExerciseDetailById(exerciseDetailID);
+
+                if (exerciseDetail != null) {
+                    System.out.println("ExerciseDetail found: ID = " + exerciseDetail.getId() +
+                            ", Series = " + exerciseDetail.getSerie() +
+                            ", Reps = " + exerciseDetail.getReps() +
+                            ", Weight = " + exerciseDetail.getWeight() +
+                            ", Schedule ID = " + exerciseDetail.getSchedule() +
+                            ", Exercise ID = " + exerciseDetail.getExercise());
+                } else {
+                    System.out.println("ExerciseDetail not found.");
+                }
+
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (NumberFormatException e) {
+                System.err.println("Invalid input. Please enter a valid number for the ExerciseDetail ID.");
+            }
+        }
+    }
+
+
+
 
 }

@@ -25,7 +25,6 @@ public class ScheduleService {
     }
 
     public boolean createSchedule(BaseUser baseUser, String scheduleName) throws SQLException {
-        //chiedo il nome nell'engine
         boolean done = scheduleDAO.addSchedule(scheduleName, baseUser.getUsername());
         return done;
     }

@@ -60,4 +60,18 @@ public class ExerciseDAO {
             return stmt.executeUpdate() > 0;
         }
     }
+
+    public int getExerciseIdByName(String name) throws SQLException {
+        String query = "SELECT id FROM Exercise WHERE name = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, name);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id");
+                }
+            }
+        }return -1;
+    }
+
+    //TODO:getExercisesByMachine
 }
