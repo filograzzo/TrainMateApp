@@ -20,6 +20,7 @@ public class ServiceManager {
     private ScheduleService scheduleService;
     private TrainingService trainingService;
     private ExerciseDetailService exerciseDetailService;
+    private ExerciseService exerciseService;
 
     private BaseUser user;
     public BaseUserService getUserService() {
@@ -43,6 +44,7 @@ public class ServiceManager {
     public ScheduleService getScheduleService(){return scheduleService;}
     public TrainingService getTrainingService(){return trainingService;}
     public ExerciseDetailService getExerciseDetailService(){return exerciseDetailService;}
+    public ExerciseService getExerciseService(){return exerciseService;}
 
     private ServiceManager()  {
         try {
@@ -64,6 +66,7 @@ public class ServiceManager {
         ExerciseDAO exerciseDAO = new ExerciseDAO(connection);
 
 
+
         baseUserService = new BaseUserService(customerDAO, personalTrainerDAO, scheduleDAO, excerciseDetailDAO);
         profilePTService= new ProfilePTService(personalTrainerDAO);
         agendaService = new AgendaService(personalTrainerDAO,courseDAO, scheduleDAO);
@@ -73,6 +76,7 @@ public class ServiceManager {
         scheduleService = new ScheduleService(scheduleDAO, excerciseDetailDAO);
         trainingService = new TrainingService(trainingDAO);
         exerciseDetailService = new ExerciseDetailService(excerciseDetailDAO, exerciseDAO);
+        exerciseService = new ExerciseService(exerciseDAO);
 
         //#TODO:costruire i vari service e assegnare qui i loro DAO
     }

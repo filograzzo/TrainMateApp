@@ -1,11 +1,15 @@
 package DAO;
 
+import DomainModel.Exercise;
 import DomainModel.Machine;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 public class MachineDAO {
     private final Connection connection;
 
@@ -26,8 +30,6 @@ public class MachineDAO {
                             rs.getString("name"),
                             rs.getString("description"),
                             rs.getBoolean("state")
-                            //TODO: nel service dovrà essere aggiunta la lista di esercizi che utilizzano il macchinario andando a cercare nel
-                            //TODO: database di exercise e cercando per nome di macchinario usando la foreign key (machine_name).
                     );
                 } else {
                     return null;
@@ -73,6 +75,4 @@ public class MachineDAO {
             return stmt.executeUpdate() > 0;
         }
     }
-
-
 }

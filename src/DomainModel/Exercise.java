@@ -2,21 +2,22 @@ package DomainModel;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 public class Exercise {
     private int id;
     private String name;
     private String category;
     private String machine;
+    private String description;
 
     private static final List<String> validCategories = Arrays.asList("Legs", "Arms", "Abdomen", "Back", "Chest");
 
-    public Exercise(int id, String name, String category, String machine) {
+    public Exercise(int id, String name, String category, String machine, String description) {
         this.id = id;
         this.name = name;
         setCategory(category); // Validate category
         this.machine = machine;
+        this.description = description;
     }
 
     public Exercise(int id, String name) {
@@ -51,6 +52,14 @@ public class Exercise {
         } else {
             throw new IllegalArgumentException("Invalid category name: " + category);
         }
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     // Getter and Setter for machine

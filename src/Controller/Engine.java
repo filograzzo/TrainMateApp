@@ -1,14 +1,8 @@
 package Controller;
 
-import BusinessLogic.Service.ExerciseDetailService;
+import BusinessLogic.Service.*;
 import BusinessLogic.Service.PersonalTrainer.ProfilePTService;
-import BusinessLogic.Service.ScheduleService;
-import BusinessLogic.Service.ServiceFactory;
-import BusinessLogic.Service.TrainingService;
-import DomainModel.BaseUser;
-import DomainModel.ExerciseDetail;
-import DomainModel.Schedule;
-import DomainModel.Training;
+import DomainModel.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -374,7 +368,135 @@ public class Engine {
         }
     }
 
+    // EXERCISES
 
+    // Solo PT (Personal Trainer)
+    public void createExercise(PersonalTrainer personalTrainer) {
+        if (personalTrainer.isValid()) {
+            ExerciseService exerciseService = (ExerciseService) sf.getService(sf.EXERCISE_SERVICE);
+            try {
+                // Inserimento dei dati per l'esercizio
+                System.out.println("Enter exercise name:");
+                String name = input.nextLine();
+
+                boolean ok = false;
+                String category = "";
+                while (!ok) {
+                    // Inserimento e validazione della categoria
+                    System.out.println("Enter exercise category (Valid categories: " + Exercise.getValidCategories() + "):");
+                    category = input.nextLine();
+
+                    // Verifica se la categoria inserita è valida
+                    if (Exercise.getValidCategories().contains(category)) {
+                        ok = true;
+                    } else {
+                        System.out.println("Invalid category. Please enter one of the valid categories.");
+                    }
+                }
+
+                System.out.println("Enter machine used (or 'None' if no machine):");
+                String machine = input.nextLine();
+
+                System.out.println("Enter a description:");
+                String description = input.nextLine();
+
+                // Creazione dell'esercizio
+                boolean done = exerciseService.createExercise(name, category, machine, description);
+                if (!done) {
+                    throw new CustomizedException("There has been an error in the creation of the exercise.");
+                } else {
+                    System.out.println("Exercise successfully created.");
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (CustomizedException e) {
+                System.err.println(e.getMessage());
+            }
+        } else {
+            System.out.println("Only personal trainers can create exercises.");
+        }
+    }
+
+    // Solo PT (Personal Trainer)
+    public void deleteExercise(PersonalTrainer personalTrainer, Exercise exercise) {
+        if (personalTrainer.isValid()) {
+            ExerciseService exerciseService = (ExerciseService) sf.getService(sf.EXERCISE_SERVICE);
+            try {
+                if (exercise == null) {
+                    throw new CustomizedException("The exercise does not exist.");
+                }
+
+                boolean done = exerciseService.deleteExercise(exercise);
+                if (!done) {
+                    throw new CustomizedException("There has been an error in the deletion of the exercise.");
+                } else {
+                    System.out.println("Exercise successfully deleted.");
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (CustomizedException e) {
+                System.err.println(e.getMessage());
+            }
+        } else {
+            System.out.println("Only personal trainers can delete exercises.");
+        }
+    }
+
+
+    public Exercise getExerciseByName() {
+        ExerciseService exerciseService = (ExerciseService) sf.getService(sf.EXERCISE_SERVICE);
+        try {
+            System.out.println("Enter the name of the exercise:");
+            String name = input.nextLine();
+
+            Exercise exercise = exerciseService.getExerciseByName(name);
+            if (exercise == null) {
+                throw new CustomizedException("This name does not refer to any existing exercise.");
+            }else return exercise;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (CustomizedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<Exercise> getAllExercises() {
+        ExerciseService exerciseService = (ExerciseService) sf.getService(sf.EXERCISE_SERVICE);
+        try {
+            // Recupero di tutti gli esercizi
+            return exerciseService.getAllExercises();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public List<Exercise> getExercisesByCategory() {
+        ExerciseService exerciseService = (ExerciseService) sf.getService(sf.EXERCISE_SERVICE);
+        List<Exercise> exercises = new ArrayList<>();
+        try {
+            // Richiesta della categoria
+            System.out.println("Enter exercise category (Valid categories: " + Exercise.getValidCategories() + "):");
+            String category = input.nextLine();
+
+            // Validazione della categoria
+            if (category == null || category.trim().isEmpty()) {
+                throw new IllegalArgumentException("Category must not be null or empty.");
+            }
+
+            if (!Exercise.getValidCategories().contains(category)) {
+                throw new IllegalArgumentException("Invalid category. Please enter one of the valid categories: " + Exercise.getValidCategories());
+            }
+
+            // Recupero degli esercizi per categoria
+            exercises = exerciseService.getExercisesByCategory(category);
+            return exercises;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
 }

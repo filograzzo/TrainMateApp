@@ -11,6 +11,7 @@ public class ServiceFactory {
     public final int SCHEDULE_SERVICE = 7;
     public final int TRAINING_SERVICE = 8;
     public final int EXERCISEDETAIL_SERVICE = 9;
+    public final int EXERCISE_SERVICE = 10;
     public static ServiceFactory getInstance() {
         if (instance == null)
             instance = new ServiceFactory();
@@ -36,6 +37,8 @@ public class ServiceFactory {
                 return ServiceManager.getInstance().getTrainingService();
             case EXERCISEDETAIL_SERVICE:
                 return ServiceManager.getInstance().getExerciseDetailService();
+            case EXERCISE_SERVICE:
+                return ServiceManager.getInstance().getExerciseService();
             default:
                 return null;
         }
