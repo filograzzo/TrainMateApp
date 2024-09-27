@@ -145,4 +145,26 @@ public class ExerciseDAO {
         return exercises;  // Restituisce la lista degli esercizi filtrati per categoria
     }
 
+    public List<Exercise> getExercisesByMachine(Machine machine) throws SQLException {
+        String query = "SELECT * FROM Exercise WHERE machine_name = ?";
+        List<Exercise> exercises = new ArrayList<>();
+
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, machine.getName());
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Exercise exercise = new Exercise(
+                            rs.getInt("id"),
+                            rs.getString("name"),
+                            rs.getString("category_name"),
+                            rs.getString("machine_name"),
+                            rs.getString("description")
+                    );
+                    exercises.add(exercise);
+                }
+            }
+        }
+        return exercises;
+    }
 }

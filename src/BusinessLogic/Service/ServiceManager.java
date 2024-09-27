@@ -21,6 +21,7 @@ public class ServiceManager {
     private TrainingService trainingService;
     private ExerciseDetailService exerciseDetailService;
     private ExerciseService exerciseService;
+    private MachineService machineService;
 
     private BaseUser user;
     public BaseUserService getUserService() {
@@ -45,6 +46,7 @@ public class ServiceManager {
     public TrainingService getTrainingService(){return trainingService;}
     public ExerciseDetailService getExerciseDetailService(){return exerciseDetailService;}
     public ExerciseService getExerciseService(){return exerciseService;}
+    public MachineService getMachineService(){return machineService;}
 
     private ServiceManager()  {
         try {
@@ -77,6 +79,7 @@ public class ServiceManager {
         trainingService = new TrainingService(trainingDAO);
         exerciseDetailService = new ExerciseDetailService(excerciseDetailDAO, exerciseDAO);
         exerciseService = new ExerciseService(exerciseDAO);
+        machineService = new MachineService(machineDAO, exerciseDAO);
 
         //#TODO:costruire i vari service e assegnare qui i loro DAO
     }

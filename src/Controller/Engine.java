@@ -498,5 +498,212 @@ public class Engine {
         }
     }
 
+    //MACHINE
+
+    public void createMachine() {
+        MachineService machineService = (MachineService) sf.getService(sf.MACHINE_SERVICE);
+        try {
+            System.out.println("Enter machine name:");
+            String name = input.nextLine();
+
+            System.out.println("Enter machine description:");
+            String description = input.nextLine();
+
+            boolean state = false;
+            boolean validInput = false;
+            while (!validInput) {
+                System.out.println("Is the machine active? (true/false):");
+                String stateInput = input.nextLine();
+
+                if (stateInput.equalsIgnoreCase("true") || stateInput.equalsIgnoreCase("false")) {
+                    state = Boolean.parseBoolean(stateInput);
+                    validInput = true;
+                } else {
+                    System.out.println("Invalid input. Please enter 'true' or 'false'.");
+                }
+            }
+
+            boolean done = machineService.createMachine(name, description, state);
+            if (!done) {
+                throw new CustomizedException("There has been an error in the creation of the machine.");
+            } else {
+                System.out.println("Machine successfully created.");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (CustomizedException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+
+    public void deleteMachine(Machine machine) {
+        MachineService machineService = (MachineService) sf.getService(sf.MACHINE_SERVICE);
+        try {
+            if (machine == null) {
+                throw new CustomizedException("The machine does not exist.");
+            }
+
+            boolean done = machineService.deleteMachine(machine);
+            if (!done) {
+                throw new CustomizedException("There has been an error in the deletion of the machine.");
+            } else {
+                System.out.println("Machine successfully deleted.");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (CustomizedException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+    public void updateMachine(Machine machine) {
+        MachineService machineService = (MachineService) sf.getService(sf.MACHINE_SERVICE);
+        try {
+            if (machine == null) {
+                throw new CustomizedException("The machine does not exist.");
+            }
+            System.out.println("Enter the new name:");
+            String newName = input.nextLine();
+            machine.setName(newName);
+
+            System.out.println("Enter the new description:");
+            String newDescription = input.nextLine();
+
+
+            boolean newState = false;
+            boolean validInput = false;
+            while (!validInput) {
+                System.out.println("Is the machine active? (true/false):");
+                String stateInput = input.nextLine();
+
+                if (stateInput.equalsIgnoreCase("true") || stateInput.equalsIgnoreCase("false")) {
+                    newState = Boolean.parseBoolean(stateInput);
+                    validInput = true;  // Esce dal ciclo quando l'input è valido
+                } else {
+                    System.out.println("Invalid input. Please enter 'true' or 'false'.");
+                }
+            }
+
+            machine.setDescription(newDescription);
+            machine.setState(newState);
+            boolean done = machineService.updateMachine(machine);
+            if (!done) {
+                throw new CustomizedException("There has been an error in the update of the machine.");
+            } else {
+                System.out.println("Machine successfully updated.");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (CustomizedException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+
+    public List<Machine> getAllMachines() {
+        MachineService machineService = (MachineService) sf.getService(sf.MACHINE_SERVICE);
+        List<Machine> machines;
+
+        try {
+            machines = machineService.getAllMachines();
+            if (machines.isEmpty()) {
+                System.out.println("No machines found.");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return machines;
+    }
+
+
+    public Machine getMachineByName(String name) {
+        MachineService machineService = (MachineService) sf.getService(sf.MACHINE_SERVICE);
+        Machine machine;
+
+        try {
+            machine = machineService.getMachineByName(name);
+            if(machine == null) {
+                throw new CustomizedException("No machine was found matching the given name.");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (CustomizedException e) {
+            throw new RuntimeException(e);
+        }
+
+        return machine;
+    }
+
+
+    public List<Machine> getActiveMachines() {
+        MachineService machineService = (MachineService) sf.getService(sf.MACHINE_SERVICE);
+        List<Machine> activeMachines;
+
+        try {
+            activeMachines = machineService.getActiveMachines();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return activeMachines;
+    }
+
+
+    public List<Machine> getInactiveMachines() {
+        MachineService machineService = (MachineService) sf.getService(sf.MACHINE_SERVICE);
+        List<Machine> inactiveMachines;
+
+        try {
+            inactiveMachines = machineService.getInactiveMachines();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return inactiveMachines;
+    }
+
+    public boolean getMachineState(Machine machine) {
+        MachineService machineService = (MachineService) sf.getService(sf.MACHINE_SERVICE);
+        boolean state = false;
+
+        try {
+            if (machine == null) {
+                throw new CustomizedException("The machine does not exist.");
+            }
+            state = machineService.getMachineState(machine);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (CustomizedException e) {
+            System.err.println(e.getMessage());
+        }
+
+        return state;
+    }
+
+    public List<Exercise> getExercisesByMachine(Machine machine) {
+        MachineService machineService = (MachineService) sf.getService(sf.MACHINE_SERVICE);
+        List<Exercise> exercises = new ArrayList<>();
+
+        try {
+            if (machine == null) {
+                throw new CustomizedException("The machine does not exist.");
+            }
+            exercises = machineService.getExercisesByMachine(machine);
+            if (exercises.isEmpty()) {
+                System.out.println("No exercises found for this machine.");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (CustomizedException e) {
+            System.err.println(e.getMessage());
+        }
+
+        return exercises;
+    }
+
+
+
 
 }

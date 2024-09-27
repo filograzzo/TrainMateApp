@@ -21,12 +21,10 @@ public class ExerciseService {
         this.baseUser = baseUser;
     }
 
-    //TODO: solo pt
     public boolean createExercise(String name, String category, String machine, String description) throws SQLException {
         return exerciseDAO.addExercise(name, category, machine, description);
     }
 
-    //TODO: solo pt
     public boolean deleteExercise(Exercise exercise) throws SQLException {
         return exerciseDAO.removeExerciseById(exercise.getId());
     }
@@ -39,7 +37,6 @@ public class ExerciseService {
         return exerciseDAO.getAllExercises();
     }
 
-    //TODO: controllare validità della stringa passata
     public List<Exercise> getExercisesByCategory(String category) throws SQLException {
         return exerciseDAO.getExercisesByCategory(category);
     }
