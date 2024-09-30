@@ -16,10 +16,17 @@ public class ServiceManager {
     private BookAppointmentService bookAppointmentService;
     private AgendaService agendaService;
     private ProfilePTService profilePTService;
-    private UserService userService;
+    private ScheduleService scheduleService;
+    private TrainingService trainingService;
+    private ExerciseDetailService exerciseDetailService;
+    private ExerciseService exerciseService;
+    private MachineService machineService;
+
+    private BaseUserService baseUserService;
     private BaseUser user;
-    public UserService getUserService() {
-        return userService;
+
+    public BaseUserService getUserService() {
+        return baseUserService;
     }
     public AgendaService getAgendaService() {
         return agendaService;
@@ -37,6 +44,11 @@ public class ServiceManager {
     public ProfileService getProfileService() {
         return profileService;
     }
+    public ScheduleService getScheduleService(){return scheduleService;}
+    public TrainingService getTrainingService(){return trainingService;}
+    public ExerciseDetailService getExerciseDetailService(){return exerciseDetailService;}
+    public ExerciseService getExerciseService(){return exerciseService;}
+    public MachineService getMachineService(){return machineService;}
 
     private ServiceManager()  {
         try {
@@ -53,18 +65,21 @@ public class ServiceManager {
         SignedDAO signedDAO = new SignedDAO(connection);
         TrainingDAO trainingDAO = new TrainingDAO(connection);
         CourseDAO courseDAO = new CourseDAO(connection);
-        PersonalDataClientDAO personalDataClientDAO = new PersonalDataClientDAO(connection);
         AppointmentDAO appointmentDAO = new AppointmentDAO(connection);
+        ExerciseDAO exerciseDAO = new ExerciseDAO(connection);
 
-
-        userService = new UserService(customerDAO, personalTrainerDAO);
+        profileService= new ProfileService(customerDAO);
+        baseUserService = new BaseUserService(customerDAO, personalTrainerDAO, profileService);
         profilePTService= new ProfilePTService(personalTrainerDAO);
         agendaService = new AgendaService(personalTrainerDAO,courseDAO, scheduleDAO);
-        profileService= new ProfileService(customerDAO,personalDataClientDAO);
         bookCourseService = new BookCourseService(courseDAO, signedDAO);
         bookAppointmentService = new BookAppointmentService(appointmentDAO);
+        scheduleService = new ScheduleService(scheduleDAO, excerciseDetailDAO);
+        trainingService = new TrainingService(trainingDAO);
+        exerciseDetailService = new ExerciseDetailService(excerciseDetailDAO, exerciseDAO);
+        exerciseService = new ExerciseService(exerciseDAO);
+        machineService = new MachineService(machineDAO, exerciseDAO);
 
-        //#TODO:costruire i vari service e assegnare qui i loro DAO
     }
 
     public static ServiceManager getInstance() {

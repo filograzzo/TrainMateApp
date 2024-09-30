@@ -18,9 +18,6 @@ public class Course {
         this.participants = participants;
         this.trainerID = trainerID;
         this.bodyPartsTrained = bodyPartsTrained;
-
-
-
     }
     public int getId() {
         return id;

@@ -1,51 +1,93 @@
 package BusinessLogic.Service.Customer;
 
 import DAO.CustomerDAO;
-import DAO.PersonalDataClientDAO;
-import DomainModel.BaseUser;
 import DomainModel.Customer;
-import DomainModel.PersonalDataClient;
 
 import java.sql.SQLException;
 
 public class ProfileService {
-    private PersonalDataClientDAO personalDataClientDAO;
     private CustomerDAO customerDAO;
-    BaseUser currentUser;
-    public ProfileService(CustomerDAO customerDAO, PersonalDataClientDAO personalDataClientDAO) {
-        this.personalDataClientDAO = personalDataClientDAO;
+
+    public Customer getCurrentUser() {
+        return currentUser;
+    }
+
+    Customer currentUser;
+    public ProfileService(CustomerDAO customerDAO) {
         this.customerDAO = customerDAO;
     }
-    public void setCustomer(BaseUser currentUser) {
+    public void setCustomer(Customer currentUser) {
         this.currentUser = currentUser;
     }
 
-    public void modifyUsername(int id, String username) throws SQLException {
-        customerDAO.updateUsername(id, username);
-        currentUser.setUsername(username);
-    }
-    public void modifyPassword(int id, String password) throws SQLException {
-        customerDAO.updatePassword(id, password);
-        currentUser.setPassword(password);
-    }
-    public void modifyEmail(int id, String email) throws SQLException {
-        customerDAO.updateEmail(id, email);
-        currentUser.setEmail(email);
-    }
-
-
-    public boolean addOrUpdatePersonalData(PersonalDataClient personalData) throws SQLException {
-        if (personalDataClientDAO.getPersonalData(personalData.getId()) != null) {
-            return personalDataClientDAO.updatePersonalData(personalData);
-        } else {
-            return personalDataClientDAO.addPersonalData(personalData);
+    public boolean modifyUsername( String username,String newUsername) throws SQLException {
+        if(!customerDAO.usernameExists(newUsername)){
+            if(customerDAO.updateUsername(username,newUsername)){
+                currentUser.setUsername(newUsername);
+                return true;
+            }
+            else{
+                return false;
+            }
         }
-        //TODO modificare anche localmente((Customer)currentUser).setPersonalDataClient(personalData);
+        else{
+            return false;
+        }
+
+    }
+    public boolean modifyPassword(String username, String password,String oldPassword) throws SQLException {
+        if(customerDAO.updatePassword(username, password,oldPassword)){
+            currentUser.setPassword(password);
+            return true;
+        }else{
+            return false;
+        }
+
+    }
+    public boolean modifyEmail(String username, String email) throws SQLException {
+        if(!customerDAO.emailExists(email)){
+            if(customerDAO.updateEmail(username, email)){
+                currentUser.setEmail(email);
+                return true;
+            }
+            else{
+                return false;
+            }
+        }else{
+            return false;
+        }
+
     }
 
+    public boolean updatePersonalData(int id, float height, float weight, int age, String gender, String goal) throws SQLException {
+        if(customerDAO.updatePersonalData(id, height, weight,age,gender,goal)){
+            ((Customer)currentUser).setHeight(height);
+            ((Customer)currentUser).setWeight(weight);
+            ((Customer)currentUser).setAge(age);
+            ((Customer)currentUser).setGender(gender);
+            ((Customer)currentUser).setGoal(goal);
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
     public boolean deletePersonalData() throws SQLException {
-        return personalDataClientDAO.deletePersonalData(currentUser.getId());
-        //TODO modificare anche localmente
+        if(customerDAO.deletePersonalData(currentUser.getId())){
+            ((Customer)currentUser).setHeight(0);
+            ((Customer)currentUser).setWeight(0);
+            ((Customer)currentUser).setAge(0);
+            ((Customer)currentUser).setGender(null);
+            ((Customer)currentUser).setGoal(null);
+            return true;
+        }
+        else{
+            return false;
+        }
+
+    }
+    public boolean getPersonalData(int clientId) throws SQLException {
+        return customerDAO.getPersonalData(clientId);
     }
 
 }

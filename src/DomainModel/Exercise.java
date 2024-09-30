@@ -1,71 +1,57 @@
 package DomainModel;
-//#TODO:modificare info e aggiungerne altre,alcuni di questi verranno aggiunti alla schedule del cliente
+
+import java.util.Arrays;
+import java.util.List;
+
 public class Exercise {
     private int id;
-    private int serie;
-    private int reps;
-    private int weight;
-    private int scheduleId;
     private String name;
+    private String category;
+    private String machine;
     private String description;
 
-    public Exercise(int id, int serie, int reps, int weight, int scheduleId, String name, String description) {
+    private static final List<String> validCategories = Arrays.asList("Legs", "Arms", "Abdomen", "Back", "Chest");
+
+    public Exercise(int id, String name, String category, String machine, String description) {
         this.id = id;
-        this.serie = serie;
-        this.reps = reps;
-        this.weight = weight;
-        this.scheduleId = scheduleId;
         this.name = name;
+        setCategory(category); // Validate category
+        this.machine = machine;
         this.description = description;
     }
 
-    // Getter e Setter
+    public Exercise(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    // Getter and Setter for id
     public int getId() {
         return id;
     }
-
     public void setId(int id) {
         this.id = id;
     }
 
-    public int getSerie() {
-        return serie;
-    }
-
-    public void setSerie(int serie) {
-        this.serie = serie;
-    }
-
-    public int getReps() {
-        return reps;
-    }
-
-    public void setRepd(int reps) {
-        this.reps = reps;
-    }
-
-    public int getweight() {
-        return weight;
-    }
-
-    public void setWeight(int weight) {
-        this.weight = weight;
-    }
-
-    public int getScheduleId() {
-        return scheduleId;
-    }
-
-    public void setScheduleId(int idSchedule) {
-        this.scheduleId = scheduleId;
-    }
-
+    // Getter and Setter for name
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
+    }
+
+    // Getter and Setter for category with validation
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        if (validCategories.contains(category)) {
+            this.category = category;
+        } else {
+            throw new IllegalArgumentException("Invalid category name: " + category);
+        }
     }
 
     public String getDescription() {
@@ -74,5 +60,18 @@ public class Exercise {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    // Getter and Setter for machine
+    public String getMachine() {
+        return machine;
+    }
+    public void setMachine(String machine) {
+        this.machine = machine;
+    }
+
+    // Static method to get all valid categories
+    public static List<String> getValidCategories() {
+        return validCategories;
     }
 }

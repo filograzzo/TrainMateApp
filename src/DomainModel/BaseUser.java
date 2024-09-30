@@ -1,21 +1,27 @@
 package DomainModel;
 
-public abstract class BaseUser {
-    private int id;
+import javax.swing.*;
+import java.awt.*;
 
-    public boolean isTypeOfUser() {
-        return typeOfUser;
+public abstract class BaseUser {
+    public void setId(int id) {
+        this.id = id;
     }
 
-    private boolean typeOfUser;
+    private int id;
     private String username;
     private String password;
     private String email;
+    private String role;
+
     public BaseUser(int id, String username, String password, String email) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.email = email;
+    }
+    public boolean isValid() {
+        return !username.isEmpty() && !password.isEmpty() && !email.isEmpty();
     }
     public int getId() {
         return id;
