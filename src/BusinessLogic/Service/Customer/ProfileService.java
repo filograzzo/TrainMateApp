@@ -72,8 +72,8 @@ public class ProfileService {
             return false;
         }
     }
-    public boolean deletePersonalData() throws SQLException {
-        if(customerDAO.deletePersonalData(currentUser.getId())){
+    public boolean deletePersonalData(int id) throws SQLException {
+        if(customerDAO.deletePersonalData(id)){
             ((Customer)currentUser).setHeight(0);
             ((Customer)currentUser).setWeight(0);
             ((Customer)currentUser).setAge(0);

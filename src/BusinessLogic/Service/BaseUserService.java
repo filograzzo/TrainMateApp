@@ -19,8 +19,9 @@ public class BaseUserService {
     private ProfileService profileService;
     private BaseUser currentUser;
     private ProfilePTService profilePTService;
-    public BaseUserService(CustomerDAO customerDAO, PersonalTrainerDAO personalTrainerDAO, ProfileService profileService) {
+    public BaseUserService(CustomerDAO customerDAO, PersonalTrainerDAO personalTrainerDAO, ProfileService profileService,ProfilePTService profilePTService) {
         this.profileService = profileService;
+        this.profilePTService = profilePTService;
         this.customerDAO = customerDAO;
         this.personalTrainerDAO = personalTrainerDAO;
     }
@@ -43,11 +44,12 @@ public class BaseUserService {
 
     public PersonalTrainer loginPersonalTrainer(String username, String password,String email) {
         try {
-            PersonalTrainer pt = personalTrainerDAO.getPersonalTrainer(username, password,email);
-            if (pt == null ) {
+            currentUser = personalTrainerDAO.getPersonalTrainer(username, password,email);
+            if (currentUser == null ) {
                 return null;
             } else {
-                return pt;
+                profilePTService.setPersonalTrainer((PersonalTrainer)currentUser);
+                return (PersonalTrainer) currentUser;
             }
         } catch (SQLException e) {
             e.printStackTrace();

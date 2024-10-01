@@ -6,10 +6,10 @@ import Controller.NavigationManager;
 import javax.swing.*;
 import java.awt.*;
 
-public class HomeCustomer extends JFrame {
+public class HomePT extends JFrame {
     private Engine engine;
 
-    public HomeCustomer(Engine engine) {
+    public HomePT(Engine engine) {
         this.engine = engine;
         setupWindow();
         JPanel mainPanel = createMainPanel();
@@ -33,23 +33,27 @@ public class HomeCustomer extends JFrame {
         NavigationManager navigationManager = NavigationManager.getIstance(this);
         navigationManager.setEngine(this.engine);
         viewProfileButton.addActionListener(e -> {
-            navigationManager.navigateToCustomerProfile();
+            navigationManager.navigateToProfilePT();
             // Handle back action
         });
         mainPanel.add(topPanel, BorderLayout.NORTH);
 
         // Create the central panel with a GridLayout
         JPanel centralPanel = new JPanel(new GridLayout(5, 1, 10, 10));
-        JButton viewCoursesButton = new JButton("View Courses");
-        viewCoursesButton.addActionListener(e -> {
-            navigationManager.navigateToCourses();
+        JButton viewAgendaButton = new JButton("View Agenda");//nella pagina agenda visualizza corsi da tenere e gestisce qui gli appuntamenti con clienti
+        viewAgendaButton.addActionListener(e -> {
+            //#TODO
         });
-        centralPanel.add(viewCoursesButton);
+        centralPanel.add(viewAgendaButton);
 
-        centralPanel.add(new JButton("Book Appointment"));
-        centralPanel.add(new JButton("View Schedule"));
-        centralPanel.add(new JButton("View Trainings"));
-        centralPanel.add(new JButton("View Exercises"));
+        JButton viewCourses = new JButton("Manage Courses");//nella pagina agenda visualizza corsi da tenere e gestisce qui gli appuntamenti con clienti
+        viewCourses.addActionListener(e -> {
+            navigationManager.navigateToCoursesPT();
+            // Handle back action
+        });
+        centralPanel.add(viewCourses);
+        centralPanel.add(new JButton("Manage Machines"));
+        centralPanel.add(new JButton("Assign Schedules"));
 
         // Add the central panel to the main panel
         mainPanel.add(centralPanel, BorderLayout.CENTER);

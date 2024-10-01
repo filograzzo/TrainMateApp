@@ -85,7 +85,11 @@ public class LoginPage extends JFrame {
             String username = usernameField.getText();
             String email = emailField.getText();
             String password = passwordField.getText();
-            engine.loginPersonalTrainer(username, password,email);
+            if(engine.loginPersonalTrainer(username, password,email)){
+                NavigationManager navigationManager = NavigationManager.getIstance(this);
+                navigationManager.setEngine(this.engine);
+                navigationManager.navigateToHomePT();
+            }
 
         });
 

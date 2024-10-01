@@ -7,16 +7,14 @@ import DomainModel.Customer;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-public class CustomerProfile extends JFrame {
+public class ProfilePT extends JFrame {
     private Engine engine;
     NavigationManager navigationManager = NavigationManager.getIstance(this);
     private JButton modifyUsernameButton;
     private JButton modifyPasswordButton;
     private JButton modifyEmailButton;
-    private JButton updatePersonalDataButton;
-    private JButton deletePersonalDataButton;
     private JButton backButton;
-    public CustomerProfile(Engine engine) {
+    public ProfilePT(Engine engine) {
         this.engine = engine;
         setupWindow();
         JPanel mainPanel = createMainPanel();
@@ -64,37 +62,21 @@ public class CustomerProfile extends JFrame {
     }
 
     private JPanel createFormPanel() {
-        JPanel formPanel = new JPanel(new GridLayout(8, 2,1,2));
+        JPanel formPanel = new JPanel(new GridLayout(2, 2, 1, 1)); // 2 rows, 2 columns, with spacing between components
 
+        // Get username and email from the engine
         String username = engine.getUser().getUsername();
-        formPanel.add(new JLabel("Username"));
-        formPanel.add(new JLabel(username));
-
         String email = engine.getUser().getEmail();
-        formPanel.add(new JLabel("email"));
-        formPanel.add(new JLabel(email));
 
-        Float height = ((Customer)engine.getUser()).getHeight();
-        formPanel.add(new JLabel("Height"));
-        formPanel.add(new JLabel(height != null ? height.toString() : ""));
+        // Add labels and values
+        formPanel.add(new JLabel("Username")); // First column, first row
+        formPanel.add(new JLabel(username));    // Second column, first row
 
-        Float weight = ((Customer)engine.getUser()).getWeight();
-        formPanel.add(new JLabel("Weight"));
-        formPanel.add(new JLabel(weight != null ? weight.toString() : ""));
-
-        Integer age = ((Customer)engine.getUser()).getAge();
-        formPanel.add(new JLabel("Age"));
-        formPanel.add(new JLabel(age != null ? age.toString() : ""));
-
-        String gender = ((Customer)engine.getUser()).getGender();
-        formPanel.add(new JLabel("Gender"));
-        formPanel.add(new JLabel(gender != null ? gender : ""));
-
-        String goal = ((Customer)engine.getUser()).getGoal();
-        formPanel.add(new JLabel("Goal"));
-        formPanel.add(new JLabel(goal != null ? goal : ""));
+        formPanel.add(new JLabel("Email"));     // First column, second row
+        formPanel.add(new JLabel(email));       // Second column, second row
         return formPanel;
     }
+
     private void showModifyUsernamePanel() {
         JPanel modifyUsernamePanel = new JPanel(new FlowLayout());
         JTextField usernameField = new JTextField(20);
@@ -105,7 +87,7 @@ public class CustomerProfile extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String oldUsername = engine.getUser().getUsername();
                 String newUsername = usernameField.getText();
-                engine.updateUsernameClient(oldUsername,newUsername);
+                engine.modifyUsernamePT(oldUsername,newUsername);
                 refreshFormPanel();
             }
         });
@@ -130,7 +112,7 @@ public class CustomerProfile extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String newEmail = emailField.getText();
-                engine.updateEmailClient(engine.getUser().getUsername(), newEmail);
+                engine.modifyEmailPT(engine.getUser().getId(), newEmail);
                 refreshFormPanel();
             }
         });
@@ -156,7 +138,7 @@ public class CustomerProfile extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String oldPassword = new String(oldPasswordField.getPassword());
                 String newPassword = new String(newPasswordField.getPassword());
-                engine.updatePasswordClient(engine.getUser().getUsername(), newPassword, oldPassword);
+                engine.modifyPasswordPT(engine.getUser().getId(), newPassword, oldPassword);
                 refreshFormPanel();
             }
         });
@@ -173,64 +155,7 @@ public class CustomerProfile extends JFrame {
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
     }
-    private void showUpdatePersonalDataPanel() {
-        JPanel addPersonalDataPanel = new JPanel(new GridLayout(6, 2, 5, 5));
-        JTextField heightField = new JTextField(20);
-        JTextField weightField = new JTextField(20);
-        JTextField ageField = new JTextField(20);
-        JTextField genderField = new JTextField(20);
-        JTextField goalField = new JTextField(20);
-        JButton submitPersonalDataButton = new JButton("Submit");
-        addPersonalDataPanel.add(new JLabel("Height:"));
-        addPersonalDataPanel.add(heightField);
-        addPersonalDataPanel.add(new JLabel("Weight:"));
-        addPersonalDataPanel.add(weightField);
-        addPersonalDataPanel.add(new JLabel("Age:"));
-        addPersonalDataPanel.add(ageField);
-        addPersonalDataPanel.add(new JLabel("Gender:"));
-        addPersonalDataPanel.add(genderField);
-        addPersonalDataPanel.add(new JLabel("Goal:"));
-        addPersonalDataPanel.add(goalField);
-        addPersonalDataPanel.add(submitPersonalDataButton);
 
-        submitPersonalDataButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Float height = Float.parseFloat(heightField.getText());
-                Float weight = Float.parseFloat(weightField.getText());
-                Integer age = Integer.parseInt(ageField.getText());
-                String gender = genderField.getText();
-                String goal = goalField.getText();
-                engine.updatePersonalData(((Customer)engine.getUser()).getId(), height, weight,age,gender,goal);
-
-                refreshFormPanel();
-            }
-        });
-
-        JDialog dialog = new JDialog(this, "Add Personal Data", true);
-        dialog.setContentPane(addPersonalDataPanel);
-        dialog.pack();
-        dialog.setLocationRelativeTo(this);
-        dialog.setVisible(true);
-    }
-    private void showDeletePersonalDataPanel() {
-        JPanel deletePersonalDataPanel = new JPanel(new FlowLayout());
-        JButton deletePersonalDataButton = new JButton("I want to delete my personal data");
-        deletePersonalDataButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                engine.deletePersonalData(((Customer)engine.getUser()).getId());
-                refreshFormPanel();
-            }
-        });
-        deletePersonalDataPanel.add(deletePersonalDataButton);
-
-        JDialog dialog = new JDialog(this, "Delete Personal Data", true);
-        dialog.setContentPane(deletePersonalDataPanel);
-        dialog.pack();
-        dialog.setLocationRelativeTo(this);
-        dialog.setVisible(true);
-    }
 
     private void refreshFormPanel() {
         getContentPane().removeAll();
@@ -246,8 +171,6 @@ public class CustomerProfile extends JFrame {
         modifyUsernameButton = new JButton("Modify Username");
         modifyPasswordButton = new JButton("Modify Password");
         modifyEmailButton = new JButton("Modify Email");
-        updatePersonalDataButton = new JButton("Update Personal Data");
-        deletePersonalDataButton = new JButton("Delete Personal Data");
         backButton = new JButton("Back");
 
         // Add action listeners for each button
@@ -263,15 +186,6 @@ public class CustomerProfile extends JFrame {
             showModifyEmailPanel();
         });
 
-        updatePersonalDataButton.addActionListener(e -> {
-            showUpdatePersonalDataPanel();
-        });
-
-        deletePersonalDataButton.addActionListener(e -> {
-            showDeletePersonalDataPanel();
-            // Handle delete personal data action
-        });
-
         backButton.addActionListener(e -> {
             navigationManager.goBack();
         });
@@ -280,8 +194,6 @@ public class CustomerProfile extends JFrame {
         buttonPanel.add(modifyUsernameButton);
         buttonPanel.add(modifyPasswordButton);
         buttonPanel.add(modifyEmailButton);
-        buttonPanel.add(updatePersonalDataButton);
-        buttonPanel.add(deletePersonalDataButton);
         buttonPanel.add(backButton);
 
         return buttonPanel;
@@ -289,3 +201,4 @@ public class CustomerProfile extends JFrame {
 
 
 }
+

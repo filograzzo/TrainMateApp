@@ -78,7 +78,7 @@ public class CustomerDAO {
     }
     public Customer getCustomer(String username, String password, String email) throws SQLException {
         // Explicitly select the columns to avoid ambiguity
-        String query = "SELECT User.id, User.username, User.password, User.email " +
+        String query = "SELECT * " +
                 "FROM User " +
                 "JOIN Customer ON User.id = Customer.id " +
                 "WHERE User.username = ? AND User.password = ? AND User.email = ?";
@@ -90,14 +90,17 @@ public class CustomerDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     int fetchedId = rs.getInt("id");
-                    System.out.println("Fetched ID from database: " + fetchedId); // Log the fetched ID
                     Customer c = new Customer(
                             fetchedId,
                             rs.getString("username"),
                             rs.getString("password"),
                             rs.getString("email")
                     );
-                    System.out.println("Customer created: " + c.getId() + " " + c.getUsername() + " " + c.getPassword() + " " + c.getEmail());
+                    c.setHeight(rs.getFloat("height"));
+                    c.setWeight(rs.getFloat("weight"));
+                    c.setAge(rs.getInt("age"));
+                    c.setGender(rs.getString("gender"));
+                    c.setGoal(rs.getString("goal"));
                     return c;
                 } else {
                     return null;

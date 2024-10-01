@@ -11,11 +11,10 @@ public class Course {
     private int trainerID;
 
 
-    public Course(int id,String name, int maxParticipants, int participants, int trainerID, String bodyPartsTrained) {
+    public Course(int id,String name, int maxParticipants, int trainerID, String bodyPartsTrained) {
         this.id = id;
         this.name = name;
         this.maxParticipants = maxParticipants;
-        this.participants = participants;
         this.trainerID = trainerID;
         this.bodyPartsTrained = bodyPartsTrained;
     }

@@ -1,6 +1,7 @@
 package Controller;
 
 import BusinessLogic.Service.*;
+import BusinessLogic.Service.Customer.BookCourseService;
 import BusinessLogic.Service.Customer.ProfileService;
 import BusinessLogic.Service.PersonalTrainer.AgendaService;
 import BusinessLogic.Service.PersonalTrainer.MachineService;
@@ -71,13 +72,13 @@ public class Engine {
             System.err.println("The user you are trying to log in does not exist.");
         } else {
             if(baseUserService.checkCredentialsPT(username,password,email)){
-                System.out.println("The Personal Trainer has been logged in successfully.");
-                logged = true;
                 this.user = baseUserService.getCurrentUser();
+                System.out.println("The Personal Trainer has been logged in successfully.");
                 ProfilePTService pps = (ProfilePTService) sf.getService(sf.PROFILEPT_SERVICE);
-                pps.setPersonalTrainer(user);
+                pps.setPersonalTrainer((PersonalTrainer)user);
                 AgendaService as = (AgendaService) sf.getService(sf.AGENDA_SERVICE);
                 as.setPersonalTrainer(user);
+                logged = true;
             }else{
                 System.out.println("Credenziali errate");
             }
@@ -110,18 +111,27 @@ public class Engine {
         return user;
     }
     /*Personal Trainer*/
-    public void modifyUsernamePT(int id, String username) {
+    public void modifyUsernamePT(String oldUsername, String username) {
         ProfilePTService profilePTService = (ProfilePTService) sf.getService(sf.PROFILEPT_SERVICE);
         try {
-            profilePTService.modifyUsername(id, username);
+            if(profilePTService.modifyUsername(oldUsername, username)){
+                System.out.println("Username updated successfully.");
+            }
+            else{
+                System.out.println("Username not updated.It may already exist,choose another one.");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    public void modifyPasswordPT(int id, String password) {
+    public void modifyPasswordPT(int id, String password, String oldPassword) {
         ProfilePTService profilePTService = (ProfilePTService) sf.getService(sf.PROFILEPT_SERVICE);
         try {
-            profilePTService.modifyPassword(id, password);
+            if(profilePTService.modifyPassword(id, password,oldPassword)){
+                System.out.println("Password updated successfully.");
+            }else{
+                System.out.println("Password not updated.");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -129,7 +139,11 @@ public class Engine {
     public void modifyEmailPT(int id, String email) {
         ProfilePTService profilePTService = (ProfilePTService) sf.getService(sf.PROFILEPT_SERVICE);
         try {
-            profilePTService.modifyEmail(id, email);
+            if(profilePTService.modifyEmail(id, email)){
+                System.out.println("Email updated successfully.");
+            }else{
+                System.out.println("Email not updated.");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -187,7 +201,52 @@ public class Engine {
             throw new RuntimeException(e);
         }
     }
+    public void deletePersonalData(int id){
+        ProfileService profileService = (ProfileService) sf.getService(sf.PROFILE_SERVICE);
+        try {
+            if(profileService.deletePersonalData(id)){
+                System.out.println("Personal data deleted successfully.");
+            }else{
+                System.out.println("Personal data not deleted.");
+
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
     //TODO:AGENDA
+
+    public  ArrayList<Course> viewAvailableCourses(){
+        BookCourseService bookCourseService = (BookCourseService) sf.getService(sf.BOOKCOURSE_SERVICE);
+        ProfilePTService profilePTService = (ProfilePTService) sf.getService(sf.PROFILEPT_SERVICE);
+        try {
+            ArrayList<Course> courses = bookCourseService.viewAvailableCourses();
+            if (courses.isEmpty()) {
+                System.out.println("No courses available.");
+            } else {
+                return courses;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+    public List<Course> viewCoursesToTake(){
+        AgendaService agendaService = (AgendaService) sf.getService(sf.AGENDA_SERVICE);
+        try {
+            List<Course> courses = agendaService.viewCourses();
+            if (courses.isEmpty()) {
+                System.out.println("No courses to take.");
+            } else {
+                return courses;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
 
     public void addorUpdateCourse(Course course){
         AgendaService agendaService = (AgendaService) sf.getService(sf.AGENDA_SERVICE);
@@ -221,6 +280,30 @@ public class Engine {
             e.printStackTrace();}
     }
     //CUSTOMER
+    public void bookCourse(int courseId){
+        BookCourseService bookCourseService = (BookCourseService) sf.getService(sf.BOOKCOURSE_SERVICE);
+        try {
+            if(bookCourseService.bookCourse(courseId)){
+                System.out.println("Course successfully booked.");
+            }else{
+                System.out.println("Course not booked.");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void cancelBooking(int courseId){
+        BookCourseService bookCourseService = (BookCourseService) sf.getService(sf.BOOKCOURSE_SERVICE);
+        try {
+            if(bookCourseService.cancelBooking(courseId)){
+                System.out.println("Booking successfully canceled.");
+            }else{
+                System.out.println("Booking not canceled.");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
     //TODO: BOOK APPOINTMENT, BOOK COURSES
 
     //SCHEDULE

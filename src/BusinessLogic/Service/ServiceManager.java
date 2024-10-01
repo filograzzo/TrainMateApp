@@ -69,8 +69,8 @@ public class ServiceManager {
         ExerciseDAO exerciseDAO = new ExerciseDAO(connection);
 
         profileService= new ProfileService(customerDAO);
-        baseUserService = new BaseUserService(customerDAO, personalTrainerDAO, profileService);
         profilePTService= new ProfilePTService(personalTrainerDAO);
+        baseUserService = new BaseUserService(customerDAO, personalTrainerDAO, profileService, profilePTService);
         agendaService = new AgendaService(personalTrainerDAO,courseDAO, scheduleDAO);
         bookCourseService = new BookCourseService(courseDAO, signedDAO);
         bookAppointmentService = new BookAppointmentService(appointmentDAO);

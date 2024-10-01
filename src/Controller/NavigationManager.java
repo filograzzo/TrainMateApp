@@ -121,4 +121,53 @@ public class NavigationManager {
         customerProfile.setSize(frameSize);
         customerProfile.setLocation(frameLocation);
     }
+
+    public void navigateToCourses(){
+        // Store the size and location of the current window
+        frameSize = currentFrame.getSize();
+        frameLocation = currentFrame.getLocation();
+        history.push(currentFrame);
+        // Close the current window
+        currentFrame.dispose();
+        //Open the Courses window
+        Courses courses = new Courses(engine);
+        courses.setSize(frameSize);
+        courses.setLocation(frameLocation);
+    }
+    public void navigateToHomePT(){
+        // Store the size and location of the current window
+        frameSize = currentFrame.getSize();
+        frameLocation = currentFrame.getLocation();
+        history.push(currentFrame);
+        // Close the current window
+        currentFrame.dispose();
+        //Open the HomePT window
+        HomePT homePT = new HomePT(engine);
+        homePT.setSize(frameSize);
+        homePT.setLocation(frameLocation);
+    }
+    public void navigateToProfilePT(){
+        // Store the size and location of the current window
+        frameSize = currentFrame.getSize();
+        frameLocation = currentFrame.getLocation();
+        history.push(currentFrame);
+        // Close the current window
+        currentFrame.dispose();
+        //Open the ProfilePT window
+        ProfilePT profilePT = new ProfilePT(engine);
+        profilePT.setSize(frameSize);
+        profilePT.setLocation(frameLocation);
+    }
+    public void navigateToCoursesPT(){
+        // Store the size and location of the current window
+        frameSize = currentFrame.getSize();
+        frameLocation = currentFrame.getLocation();
+        history.push(currentFrame);
+        // Close the current window
+        currentFrame.dispose();
+        //Open the CoursesPT window
+        CoursesPT coursesPT = new CoursesPT(engine);
+        coursesPT.setSize(frameSize);
+        coursesPT.setLocation(frameLocation);
+    }
 }

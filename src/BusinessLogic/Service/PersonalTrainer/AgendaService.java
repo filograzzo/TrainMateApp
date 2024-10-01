@@ -22,7 +22,7 @@ public class AgendaService {
     BaseUser currentUser;
     public AgendaService(PersonalTrainerDAO personalTrainerDAO,CourseDAO courseDAO, ScheduleDAO scheduleDAO) {
         this.personalTrainerDAO = personalTrainerDAO;
-
+        this.courseDAO = courseDAO;
     }
     public void setPersonalTrainer(BaseUser currentUser) {
         this.currentUser = currentUser;
