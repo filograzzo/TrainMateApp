@@ -5,7 +5,9 @@ import DomainModel.BaseUser;
 import DomainModel.Appointment;
 import DomainModel.Customer;
 
+import java.sql.Date;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.util.List;
 
 public class BookAppointmentService {
@@ -26,7 +28,7 @@ public class BookAppointmentService {
         return appointments;
     }
 
-    public void bookAppointment(int courseId,int currentUserId,int PtrainerId,String day, String time) throws SQLException {
+    public void bookAppointment(int courseId, int currentUserId, int PtrainerId, Date day, Time time) throws SQLException {
         appointmentDAO.addAppointment(courseId,currentUserId,PtrainerId,day,time);
         ((Customer)currentUser).getAppointmentList().addAppointment(new Appointment(courseId,currentUserId,PtrainerId,day,time));
     }

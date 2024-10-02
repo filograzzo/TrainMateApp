@@ -17,11 +17,22 @@ public class PersonalTrainerDAO {
     }
 
 
-    public boolean exists(String username, String password) throws SQLException {
-        String query = "SELECT * FROM PersonalTrainer WHERE username = ? AND password = ?";
+    public boolean usernameExists(String username)throws SQLException {//checkCredentials
+        String query = "SELECT * FROM User WHERE username = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, username);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
+    public boolean exists(String username,String password,String email) throws SQLException {
+        String query = "SELECT * FROM User WHERE username = ? AND password = ? AND email = ? ";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, username);
             stmt.setString(2, password);
+            stmt.setString(3, email);
             try (ResultSet rs = stmt.executeQuery()) {
                 return rs.next();
             }
@@ -29,7 +40,7 @@ public class PersonalTrainerDAO {
     }
 
     public boolean create(String username, String password, String email) throws SQLException {
-        String query = "INSERT INTO PersonalTrainer (username, password, email) VALUES (?, ?, ?)";
+        String query = "INSERT INTO User (username, password, email) VALUES (?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, username);
             stmt.setString(2, password);
@@ -37,12 +48,49 @@ public class PersonalTrainerDAO {
             return stmt.executeUpdate() > 0;
         }
     }
+    public int getIdUserPT(String username)throws SQLException{
+        String query = "SELECT id FROM User WHERE username = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, username);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id");
+                } else {
+                    return -1;
+                }
+            }
+        }
+    }
+    public boolean createPT(int id)throws SQLException{
+        String query2 = "INSERT INTO PersonalTrainer (id) VALUES (?)";
+        try (PreparedStatement stmt = connection.prepareStatement(query2)) {
+            stmt.setInt(1, id);
+            return stmt.executeUpdate() > 0;
+        }
+    }
 
-    public PersonalTrainer getPersonalTrainer(String username, String password) throws SQLException {
-        String query = "SELECT * FROM PersonalTrainer WHERE username = ? AND password = ?";
+    public String getNamePersonalTrainerbyId(int Id)throws SQLException{
+        String query = "SELECT username FROM User WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, Id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("username");
+                } else {
+                    return null;
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                throw e;
+            }
+        }
+    }
+    public PersonalTrainer getPersonalTrainer(String username, String password,String email) throws SQLException {
+        String query = "SELECT * FROM User JOIN PersonalTrainer ON User.id = PersonalTrainer.id WHERE username = ? AND password = ? AND email = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, username);
             stmt.setString(2, password);
+            stmt.setString(3, email);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return new PersonalTrainer(rs.getInt("id"), rs.getString("username"), rs.getString("password"), rs.getString("email"));
@@ -53,15 +101,22 @@ public class PersonalTrainerDAO {
         }
     }
 
-    public boolean deletePersonalTrainer(String username, String password) throws SQLException {
-        String query = "DELETE FROM PersonalTrainer WHERE username = ? AND password = ?";
+    public boolean deleteUserPT(String username, String password,String email) throws SQLException {
+        String query = "DELETE FROM User WHERE username = ? AND password = ? AND email = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, username);
             stmt.setString(2, password);
+            stmt.setString(3, email);
             return stmt.executeUpdate() > 0;
         }
     }
-
+    public boolean deletePT(int id) throws SQLException {
+        String query = "DELETE FROM PersonalTrainer WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, id);
+            return stmt.executeUpdate() > 0;
+        }
+    }
     public boolean updatePersonalTrainer(PersonalTrainer personalTrainer) throws SQLException {
         String query = "UPDATE PersonalTrainer SET username = ?, password = ?, email = ? WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -73,33 +128,33 @@ public class PersonalTrainerDAO {
         }
     }
 
-    public boolean updateUsername(int id, String newUsername) throws SQLException {
-        String query = "UPDATE PersonalTrainer SET username = ? WHERE id = ?";
+    public boolean updateUsername(String oldUsername, String newUsername) throws SQLException {
+        String query = "UPDATE User SET username = ? WHERE username = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, newUsername);
-            stmt.setInt(2, id);
+            stmt.setString(2, oldUsername);
             return stmt.executeUpdate() > 0;
         }
     }
 
-    public boolean updatePassword(int id, String newPassword) throws SQLException {
-        String query = "UPDATE PersonalTrainer SET password = ? WHERE id = ?";
+    public boolean updatePassword(int id, String newPassword,String oldPassword) throws SQLException {
+        String query = "UPDATE User SET password = ? WHERE id = ? AND password = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, newPassword);
             stmt.setInt(2, id);
+            stmt.setString(3, oldPassword);
             return stmt.executeUpdate() > 0;
         }
     }
 
     public boolean updateEmail(int id, String newEmail) throws SQLException {
-        String query = "UPDATE PersonalTrainer SET email = ? WHERE id = ?";
+        String query = "UPDATE User SET email = ? WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, newEmail);
             stmt.setInt(2, id);
             return stmt.executeUpdate() > 0;
         }
     }
-
     public List<PersonalTrainer> getAllPersonalTrainers() throws SQLException {
         String query = "SELECT * FROM PersonalTrainer";
         List<PersonalTrainer> personalTrainers = new ArrayList<>();

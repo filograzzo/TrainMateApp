@@ -1,15 +1,18 @@
 package DomainModel;
 
+import java.sql.Date;
+import java.sql.Time;
+
 public class Appointment {
 
 
     private static int id;
     private int personalTrainerId;
     private int customerId;
-    private String day;
-    private String time;
+    private Date day;
+    private Time time;
 
-    public Appointment( int id, int personalTrainerId, int customerId, String day, String time) {
+    public Appointment( int id, int personalTrainerId, int customerId, Date day, Time time) {
         this.id=id;
         this.personalTrainerId = personalTrainerId;
         this.customerId = customerId;
@@ -40,19 +43,19 @@ public class Appointment {
         this.customerId = customerId;
     }
 
-    public String getDay() {
+    public Date getDay() {
         return day;
     }
 
-    public void setDay(String day) {
+    public void setDay(Date day) {
         this.day = day;
     }
 
-    public String getTime() {
+    public Time getTime() {
         return time;
     }
 
-    public void setTime(String time) {
+    public void setTime(Time time) {
         this.time = time;
     }
 }

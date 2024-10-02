@@ -1,52 +1,56 @@
 package BusinessLogic.Service;
 
+import BusinessLogic.Service.Customer.ProfileService;
 import BusinessLogic.Service.PersonalTrainer.ProfilePTService;
-import DAO.CustomerDAO;
-import DAO.ExerciseDetailDAO;
-import DAO.PersonalTrainerDAO;
-import DAO.ScheduleDAO;
-import DomainModel.*;
+import DAO.*;
+import DomainModel.BaseUser;
+import DomainModel.Constants;
+import DomainModel.Customer;
+import DomainModel.PersonalTrainer;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Scanner;
 
 public class BaseUserService {
     public CustomerDAO customerDAO;
     public PersonalTrainerDAO personalTrainerDAO;
     public ScheduleDAO scheduleDAO;
-    public BaseUser currentUser;
     public ExerciseDetailDAO exerciseDetailDAO;
+    private ProfileService profileService;
+    private BaseUser currentUser;
     private ProfilePTService profilePTService;
-    private final Scanner input = new Scanner(System.in);
-
-    public BaseUserService(CustomerDAO customerDAO, PersonalTrainerDAO personalTrainerDAO, ScheduleDAO scheduleDAO, ExerciseDetailDAO exerciseDetailDAO) {
+    public BaseUserService(CustomerDAO customerDAO, PersonalTrainerDAO personalTrainerDAO, ProfileService profileService,ProfilePTService profilePTService) {
+        this.profileService = profileService;
+        this.profilePTService = profilePTService;
         this.customerDAO = customerDAO;
         this.personalTrainerDAO = personalTrainerDAO;
-        this.scheduleDAO = scheduleDAO;
-        this.exerciseDetailDAO = exerciseDetailDAO;
     }
 
-    public Customer loginUser(String username, String password) {
+    public Customer loginUser(String username, String password,String email) {
         try {
-            Customer c = customerDAO.getCustomer(username, password);
-            if (c == null) {
-                System.err.println("The user you are trying to log in does not exist.");
+            currentUser = customerDAO.getCustomer(username, password,email);
+            if (currentUser == null ) {
+                return null;
             } else {
-                System.out.println("The user has been logged in successfully.");
+                profileService.setCustomer((Customer)currentUser);
+                return (Customer) currentUser;
+
             }
-            return c;
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public PersonalTrainer loginPersonalTrainer(String username, String password) {
+    public PersonalTrainer loginPersonalTrainer(String username, String password,String email) {
         try {
-            currentUser = personalTrainerDAO.getPersonalTrainer(username, password);
-            profilePTService.setPersonalTrainer(currentUser);
-            return (PersonalTrainer) currentUser;
+            currentUser = personalTrainerDAO.getPersonalTrainer(username, password,email);
+            if (currentUser == null ) {
+                return null;
+            } else {
+                profilePTService.setPersonalTrainer((PersonalTrainer)currentUser);
+                return (PersonalTrainer) currentUser;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -54,12 +58,17 @@ public class BaseUserService {
     }
     public boolean registerUser(String username, String password, String email) {
         try {
-            if (customerDAO.userExists(username, password)) {
-                System.err.println("The user you are trying to create already exists.");
+            if (customerDAO.usernameExists(username)) {//aggiungere il check dell'email già esistente?
+                System.err.println("This username has already been taken. Please choose another one.");
                 return false;
             } else {
-                    System.out.println("The user has been registered successfully.");
-                    return true;
+                    if(customerDAO.insertUser(username, password, email)) {
+                        int id=customerDAO.getIdUserCustomer(username);
+                        customerDAO.insertCustomer(id);
+                        currentUser = customerDAO.getCustomer(username, password,email);
+                    }
+                System.out.println("The user has been registered successfully.");
+                return true;
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -69,14 +78,16 @@ public class BaseUserService {
     public boolean registerPersonalTrainer(String username, String password, String email, String accessCode) {
         try {
 
-            if (personalTrainerDAO.exists(username, password)) {
-                System.err.println("The personal trainer you are trying to create already exists.");
+            if (personalTrainerDAO.usernameExists(username)) {
+                System.err.println("This username has already been taken. Please choose another one.");
                 return false;
             } else {
                 if (Constants.ACCESSCODE.equals(accessCode)) {
                     if(personalTrainerDAO.create(username, password, email)) {
-                        currentUser = personalTrainerDAO.getPersonalTrainer(username, password);
-                        profilePTService.setPersonalTrainer(currentUser);
+                        int id=personalTrainerDAO.getIdUserPT(username);
+                        personalTrainerDAO.createPT(id);
+                        currentUser = personalTrainerDAO.getPersonalTrainer(username, password,email);
+                        //profilePTService.setPersonalTrainer(currentUser);
                     }
                     System.out.println("The personal trainer has been registered successfully.");
                     return true;
@@ -91,6 +102,23 @@ public class BaseUserService {
             return false;
         }
     }
+    public boolean checkCredentialsCustomer(String username, String password,String email) {
+        try {
+            return customerDAO.userExists(username, password,email);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    public boolean checkCredentialsPT(String username, String password,String email) {
+        try {
+            return personalTrainerDAO.exists(username, password,email);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public BaseUser getCurrentUser() {
         return currentUser ;
     }
@@ -118,16 +146,6 @@ public class BaseUserService {
         }
     }
 
-    //Can be useful beofore changing the password
-    public boolean validateCredentials(String username, String password) {
-        try {
-            return customerDAO.getCustomer(username, password) != null || personalTrainerDAO.getPersonalTrainer(username, password) != null;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
     public List<Customer> getAllCustomers() {
         try {
             return customerDAO.getAllCustomers();
@@ -146,24 +164,31 @@ public class BaseUserService {
         }
     }
 
-    public boolean deleteCustomer(Customer customer) {
+    public boolean deleteCustomer(String username,String password,String email) {
         try {
-            return customerDAO.deleteCustomer(customer.getUsername(), customer.getPassword());
+            if(customerDAO.deleteUserCustomer(username, password,email)){
+                return customerDAO.deleteCustomer(customerDAO.getIdUserCustomer(username));
+            }else{
+                return false;
+
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
 
-    public boolean deletePersonalTrainer(PersonalTrainer personalTrainer) {
+    public boolean deletePersonalTrainer(String username, String password, String email) {
         try {
-            return personalTrainerDAO.deletePersonalTrainer(personalTrainer.getUsername(), personalTrainer.getPassword());
+            if( personalTrainerDAO.deleteUserPT(username, password,email)){
+                return personalTrainerDAO.deletePT(personalTrainerDAO.getIdUserPT(username));
+            }else{
+                return false;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
-
-    //creation of a schedule
 
 }

@@ -6,25 +6,46 @@ import java.sql.SQLException;
 public class ProfilePTService {
     private PersonalTrainer personalTrainer;
     private PersonalTrainerDAO personalTrainerDAO;
-    BaseUser currentUser;
+    PersonalTrainer currentUser;
     public ProfilePTService(PersonalTrainerDAO personalTrainerDAO) {
         this.personalTrainerDAO = personalTrainerDAO;
     }
-    public void setPersonalTrainer(BaseUser currentUser) {
+    public void setPersonalTrainer(PersonalTrainer currentUser) {
         this.currentUser = currentUser;
     }
 
-    public void modifyUsername(int id, String username) throws SQLException {
-        personalTrainerDAO.updateUsername(id, username);
-        currentUser.setUsername(username);
+    public boolean modifyUsername(String oldUsername, String username) throws SQLException {
+        if(!personalTrainerDAO.usernameExists(username)){
+            if(personalTrainerDAO.updateUsername(oldUsername, username)) {
+                currentUser.setUsername(username);
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            return false;
+        }
+
     }
-    public void modifyPassword(int id, String password) throws SQLException {
-        personalTrainerDAO.updatePassword(id, password);
-        currentUser.setPassword(password);
+    public boolean modifyPassword(int id, String password,String oldPassword) throws SQLException {
+        if(personalTrainerDAO.updatePassword(id, password,oldPassword)){
+            currentUser.setPassword(password);
+            return true;
+        } else{
+            return false;
+
+        }
     }
-    public void modifyEmail(int id, String email) throws SQLException {
-        personalTrainerDAO.updateEmail(id, email);
-        currentUser.setEmail(email);
+    public boolean modifyEmail(int id, String email) throws SQLException {
+        if(personalTrainerDAO.updateEmail(id, email)){
+            currentUser.setEmail(email);
+            return true;
+        } else{
+            return false;
+        }
+    }
+    public String getUsername(int id) throws SQLException {
+        return personalTrainerDAO.getNamePersonalTrainerbyId(id);
     }
 
 

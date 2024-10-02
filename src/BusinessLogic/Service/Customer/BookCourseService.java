@@ -7,7 +7,6 @@ import DomainModel.Course;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 public class BookCourseService {
     //Todo aggiungere un modo affinchè il client possa visualizzare tutti i corsi a cui si è iscritto
@@ -31,10 +30,10 @@ public class BookCourseService {
     public boolean bookCourse(int courseId) throws SQLException {
         Course course = courseDAO.getCourseById(courseId);
         if (course != null && course.getParticipants() < course.getMaxParticipants()) {
-            course.setParticipants( course.getParticipants() + 1);
-            if (courseDAO.updateCourse(course)) {
-                return signedDAO.addSigned(currentUser.getId(), courseId);
-            }
+            signedDAO.addSigned(currentUser.getId(), courseId ,course.getMaxParticipants());
+            courseDAO.updateCourseParticipants(course.getParticipants(),course.getId());
+            course.setParticipants(course.getParticipants() + 1);
+            return true;
         }
         return false;
     }
@@ -43,9 +42,7 @@ public class BookCourseService {
         Course course = courseDAO.getCourseById(courseId);
         if (course != null && course.getParticipants() > 0) {
             course.setParticipants(course.getParticipants() - 1);
-            if (courseDAO.updateCourse(course)) {
-                return signedDAO.removeSigned(currentUser.getId(), courseId);
-            }
+            return signedDAO.removeSigned(currentUser.getId(), courseId);
         }
         return false;
     }
