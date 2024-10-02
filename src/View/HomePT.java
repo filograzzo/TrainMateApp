@@ -5,6 +5,7 @@ import Controller.NavigationManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.sql.SQLException;
 
 public class HomePT extends JFrame {
     private Engine engine;
@@ -42,18 +43,27 @@ public class HomePT extends JFrame {
         JPanel centralPanel = new JPanel(new GridLayout(5, 1, 10, 10));
         JButton viewAgendaButton = new JButton("View Agenda");//nella pagina agenda visualizza corsi da tenere e gestisce qui gli appuntamenti con clienti
         viewAgendaButton.addActionListener(e -> {
-            //#TODO
+            navigationManager.navigateToAgenda();
         });
         centralPanel.add(viewAgendaButton);
 
-        JButton viewCourses = new JButton("Manage Courses");//nella pagina agenda visualizza corsi da tenere e gestisce qui gli appuntamenti con clienti
+        JButton viewCourses = new JButton("Manage Courses");
         viewCourses.addActionListener(e -> {
             navigationManager.navigateToCoursesPT();
-            // Handle back action
         });
         centralPanel.add(viewCourses);
-        centralPanel.add(new JButton("Manage Machines"));
-        centralPanel.add(new JButton("Assign Schedules"));
+
+        JButton manageMachinesButton = new JButton("Manage Machines");
+        manageMachinesButton.addActionListener(e -> {
+            //#TODO
+        });
+        centralPanel.add(manageMachinesButton);
+
+        JButton assignSchedulesButton = new JButton("Assign Schedules");
+        assignSchedulesButton.addActionListener(e -> {
+            //#TODO
+        });
+        centralPanel.add(assignSchedulesButton);
 
         // Add the central panel to the main panel
         mainPanel.add(centralPanel, BorderLayout.CENTER);

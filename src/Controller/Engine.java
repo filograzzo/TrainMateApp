@@ -1,6 +1,7 @@
 package Controller;
 
 import BusinessLogic.Service.*;
+import BusinessLogic.Service.Customer.BookAppointmentService;
 import BusinessLogic.Service.Customer.BookCourseService;
 import BusinessLogic.Service.Customer.ProfileService;
 import BusinessLogic.Service.PersonalTrainer.AgendaService;
@@ -53,10 +54,11 @@ public class Engine {
                 ProfileService ps = (ProfileService) sf.getService(sf.PROFILE_SERVICE);
                 ps.setCustomer((Customer)user);
                 logged = true;
-                //BookAppointmentService bas = (BookAppointmentService) sf.getService(sf.BOOKAPPOINTMENT_SERVICE);
-                //bas.setCurrentUser(user);
-                //BookCourseService bcs = (BookCourseService) sf.getService(sf.BOOKCOURSE_SERVICE);
-                //bcs.setCurrentUser(user);
+                BookAppointmentService bas = (BookAppointmentService) sf.getService(sf.BOOKAPPOINTMENT_SERVICE);
+                bas.setCurrentUser(user);
+                BookCourseService bcs = (BookCourseService) sf.getService(sf.BOOKCOURSE_SERVICE);
+                bcs.setCurrentUser(user);
+
 
             }else{
                 System.out.println("Credenziali errate");
@@ -215,7 +217,7 @@ public class Engine {
         }
     }
     //TODO:AGENDA
-
+    //COURSES
     public  ArrayList<Course> viewAvailableCourses(){
         BookCourseService bookCourseService = (BookCourseService) sf.getService(sf.BOOKCOURSE_SERVICE);
         ProfilePTService profilePTService = (ProfilePTService) sf.getService(sf.PROFILEPT_SERVICE);
@@ -248,10 +250,14 @@ public class Engine {
     }
 
 
-    public void addorUpdateCourse(Course course){
+    public void addCourse(String name, int maxParticipants, int trainerID, String bodyPartsTrained,String day, Time time){
         AgendaService agendaService = (AgendaService) sf.getService(sf.AGENDA_SERVICE);
         try{
-            agendaService.addOrUpdateCourse(course);
+            if(agendaService.addCourse(name,maxParticipants,trainerID,bodyPartsTrained, day,time)){
+                System.out.println("Course successfully added.");}
+            else{
+                System.out.println("Course not added.There has been a mistake");
+            }
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -264,6 +270,29 @@ public class Engine {
         }catch(Exception e){
             e.printStackTrace();}
     }
+
+    public void updateCourse(int id, String name, int maxParticipants, int trainerID, String bodyPartsTrained, String day, Time time){
+        AgendaService agendaService = (AgendaService) sf.getService(sf.AGENDA_SERVICE);
+        try{
+            if(agendaService.updateCourse(id,name,maxParticipants,trainerID,bodyPartsTrained, day,time)){
+                System.out.println("Course successfully updated.");
+            }else{
+                System.out.println("Course not updated.");
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+    public String getCoursePTname(int id){
+        AgendaService agendaService = (AgendaService) sf.getService(sf.AGENDA_SERVICE);
+        try{
+            return agendaService.getPTnamebyID(id);
+        }catch (SQLException e){
+            return null;
+        }
+    }
+
+
     public void addAppointment(int id, int customerId, Date day, Time time){
         AgendaService agendaService = (AgendaService) sf.getService(sf.AGENDA_SERVICE);
         try{
@@ -292,13 +321,13 @@ public class Engine {
             throw new RuntimeException(e);
         }
     }
-    public void cancelBooking(int courseId){
+    public boolean cancelBooking(int courseId){
         BookCourseService bookCourseService = (BookCourseService) sf.getService(sf.BOOKCOURSE_SERVICE);
         try {
             if(bookCourseService.cancelBooking(courseId)){
-                System.out.println("Booking successfully canceled.");
+                return true;
             }else{
-                System.out.println("Booking not canceled.");
+                return false;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

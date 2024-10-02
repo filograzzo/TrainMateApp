@@ -158,7 +158,7 @@ public class NavigationManager {
         profilePT.setSize(frameSize);
         profilePT.setLocation(frameLocation);
     }
-    public void navigateToCoursesPT(){
+    public void navigateToCoursesPT() {
         // Store the size and location of the current window
         frameSize = currentFrame.getSize();
         frameLocation = currentFrame.getLocation();
@@ -169,5 +169,17 @@ public class NavigationManager {
         CoursesPT coursesPT = new CoursesPT(engine);
         coursesPT.setSize(frameSize);
         coursesPT.setLocation(frameLocation);
+    }
+    public void navigateToAgenda() {
+        // Store the size and location of the current window
+        frameSize = currentFrame.getSize();
+        frameLocation = currentFrame.getLocation();
+        history.push(currentFrame);
+        // Close the current window
+        currentFrame.dispose();
+        //Open the CoursesPT window
+        Agenda agenda = new Agenda(engine);
+        agenda.setSize(frameSize);
+        agenda.setLocation(frameLocation);
     }
 }

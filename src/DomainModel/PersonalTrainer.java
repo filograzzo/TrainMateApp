@@ -1,5 +1,7 @@
 package DomainModel;
 
+import java.util.ArrayList;
+
 public class PersonalTrainer extends BaseUser {
 
     //Questa classe è una classe di oggetti temporanei: i dati restano sempre salvati nel database e solo al momento del login
@@ -11,6 +13,20 @@ public class PersonalTrainer extends BaseUser {
     //TODO:aggiungere una classe agenda e avere un oggetto agenda come attributo del PT
     public PersonalTrainer(int id, String username, String password, String email) {
         super(id, username, password, email);
+    }
+
+    ArrayList<Course> courses = new ArrayList<>();
+    public boolean addCourseToList(Course course) {
+        courses.add(course);
+        return true;
+    }
+    public Course getCoursebyId(int id){
+        for (Course course : courses) {
+            if (course.getId() == id) {
+                return course;
+            }
+        }
+        return null;
     }
 
 

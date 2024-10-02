@@ -13,6 +13,7 @@ public class Customer extends BaseUser {
     private float height;
     private float weight;
     private int age;
+
     private String gender;
     // creare oggetto scheda
     private String goal;  //cosa vuoi ottenere
@@ -68,5 +69,7 @@ public class Customer extends BaseUser {
         double heightInMeters = height / 100.0;
         return weight / (heightInMeters * heightInMeters);
     }
+
+
 
 }

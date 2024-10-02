@@ -16,7 +16,27 @@ public class SignedDAO {
     public SignedDAO(Connection connection) {
         this.connection = connection;
     }
+    public int SignedToCoursebyId(int courseId) throws SQLException {
+        String query = "SELECT COUNT(*) AS count FROM Signed WHERE course_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, courseId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    if( rs.getInt("count")==0){
+                        return 0;
 
+                    }else{
+                        int count = rs.getInt("count");
+                        return count;
+                    }
+
+                } else {
+                    System.out.println("Error in SignedToCoursebyId");
+                }
+            }
+        }
+        return 0;
+    }
     public Signed getSigned(int courseId, int customerId) throws SQLException {
         String query = "SELECT * FROM Signed WHERE course_id = ? AND customer_id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -32,17 +52,33 @@ public class SignedDAO {
         }
     }
 
-    public boolean addSigned(int courseId, int customerId) throws SQLException {
-        if (checkIfFull(courseId)) {
+    public boolean addSigned(int customerId, int courseId, int max_participants) throws SQLException {
+        if (SignedToCoursebyId(courseId) >= max_participants) {
             return false;
-        }
-        String query = "INSERT INTO Signed (course_id, customer_id) VALUES (?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, courseId);
-            stmt.setInt(2, customerId);
-            return stmt.executeUpdate() > 0;
+        } else {
+            // Check if the entry already exists
+            String checkQuery = "SELECT COUNT(*) FROM Signed WHERE course_id = ? AND customer_id = ?";
+            try (PreparedStatement checkStmt = connection.prepareStatement(checkQuery)) {
+                checkStmt.setInt(1, courseId);
+                checkStmt.setInt(2, customerId);
+                try (ResultSet rs = checkStmt.executeQuery()) {
+                    if (rs.next() && rs.getInt(1) > 0) {
+                        // Entry already exists
+                        return false;
+                    }
+                }
+            }
+
+            // Insert new entry
+            String query = "INSERT INTO Signed (course_id, customer_id) VALUES (?, ?)";
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setInt(1, courseId);
+                stmt.setInt(2, customerId);
+                return stmt.executeUpdate() > 0;
+            }
         }
     }
+
 
     public boolean removeSigned(int courseId, int customerId) throws SQLException {
         String query = "DELETE FROM Signed WHERE course_id = ? AND customer_id = ?";
@@ -53,33 +89,6 @@ public class SignedDAO {
         }
     }
 
-    public boolean checkIfFull(int courseId) throws SQLException {
-        String query = "SELECT COUNT(*) AS count FROM Signed WHERE course_id = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, courseId);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    int count = rs.getInt("count");
-                    int capacity = getCourseCapacity(courseId);
-                    return count >= capacity;
-                } else {
-                    return false;
-                }
-            }
-        }
-    }
 
-    private int getCourseCapacity(int courseId) throws SQLException {
-        String query = "SELECT max_participants FROM Course WHERE id = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, courseId);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt("max_participants");
-                } else {
-                    throw new SQLException("Course not found");
-                }
-            }
-        }
-    }
+
 }

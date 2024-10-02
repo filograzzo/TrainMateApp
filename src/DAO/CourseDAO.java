@@ -2,10 +2,7 @@ package DAO;
 
 import DomainModel.Course;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,8 +26,10 @@ public class CourseDAO {
                             rs.getString("name"),
                             rs.getInt("max_participants"),
                             rs.getInt("trainer_id"),
-                            rs.getString("bodyPartsTrained")
-                    ));
+                            rs.getString("bodyPartsTrained"),
+                            rs.getTime("time"),
+                            rs.getString("day")
+                                        ));
                 }
                 return courses;
             }
@@ -45,9 +44,11 @@ public class CourseDAO {
                     return new Course(
                             rs.getInt("id"),
                             rs.getString("name"),
-                            rs.getInt("maxParticipants"),
+                            rs.getInt("max_participants"),
                             rs.getInt("trainer_id"),
-                            rs.getString("bodyPartTrained")
+                            rs.getString("bodyPartsTrained"),
+                            rs.getTime("time"),
+                            rs.getString("day")
                     );
                 } else {
                     return null;
@@ -55,14 +56,15 @@ public class CourseDAO {
             }
         }
     }
-    public boolean addCourse(Course course) throws SQLException {
-        String query = "INSERT INTO Course (id,name, max_participants,trainer_id,bodyPartsTrained ) VALUES (?, ?, ?, ?, ?)";
+    public boolean addCourse(String name, int maxParticipants, int trainerID, String bodyPartsTrained, String day, Time time) throws SQLException {
+        String query = "INSERT INTO Course (name, max_participants,trainer_id,bodyPartsTrained,day,time ) VALUES (?, ?, ?, ?,?,?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1,course.getId());
-            stmt.setString(2, course.getName());
-            stmt.setInt(3, course.getMaxParticipants());
-            stmt.setInt(4, course.getIDTrainer());
-            stmt.setString(5, course.getBodyPartsTrained());
+            stmt.setString(1, name);
+            stmt.setInt(2, maxParticipants);
+            stmt.setInt(3, trainerID);
+            stmt.setString(4, bodyPartsTrained);
+            stmt.setString(5, day);
+            stmt.setTime(6, time);
             return stmt.executeUpdate() > 0;
         }
     }
@@ -78,21 +80,34 @@ public class CourseDAO {
                             rs.getString("name"),
                             rs.getInt("max_participants"),
                             rs.getInt("trainer_id"),
-                            rs.getString("bodyPartsTrained")
+                            rs.getString("bodyPartsTrained"),
+                            rs.getTime("time"),
+                            rs.getString("day")
                     ));
                 }
                 return courses;
             }
         }
     }
-    public boolean updateCourse(Course course) throws SQLException {
-        String query = "UPDATE Course SET name = ?, trainer_id = ?, maxParticipants = ?, bodyPartsTrained = ? WHERE id = ?";
+
+    public void updateCourseParticipants(int participants,int id) throws SQLException {
+        String query = "UPDATE course SET participants = ? WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setString(1, course.getName());
-            stmt.setInt(2, course.getIDTrainer());
-            stmt.setInt(3, course.getMaxParticipants());
-            stmt.setString(4, course.getBodyPartsTrained());
-            stmt.setInt(5, course.getId());
+            stmt.setInt(1,(participants+1));
+            stmt.setInt(2, id);
+            stmt.executeUpdate();
+        }
+    }
+    public boolean updateCourseValues(int courseId, String name, int maxParticipants, int trainerID, String bodyPartsTrained, String day, Time time) throws SQLException {
+        String query = "UPDATE Course SET name = ?, trainer_id = ?, max_participants = ?, bodyPartsTrained = ?,day=?,time=? WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, name);
+            stmt.setInt(2, trainerID);
+            stmt.setInt(3, maxParticipants);
+            stmt.setString(4, bodyPartsTrained);
+            stmt.setString(5, day);
+            stmt.setTime(6, time);
+            stmt.setInt(7, courseId);
             return stmt.executeUpdate() > 0;
         }
     }
@@ -101,6 +116,19 @@ public class CourseDAO {
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, courseId);
             return stmt.executeUpdate() > 0;
+        }
+    }
+
+    public int getMaxCourseId() throws SQLException {
+        String query = "SELECT MAX(id) FROM Course";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                } else {
+                    return 0;
+                }
+            }
         }
     }
 
