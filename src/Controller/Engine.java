@@ -676,11 +676,11 @@ public class Engine {
     // EXERCISES
 
     // Solo PT (Personal Trainer)
-    public void createExercise(PersonalTrainer personalTrainer) {
-        if (personalTrainer.isValid()) {
+    public void createExercise(String name, String category, String machine, String description) {
+
             ExerciseService exerciseService = (ExerciseService) sf.getService(sf.EXERCISE_SERVICE);
             try {
-                // Inserimento dei dati per l'esercizio
+                /*// Inserimento dei dati per l'esercizio
                 System.out.println("Enter exercise name:");
                 String name = input.nextLine();
 
@@ -704,7 +704,7 @@ public class Engine {
 
                 System.out.println("Enter a description:");
                 String description = input.nextLine();
-
+*/
                 // Creazione dell'esercizio
                 boolean done = exerciseService.createExercise(name, category, machine, description);
                 if (!done) {
@@ -717,14 +717,11 @@ public class Engine {
             } catch (CustomizedException e) {
                 System.err.println(e.getMessage());
             }
-        } else {
-            System.out.println("Only personal trainers can create exercises.");
-        }
     }
 
     // Solo PT (Personal Trainer)
-    public void deleteExercise(PersonalTrainer personalTrainer, Exercise exercise) {
-        if (personalTrainer.isValid()) {
+    public void deleteExercise(Exercise exercise) {
+
             ExerciseService exerciseService = (ExerciseService) sf.getService(sf.EXERCISE_SERVICE);
             try {
                 if (exercise == null) {
@@ -742,9 +739,7 @@ public class Engine {
             } catch (CustomizedException e) {
                 System.err.println(e.getMessage());
             }
-        } else {
-            System.out.println("Only personal trainers can delete exercises.");
-        }
+
     }
 
 
@@ -1013,20 +1008,6 @@ public class Engine {
 
         return exercises;
     }
-
-    public List<Machine> viewMachinesToTake(){
-        MachineService machineService = (MachineService) sf.getService(sf.MACHINE_SERVICE);
-        try{
-            List<Machine> machines = machineService.getAllMachines();
-            if(machines.isEmpty()) {
-                System.out.println("No machines to take.");
-            }else{return machines;}
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }return null;
-    }
-
-
 
 
 }

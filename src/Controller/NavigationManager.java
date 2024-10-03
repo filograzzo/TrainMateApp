@@ -175,4 +175,12 @@ public class NavigationManager {
         machinesPT.setSize(frameSize);
         machinesPT.setLocation(frameLocation);
     }
+    public void navigateToExercisesPT(){
+        frameSize = currentFrame.getSize();
+        frameLocation = currentFrame.getLocation();
+        currentFrame.dispose();
+        ExercisesPT exercisesPT = new ExercisesPT(engine);
+        exercisesPT.setSize(frameSize);
+        exercisesPT.setLocation(frameLocation);
+    }
 }

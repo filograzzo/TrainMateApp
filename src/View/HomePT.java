@@ -65,6 +65,12 @@ public class HomePT extends JFrame {
         });
         centralPanel.add(assignSchedulesButton);
 
+        JButton manageExercisesButton = new JButton("Manage Exercises");
+        manageExercisesButton.addActionListener(e -> {
+            navigationManager.navigateToExercisesPT();
+        });
+        centralPanel.add(manageExercisesButton);
+
         // Add the central panel to the main panel
         mainPanel.add(centralPanel, BorderLayout.CENTER);
 
