@@ -78,7 +78,23 @@ public class SignedDAO {
             }
         }
     }
-
+    public boolean userAlreadySigned(int id,int courseid){
+        String query = "SELECT * FROM Signed WHERE course_id = ? AND customer_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, courseid);
+            stmt.setInt(2, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
     public boolean removeSigned(int courseId, int customerId) throws SQLException {
         String query = "DELETE FROM Signed WHERE course_id = ? AND customer_id = ?";

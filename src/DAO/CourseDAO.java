@@ -1,6 +1,7 @@
 package DAO;
 
 import DomainModel.Course;
+import View.Courses;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ public class CourseDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 ArrayList<Course> courses = new ArrayList<>();
                 while (rs.next()) {
-                    courses.add(new Course(
+                    Course course=new Course(
                             rs.getInt("id"),
                             rs.getString("name"),
                             rs.getInt("max_participants"),
@@ -29,7 +30,9 @@ public class CourseDAO {
                             rs.getString("bodyPartsTrained"),
                             rs.getTime("time"),
                             rs.getString("day")
-                                        ));
+                    );
+                    courses.add(course);
+                    course.setParticipants(rs.getInt("participants"));
                 }
                 return courses;
             }
@@ -41,7 +44,7 @@ public class CourseDAO {
             stmt.setInt(1, courseId);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return new Course(
+                    Course c=new Course(
                             rs.getInt("id"),
                             rs.getString("name"),
                             rs.getInt("max_participants"),
@@ -50,6 +53,8 @@ public class CourseDAO {
                             rs.getTime("time"),
                             rs.getString("day")
                     );
+                    c.setParticipants(rs.getInt("participants"));
+                    return c;
                 } else {
                     return null;
                 }
@@ -75,7 +80,7 @@ public class CourseDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 List<Course> courses = new ArrayList<>();
                 while (rs.next()) {
-                    courses.add(new Course(
+                    Course c=new Course(
                             rs.getInt("id"),
                             rs.getString("name"),
                             rs.getInt("max_participants"),
@@ -83,7 +88,9 @@ public class CourseDAO {
                             rs.getString("bodyPartsTrained"),
                             rs.getTime("time"),
                             rs.getString("day")
-                    ));
+                    );
+                    c.setParticipants(rs.getInt("participants"));
+                    courses.add(c);
                 }
                 return courses;
             }
@@ -94,6 +101,14 @@ public class CourseDAO {
         String query = "UPDATE course SET participants = ? WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1,(participants+1));
+            stmt.setInt(2, id);
+            stmt.executeUpdate();
+        }
+    }
+    public void updateCourseParticipantsCancel(int participants,int id) throws SQLException {
+        String query = "UPDATE course SET participants = ? WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1,(participants));
             stmt.setInt(2, id);
             stmt.executeUpdate();
         }
