@@ -45,7 +45,7 @@ public class Agenda extends JFrame {
         gbc.weightx = 0.1;  // Slight weight for the empty corner
         gbc.weighty = 0.1;
         gbc.fill = GridBagConstraints.BOTH;
-        calendarPanel.add(new JLabel(""), gbc); // Empty top-left cell
+        calendarPanel.add(createBackButton()); // Empty top-left cell
 
         // Add days of the week at the top (row 0, starting from column 1)
         for (int i = 0; i < days.size(); i++) {
@@ -91,7 +91,7 @@ public class Agenda extends JFrame {
         List<Course> courses = engine.viewCoursesToTake();  // Retrieve courses via Engine
 
         if (courses == null || courses.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "No courses to display.");
+            System.out.println("No courses to display.");
             return;
         }
 
@@ -128,13 +128,11 @@ public class Agenda extends JFrame {
         }
         return -1;
     }
-    private JPanel createBackButtonPanel() {
+    private JButton createBackButton() {
         JButton backButton = new JButton("Back");
-        backButton.addActionListener(e -> navigationManager.goBack());
-        JPanel buttonPanel = new JPanel(new FlowLayout());
-        buttonPanel.add(backButton);
+        backButton.addActionListener(e -> navigationManager.navigateToHomePT());
 
-        return buttonPanel;
+        return backButton;
     }
 }
 

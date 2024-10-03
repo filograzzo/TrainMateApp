@@ -1,6 +1,7 @@
 package View;
 
 import Controller.Engine;
+import Controller.NavigationManager;
 import DomainModel.Course;
 
 import javax.swing.*;
@@ -12,6 +13,7 @@ import java.util.List;
 public class Courses extends JFrame {
     private Engine engine;
     private JList<String> courseList;
+    NavigationManager navigationManager = NavigationManager.getIstance(this);
     private DefaultListModel<String> listModel1;
     private List<Course> courses;
 
@@ -42,7 +44,7 @@ public class Courses extends JFrame {
         JButton cancelButton = new JButton("Cancel Booking");
         buttonPanel.add(bookButton);
         buttonPanel.add(cancelButton);
-
+        buttonPanel.add(createBackButton());
         add(buttonPanel, BorderLayout.SOUTH);
 
         bookButton.addActionListener(new ActionListener() {
@@ -51,8 +53,11 @@ public class Courses extends JFrame {
                 int selectedIndex = courseList.getSelectedIndex();
                 if (selectedIndex != -1) {
                     Course selectedCourse = courses.get(selectedIndex);
-                    engine.bookCourse(selectedCourse.getId());
-                    JOptionPane.showMessageDialog(Courses.this, "Course booked successfully!");
+                    if(engine.bookCourse(selectedCourse.getId())){
+                        JOptionPane.showMessageDialog(Courses.this, "Course booked successfully!");
+                    }else{
+                        JOptionPane.showMessageDialog(Courses.this, "Unable to book the course.");
+                    }
                     loadCourses();
 
                 } else {
@@ -92,11 +97,11 @@ public class Courses extends JFrame {
         if (courses != null) {
             listModel1.clear();  // Clear the existing list items
             for (Course course : courses) {
+                String namePT = engine.getCoursePTname(course.getIDTrainer());
                 // Format the course details to display in the list;
                 String courseDetails = String.format(
-                        "Name: %s, Body Parts Trained: %s, Max Participants: %d, Participants: %d, Trainer ID: %d",
-                        course.getName(), course.getBodyPartsTrained(), course.getMaxParticipants(), course.getParticipants(), course.getIDTrainer()
-                );
+                        "Name: %s, Body Parts Trained: %s, Max Participants: %d, Participants: %d, Trainer: %s",
+                        course.getName(), course.getBodyPartsTrained(), course.getMaxParticipants(), course.getParticipants(), namePT);
                 listModel1.addElement(courseDetails);  // Add the updated course details to the list
             }
         } else {
@@ -104,6 +109,11 @@ public class Courses extends JFrame {
             listModel1.addElement("No courses available.");
         }
     }
+    private JButton createBackButton() {
+        JButton backButton = new JButton("Back");
+        backButton.addActionListener(e -> navigationManager.navigateToHomeCustomer());
 
+        return backButton;
+    }
 
 }

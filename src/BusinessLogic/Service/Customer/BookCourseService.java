@@ -26,14 +26,20 @@ public class BookCourseService {
     public ArrayList<Course> viewAvailableCourses() throws SQLException {
         return courseDAO.getAllCourses();
     }
+    public boolean isSigned(int courseId) throws SQLException {
+        return signedDAO.userAlreadySigned(currentUser.getId(), courseId);
+    }
 
     public boolean bookCourse(int courseId) throws SQLException {
         Course course = courseDAO.getCourseById(courseId);
-        if (course != null && course.getParticipants() < course.getMaxParticipants()) {
+        if (course != null && course.getParticipants() < course.getMaxParticipants()){
             signedDAO.addSigned(currentUser.getId(), courseId ,course.getMaxParticipants());
             courseDAO.updateCourseParticipants(course.getParticipants(),course.getId());
             course.setParticipants(course.getParticipants() + 1);
             return true;
+        }
+        else{
+            System.out.println("Course is full");
         }
         return false;
     }
@@ -42,8 +48,12 @@ public class BookCourseService {
         Course course = courseDAO.getCourseById(courseId);
         if (course != null && course.getParticipants() > 0) {
             course.setParticipants(course.getParticipants() - 1);
-            return signedDAO.removeSigned(currentUser.getId(), courseId);
+            courseDAO.updateCourseParticipantsCancel(course.getParticipants(),course.getId());
+            return signedDAO.removeSigned(courseId,currentUser.getId());
+        }else{
+            System.out.println("Course is empty or not found");
+            return false;
         }
-        return false;
+
     }
 }

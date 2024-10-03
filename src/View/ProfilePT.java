@@ -187,7 +187,7 @@ public class ProfilePT extends JFrame {
         });
 
         backButton.addActionListener(e -> {
-            navigationManager.goBack();
+            navigationManager.navigateToHomePT();
         });
 
         // Add buttons to the panel

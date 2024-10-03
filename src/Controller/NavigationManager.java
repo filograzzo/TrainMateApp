@@ -1,5 +1,4 @@
 package Controller;
-import DomainModel.Machine;
 import View.*;
 
 
@@ -14,7 +13,6 @@ public class NavigationManager {
     private Dimension frameSize;
     private Point frameLocation;
     private Engine engine;
-    private Stack<JFrame> history = new Stack<>();
 
     public void setEngine(Engine engine){
         this.engine = engine;
@@ -31,19 +29,15 @@ public class NavigationManager {
         this.engine=Engine.getInstance();
     }
 
-    public static NavigationManager getIstance(JFrame currentFrame){
-        if(istance==null){
-            istance =new NavigationManager(currentFrame);
+    public static NavigationManager getIstance(JFrame currentFrame) {
+        if (istance == null) {
+            istance = new NavigationManager(currentFrame);
         }
         return istance;
     }
-    public void goBack() {
-        if (!history.isEmpty()) {
-            currentFrame.setVisible(false);
-            currentFrame = history.pop();
-            currentFrame.setVisible(true);
-        }
-    }
+
+
+
     public void navigateToLoginPage(){
         // Store the size and location of the current window
         frameSize = currentFrame.getSize();
@@ -53,8 +47,8 @@ public class NavigationManager {
         currentFrame.dispose();
 
         // Open the DailyPlan window
-        history.push(currentFrame);
         LoginPage loginView = new LoginPage(engine);
+
         loginView.setSize(frameSize); // set the size of the new window
         loginView.setLocation(frameLocation); // set the location of the new window
     }
@@ -62,7 +56,6 @@ public class NavigationManager {
         // Store the size and location of the current window
         frameSize = currentFrame.getSize();
         frameLocation = currentFrame.getLocation();
-        history.push(currentFrame);
         // Close the current window
         currentFrame.dispose();
 
@@ -75,7 +68,6 @@ public class NavigationManager {
         // Store the size and location of the current window
         frameSize = currentFrame.getSize();
         frameLocation = currentFrame.getLocation();
-        history.push(currentFrame);
         // Close the current window
         currentFrame.dispose();
 
@@ -88,7 +80,6 @@ public class NavigationManager {
         // Store the size and location of the current window
         frameSize = currentFrame.getSize();
         frameLocation = currentFrame.getLocation();
-        history.push(currentFrame);
         // Close the current window
         currentFrame.dispose();
 
@@ -102,7 +93,6 @@ public class NavigationManager {
         // Store the size and location of the current window
         frameSize = currentFrame.getSize();
         frameLocation = currentFrame.getLocation();
-        history.push(currentFrame);
         // Close the current window
         currentFrame.dispose();
         //Open the HomeCustomer window
@@ -114,7 +104,6 @@ public class NavigationManager {
         // Store the size and location of the current window
         frameSize = currentFrame.getSize();
         frameLocation = currentFrame.getLocation();
-        history.push(currentFrame);
         // Close the current window
         currentFrame.dispose();
         //Open the CustomerProfile window
@@ -127,7 +116,6 @@ public class NavigationManager {
         // Store the size and location of the current window
         frameSize = currentFrame.getSize();
         frameLocation = currentFrame.getLocation();
-        history.push(currentFrame);
         // Close the current window
         currentFrame.dispose();
         //Open the Courses window
@@ -139,7 +127,6 @@ public class NavigationManager {
         // Store the size and location of the current window
         frameSize = currentFrame.getSize();
         frameLocation = currentFrame.getLocation();
-        history.push(currentFrame);
         // Close the current window
         currentFrame.dispose();
         //Open the HomePT window
@@ -151,7 +138,6 @@ public class NavigationManager {
         // Store the size and location of the current window
         frameSize = currentFrame.getSize();
         frameLocation = currentFrame.getLocation();
-        history.push(currentFrame);
         // Close the current window
         currentFrame.dispose();
         //Open the ProfilePT window
@@ -163,7 +149,6 @@ public class NavigationManager {
         // Store the size and location of the current window
         frameSize = currentFrame.getSize();
         frameLocation = currentFrame.getLocation();
-        history.push(currentFrame);
         // Close the current window
         currentFrame.dispose();
         //Open the CoursesPT window
@@ -175,7 +160,6 @@ public class NavigationManager {
         // Store the size and location of the current window
         frameSize = currentFrame.getSize();
         frameLocation = currentFrame.getLocation();
-        history.push(currentFrame);
         // Close the current window
         currentFrame.dispose();
         //Open the CoursesPT window
@@ -183,11 +167,9 @@ public class NavigationManager {
         agenda.setSize(frameSize);
         agenda.setLocation(frameLocation);
     }
-
     public void navigateToMachinesPT(){
         frameSize = currentFrame.getSize();
         frameLocation = currentFrame.getLocation();
-        history.push(currentFrame);
         currentFrame.dispose();
         MachinesPT machinesPT = new MachinesPT(engine);
         machinesPT.setSize(frameSize);

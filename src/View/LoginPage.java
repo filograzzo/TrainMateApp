@@ -10,6 +10,7 @@ public class LoginPage extends JFrame {
     private JTextField usernameField;
     private JTextField emailField;
     private JTextField passwordField;
+
     private Engine engine;
     public LoginPage(Engine engine) {
         this.engine = engine;
@@ -69,6 +70,7 @@ public class LoginPage extends JFrame {
             if(engine.loginUser(username, password, email)){
                 NavigationManager navigationManager = NavigationManager.getIstance(this);
                 navigationManager.setEngine(this.engine);
+
                 navigationManager.navigateToHomeCustomer();
             };
 

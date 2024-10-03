@@ -96,7 +96,7 @@ public class RegisterPT extends JFrame {
     }
     private JPanel createBackButtonPanel() {
         JButton backButton = new JButton("Back");
-        backButton.addActionListener(e -> navigationManager.goBack());
+        backButton.addActionListener(e -> navigationManager.navigateToRegistrationPage());
         JPanel buttonPanel = new JPanel(new FlowLayout());
         buttonPanel.add(backButton);
 

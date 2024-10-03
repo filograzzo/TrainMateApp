@@ -321,18 +321,26 @@ public class Engine {
             e.printStackTrace();}
     }
     //CUSTOMER
-    public void bookCourse(int courseId){
+    public boolean bookCourse(int courseId){
         BookCourseService bookCourseService = (BookCourseService) sf.getService(sf.BOOKCOURSE_SERVICE);
         try {
-            if(bookCourseService.bookCourse(courseId)){
-                System.out.println("Course successfully booked.");
+            if(bookCourseService.isSigned(courseId)){
+                System.out.println("You are already signed up for this course.");
+                return false;
             }else{
-                System.out.println("Course not booked.");
+                if(bookCourseService.bookCourse(courseId)){
+                    System.out.println("Course successfully booked.");
+                    return true;
+                }else{
+                    System.out.println("Course is full");
+                    return false;
+                }
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
+
     public boolean cancelBooking(int courseId){
         BookCourseService bookCourseService = (BookCourseService) sf.getService(sf.BOOKCOURSE_SERVICE);
         try {
@@ -1004,6 +1012,18 @@ public class Engine {
         }
 
         return exercises;
+    }
+
+    public List<Machine> viewMachinesToTake(){
+        MachineService machineService = (MachineService) sf.getService(sf.MACHINE_SERVICE);
+        try{
+            List<Machine> machines = machineService.getAllMachines();
+            if(machines.isEmpty()) {
+                System.out.println("No machines to take.");
+            }else{return machines;}
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }return null;
     }
 
 

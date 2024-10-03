@@ -273,7 +273,7 @@ public class CustomerProfile extends JFrame {
         });
 
         backButton.addActionListener(e -> {
-            navigationManager.goBack();
+            navigationManager.navigateToHomeCustomer();
         });
 
         // Add buttons to the panel

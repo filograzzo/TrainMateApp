@@ -26,7 +26,7 @@ public class RegistrationPage extends JFrame {
     }
     private JPanel createBackButtonPanel() {
         JButton backButton = new JButton("Back");
-        backButton.addActionListener(e -> navigationManager.goBack());
+        backButton.addActionListener(e -> navigationManager.navigateToLoginPage());
         JPanel buttonPanel = new JPanel(new FlowLayout());
         buttonPanel.add(backButton);
 
