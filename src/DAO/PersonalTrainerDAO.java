@@ -1,5 +1,6 @@
 package DAO;
 
+import DomainModel.BaseUser;
 import DomainModel.PersonalTrainer;
 
 import java.sql.Connection;
@@ -74,6 +75,20 @@ public class PersonalTrainerDAO {
             return stmt.executeUpdate() > 0;  // Returns true if insertion is successful
         }
     }
+
+    public boolean isPersonalTrainer(BaseUser baseUser) {
+        String query = "SELECT * FROM PersonalTrainer WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, baseUser.getId());
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next();  // Ritorna true se c'è almeno un risultato (id trovato)
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;  // In caso di errore, restituisce false
+        }
+    }
+
 
     // Get the username of a PersonalTrainer by their ID
     public String getNamePersonalTrainerById(int id) throws SQLException {

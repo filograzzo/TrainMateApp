@@ -146,6 +146,10 @@ public class BaseUserService {
         }
     }
 
+    public boolean isPersonalTrainer(BaseUser baseUser) {
+        return personalTrainerDAO.isPersonalTrainer(baseUser);
+    }
+
     public List<Customer> getAllCustomers() {
         try {
             return customerDAO.getAllCustomers();

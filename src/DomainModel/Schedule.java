@@ -8,7 +8,6 @@ public class Schedule {
     private int id;
     private String name;
     private String customerUsername;
-    //tolta la lista di trainings perché è possibile vedere in quali allenamenti è stata usata questa scheda semplicemente con una query sulla foreign key che c'è in training.
     private List<ExerciseDetail> exerciseDetails = new ArrayList<>();
 
     public Schedule (int id, String name, String customer){

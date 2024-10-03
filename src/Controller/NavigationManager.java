@@ -1,4 +1,6 @@
 package Controller;
+import DomainModel.BaseUser;
+import DomainModel.Schedule;
 import View.*;
 
 
@@ -13,6 +15,15 @@ public class NavigationManager {
     private Dimension frameSize;
     private Point frameLocation;
     private Engine engine;
+    private BaseUser currentUser;
+
+    public void setCurrentUser(BaseUser user) {
+        this.currentUser = user;
+    }
+
+    public BaseUser getCurrentUser() {
+        return currentUser;
+    }
 
     public void setEngine(Engine engine){
         this.engine = engine;
@@ -182,5 +193,21 @@ public class NavigationManager {
         ExercisesPT exercisesPT = new ExercisesPT(engine);
         exercisesPT.setSize(frameSize);
         exercisesPT.setLocation(frameLocation);
+    }
+    public void navigateToSchedulesAssignmentPT(){
+        frameSize = currentFrame.getSize();
+        frameLocation = currentFrame.getLocation();
+        currentFrame.dispose();
+        SchedulesAssignmentPT schedulesAssignmentPT = new SchedulesAssignmentPT(engine, currentUser);
+        schedulesAssignmentPT.setSize(frameSize);
+        schedulesAssignmentPT.setLocation(frameLocation);
+    }
+    public void navigateToExerciseDetailView(Schedule schedule) throws SQLException {
+        frameSize = currentFrame.getSize();
+        frameLocation = currentFrame.getLocation();
+        currentFrame.dispose();
+        ExerciseDetailView exerciseDetailView = new ExerciseDetailView(engine, schedule.getId());
+        exerciseDetailView.setSize(frameSize);
+        exerciseDetailView.setLocation(frameLocation);
     }
 }

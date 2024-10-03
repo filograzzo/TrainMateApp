@@ -2,6 +2,7 @@ package View;
 
 import Controller.Engine;
 import Controller.NavigationManager;
+import DomainModel.BaseUser;
 
 import javax.swing.*;
 import java.awt.*;
@@ -61,7 +62,7 @@ public class HomePT extends JFrame {
 
         JButton assignSchedulesButton = new JButton("Assign Schedules");
         assignSchedulesButton.addActionListener(e -> {
-            //#TODO
+            navigationManager.navigateToSchedulesAssignmentPT();
         });
         centralPanel.add(assignSchedulesButton);
 

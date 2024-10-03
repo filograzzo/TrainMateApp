@@ -51,6 +51,11 @@ public class Engine {
             if(baseUserService.checkCredentialsCustomer(username,password,email)){
                 this.user = baseUserService.getCurrentUser();
                 System.out.println("The user has been logged in successfully.");
+
+                NavigationManager navigationManager = NavigationManager.getIstance(null);  // Supponiamo di passare null temporaneamente
+                navigationManager.setEngine(this);
+                navigationManager.setCurrentUser(this.user);
+
                 ProfileService ps = (ProfileService) sf.getService(sf.PROFILE_SERVICE);
                 ps.setCustomer((Customer)user);
                 logged = true;
@@ -58,7 +63,6 @@ public class Engine {
                 bas.setCurrentUser(user);
                 BookCourseService bcs = (BookCourseService) sf.getService(sf.BOOKCOURSE_SERVICE);
                 bcs.setCurrentUser(user);
-
 
             }else{
                 System.out.println("Credenziali errate");
@@ -76,6 +80,11 @@ public class Engine {
             if(baseUserService.checkCredentialsPT(username,password,email)){
                 this.user = baseUserService.getCurrentUser();
                 System.out.println("The Personal Trainer has been logged in successfully.");
+
+                NavigationManager navigationManager = NavigationManager.getIstance(null);  // Supponiamo di passare null temporaneamente
+                navigationManager.setEngine(this);
+                navigationManager.setCurrentUser(this.user);
+
                 ProfilePTService pps = (ProfilePTService) sf.getService(sf.PROFILEPT_SERVICE);
                 pps.setPersonalTrainer((PersonalTrainer)user);
                 AgendaService as = (AgendaService) sf.getService(sf.AGENDA_SERVICE);
@@ -353,18 +362,33 @@ public class Engine {
             throw new RuntimeException(e);
         }
     }
+
+    public Customer getCustomerByUsername(String username){
+        BaseUserService baseUserService = (BaseUserService) sf.getService(sf.USER_SERVICE);
+        return getCustomerByUsername(username);
+    }
+
+    public List<Customer> getAllCustomers(){
+        BaseUserService baseUserService = (BaseUserService) sf.getService(sf.USER_SERVICE);
+        List<Customer> customers = baseUserService.getAllCustomers();
+        for(Customer customer : customers){
+            boolean pt = baseUserService.isPersonalTrainer(customer);
+            if(pt){
+                customers.remove(customer);
+            }
+        }return customers;
+    }
+
     //TODO: BOOK APPOINTMENT, BOOK COURSES
 
     //SCHEDULE
 
-    public void createSchedule(BaseUser baseUser){
+    public void createSchedule(BaseUser baseUser, String newName){
         if(baseUser.isValid()) {
             ScheduleService scheduleService = (ScheduleService) sf.getService(sf.SCHEDULE_SERVICE);
             try {
-                System.out.println("What would you like to call your new schedule?");
-                String scheduleName = input.nextLine();
 
-                boolean done = scheduleService.createSchedule(baseUser, scheduleName);
+                boolean done = scheduleService.createSchedule(baseUser, newName);
                 if (!done) {
                     throw new CustomizedException("There has been an error in the creation of the schedule.");
                 }
@@ -392,12 +416,13 @@ public class Engine {
     }
 
     public void updateSchedule(BaseUser baseUser, Schedule schedule){
-        if(baseUser.isValid()){
+
             ScheduleService scheduleService = (ScheduleService) sf.getService(sf.SCHEDULE_SERVICE);
             try{
-                System.out.println("What do you want to change the name of the schedule to?");
+                /*System.out.println("What do you want to change the name of the schedule to?");
                 String newName = input.nextLine();
                 schedule.setName(newName);
+                 */
                 boolean done = scheduleService.updateSchedule(schedule);
                 if(!done)
                     throw new CustomizedException("The update failed. You did not change the name of your schedule.");
@@ -406,7 +431,7 @@ public class Engine {
             } catch (CustomizedException e) {
                 throw new RuntimeException(e);
             }
-        }
+
     }
 
     public List<Schedule> getSchedules(BaseUser baseUser){
@@ -533,11 +558,11 @@ public class Engine {
 
     //EXERCISEDETAIL
 
-    public void createExerciseDetail(BaseUser baseUser, Schedule schedule) {
-        if (baseUser.isValid()) {
+    public void createExerciseDetail(int serie, int reps, int weight, int scheduleID, int exerciseID) {
+
             ExerciseDetailService exerciseDetailService = (ExerciseDetailService) sf.getService(sf.EXERCISEDETAIL_SERVICE   );
             try {
-                // Richiesta dati per l'ExerciseDetail
+                /*// Richiesta dati per l'ExerciseDetail
                 System.out.println("Enter the number of series:");
                 int serie = Integer.parseInt(input.nextLine());
 
@@ -565,7 +590,8 @@ public class Engine {
                     throw new CustomizedException("There has been some problem with the acquisition of the exercise id");
                 else {
                     done = exerciseDetailService.createExerciseDetail(serie, reps, weight, scheduleID, exerciseID);
-                }
+                }*/
+                boolean done = exerciseDetailService.createExerciseDetail(serie, reps, weight, scheduleID, exerciseID);
 
                 if (!done) {
                     throw new RuntimeException("There has been an error in the creation of the exercise detail.");
@@ -577,14 +603,12 @@ public class Engine {
                 throw new RuntimeException(e);
             } catch (NumberFormatException e) {
                 System.err.println("Invalid input. Please enter valid numbers for serie, reps, weight, scheduleID, and exerciseID.");
-            } catch (CustomizedException e) {
-                throw new RuntimeException(e);
             }
-        }
+
     }
 
-    public void deleteExerciseDetail(BaseUser baseUser, ExerciseDetail exerciseDetail) {
-        if (baseUser.isValid()) {
+    public void deleteExerciseDetail( ExerciseDetail exerciseDetail) {
+
             ExerciseDetailService exerciseDetailService = (ExerciseDetailService) sf.getService(sf.EXERCISEDETAIL_SERVICE   );
 
             try {
@@ -597,14 +621,14 @@ public class Engine {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-        }
+
     }
 
-    public void updateExerciseDetail(BaseUser baseUser, ExerciseDetail exerciseDetail) {
-        if (baseUser.isValid()) {
+    public void updateExerciseDetail(int id, int serie, int reps, int weight, int scheduleID, int exerciseID) {
+
             ExerciseDetailService exerciseDetailService = (ExerciseDetailService) sf.getService(sf.EXERCISEDETAIL_SERVICE   );
             try {
-                System.out.println("Enter the new number of series:");
+                /*System.out.println("Enter the new number of series:");
                 int serie = Integer.parseInt(input.nextLine());
 
                 System.out.println("Enter the new number of repetitions:");
@@ -629,8 +653,9 @@ public class Engine {
                     throw new CustomizedException("There has been some problem with the acquisition of the exercise id");
                 else {
                     done = exerciseDetailService.updateExerciseDetail(exerciseDetail.getId(), serie, reps, weight, exerciseID);
-                }
+                }*/
 
+                boolean done = exerciseDetailService.updateExerciseDetail(id, serie, reps, weight, exerciseID);
                 if (!done) {
                     throw new RuntimeException("There has been an error in the update of the exercise detail.");
                 } else {
@@ -641,10 +666,8 @@ public class Engine {
                 throw new RuntimeException(e);
             } catch (NumberFormatException e) {
                 System.err.println("Invalid input. Please enter valid numbers for serie, reps, weight, scheduleID, and exerciseID.");
-            } catch (CustomizedException e) {
-                throw new RuntimeException(e);
             }
-        }
+
     }
 
     public void getExerciseDetailById(BaseUser baseUser, int exerciseDetailID) {
@@ -671,6 +694,12 @@ public class Engine {
                 System.err.println("Invalid input. Please enter a valid number for the ExerciseDetail ID.");
             }
         }
+    }
+
+    public List<ExerciseDetail> getExerciseDetailsBySchedule(int schedule_id) throws SQLException {
+        ExerciseDetailService exerciseDetailService =  (ExerciseDetailService) sf.getService(sf.EXERCISEDETAIL_SERVICE);
+        return exerciseDetailService.getExerciseDetailsBySchedule(schedule_id);
+
     }
 
     // EXERCISES
@@ -796,6 +825,11 @@ public class Engine {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public int getExerciseIdByName(String name) throws SQLException {
+        ExerciseDetailService exerciseDetailService =  (ExerciseDetailService) sf.getService(sf.EXERCISEDETAIL_SERVICE);
+        return exerciseDetailService.getExerciseIdByName(name);
     }
 
     //MACHINE
