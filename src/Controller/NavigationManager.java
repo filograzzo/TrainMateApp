@@ -1,4 +1,5 @@
 package Controller;
+import DomainModel.Machine;
 import View.*;
 
 
@@ -181,5 +182,15 @@ public class NavigationManager {
         Agenda agenda = new Agenda(engine);
         agenda.setSize(frameSize);
         agenda.setLocation(frameLocation);
+    }
+
+    public void navigateToMachinesPT(){
+        frameSize = currentFrame.getSize();
+        frameLocation = currentFrame.getLocation();
+        history.push(currentFrame);
+        currentFrame.dispose();
+        MachinesPT machinesPT = new MachinesPT(engine);
+        machinesPT.setSize(frameSize);
+        machinesPT.setLocation(frameLocation);
     }
 }

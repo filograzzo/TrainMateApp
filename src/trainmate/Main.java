@@ -4,12 +4,9 @@ package trainmate;
 import Controller.Engine;
 import View.LoginPage;
 
-class main{
+class Main{
     public static void main(String[] args) {
         Engine engine = Engine.getInstance();
-
         new LoginPage(engine);
-
-
     }
 }

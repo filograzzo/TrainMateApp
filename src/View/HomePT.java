@@ -55,7 +55,7 @@ public class HomePT extends JFrame {
 
         JButton manageMachinesButton = new JButton("Manage Machines");
         manageMachinesButton.addActionListener(e -> {
-            //#TODO
+            navigationManager.navigateToMachinesPT();
         });
         centralPanel.add(manageMachinesButton);
 

@@ -8,7 +8,6 @@ public class Course {
     private String name;
     private String bodyPartsTrained;
     private int maxParticipants;
-
     Time time;
     String day;
     private int participants;

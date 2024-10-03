@@ -249,6 +249,18 @@ public class Engine {
         return null;
     }
 
+    public List<Machine> viewMachinesToTake(){
+        MachineService machineService = (MachineService) sf.getService(sf.MACHINE_SERVICE);
+        try{
+            List<Machine> machines = machineService.getAllMachines();
+            if(machines.isEmpty()) {
+                System.out.println("No machines to take.");
+            }else{return machines;}
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }return null;
+    }
+
 
     public void addCourse(String name, int maxParticipants, int trainerID, String bodyPartsTrained,String day, Time time){
         AgendaService agendaService = (AgendaService) sf.getService(sf.AGENDA_SERVICE);
@@ -785,10 +797,10 @@ public class Engine {
 
     //MACHINE
 
-    public void createMachine() {
+    public void createMachine(String name, String description, boolean state) {
         MachineService machineService = (MachineService) sf.getService(sf.MACHINE_SERVICE);
         try {
-            System.out.println("Enter machine name:");
+            /*System.out.println("Enter machine name:");
             String name = input.nextLine();
 
             System.out.println("Enter machine description:");
@@ -813,11 +825,10 @@ public class Engine {
                 throw new CustomizedException("There has been an error in the creation of the machine.");
             } else {
                 System.out.println("Machine successfully created.");
-            }
+            }*/
+            machineService.createMachine(name, description, state);
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        } catch (CustomizedException e) {
-            System.err.println(e.getMessage());
         }
     }
 
@@ -848,7 +859,7 @@ public class Engine {
             if (machine == null) {
                 throw new CustomizedException("The machine does not exist.");
             }
-            System.out.println("Enter the new name:");
+            /*System.out.println("Enter the new name:");
             String newName = input.nextLine();
             machine.setName(newName);
 
@@ -877,7 +888,14 @@ public class Engine {
                 throw new CustomizedException("There has been an error in the update of the machine.");
             } else {
                 System.out.println("Machine successfully updated.");
+            }*/
+            boolean done = machineService.updateMachine(machine);
+            if (!done) {
+                throw new CustomizedException("There has been an error in the update of the machine.");
+            } else {
+                System.out.println("Machine successfully updated.");
             }
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } catch (CustomizedException e) {
