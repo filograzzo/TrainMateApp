@@ -119,6 +119,10 @@ public class BaseUserService {
         }
     }
 
+    public Customer getCustomerByUsername(String username) throws SQLException {
+        return customerDAO.getCustomerByUsername(username);
+    }
+
     public BaseUser getCurrentUser() {
         return currentUser ;
     }

@@ -38,6 +38,14 @@ public class HomeCustomer extends JFrame {
         });
         mainPanel.add(topPanel, BorderLayout.NORTH);
 
+        JButton logoutButton = new JButton("Logout");
+        logoutButton.addActionListener(e -> {
+            // Logic to handle logout
+            engine.logout();
+            navigationManager.navigateToLoginPage();
+        });
+        topPanel.add(logoutButton);
+
         // Create the central panel with a GridLayout
         JPanel centralPanel = new JPanel(new GridLayout(5, 1, 10, 10));
         JButton viewCoursesButton = new JButton("View Courses");

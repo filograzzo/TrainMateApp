@@ -41,5 +41,9 @@ public class ExerciseService {
         return exerciseDAO.getExercisesByCategory(category);
     }
 
+    public String getExerciseNameById(int id) throws SQLException {
+        return exerciseDAO.getExerciseNameById(id);
+    }
+
 
 }

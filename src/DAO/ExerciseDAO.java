@@ -167,4 +167,18 @@ public class ExerciseDAO {
         }
         return exercises;
     }
+
+    public String getExerciseNameById(int id) throws SQLException {
+        String query = "SELECT name FROM Exercise WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("name"); // Restituisce il nome dell'esercizio
+                } else {
+                    return null; // Restituisce null se l'ID non esiste
+                }
+            }
+        }
+    }
 }

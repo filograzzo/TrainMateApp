@@ -363,42 +363,50 @@ public class Engine {
         }
     }
 
-    public Customer getCustomerByUsername(String username){
+    public Customer getCustomerByUsername(String username) throws SQLException {
         BaseUserService baseUserService = (BaseUserService) sf.getService(sf.USER_SERVICE);
-        return getCustomerByUsername(username);
+        return baseUserService.getCustomerByUsername(username);
     }
 
     public List<Customer> getAllCustomers(){
         BaseUserService baseUserService = (BaseUserService) sf.getService(sf.USER_SERVICE);
         List<Customer> customers = baseUserService.getAllCustomers();
+        List<Customer> customerToRemove = new ArrayList<Customer>();
         for(Customer customer : customers){
             boolean pt = baseUserService.isPersonalTrainer(customer);
             if(pt){
-                customers.remove(customer);
+                customerToRemove.add(customer);
             }
-        }return customers;
+        }
+        customers.removeAll(customerToRemove);
+        return customers;
     }
 
     //TODO: BOOK APPOINTMENT, BOOK COURSES
 
     //SCHEDULE
 
-    public void createSchedule(BaseUser baseUser, String newName){
-        if(baseUser.isValid()) {
+    public void createSchedule(BaseUser baseUser, String newName) {
+        if (baseUser.isValid()) {
             ScheduleService scheduleService = (ScheduleService) sf.getService(sf.SCHEDULE_SERVICE);
             try {
-
                 boolean done = scheduleService.createSchedule(baseUser, newName);
                 if (!done) {
                     throw new CustomizedException("There has been an error in the creation of the schedule.");
+                } else {
+                    // Messaggio di successo
+                    System.out.println("Schedule created successfully.");
                 }
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             } catch (CustomizedException e) {
                 System.err.println(e.getMessage());
             }
+        } else {
+            System.err.println("User is not valid. Schedule creation aborted.");
         }
     }
+
 
     public void removeSchedule(BaseUser baseUser, Schedule schedule){
         if(baseUser.isValid()){
@@ -434,12 +442,16 @@ public class Engine {
 
     }
 
-    public List<Schedule> getSchedules(BaseUser baseUser){
+    public List<Schedule> getAllSchedules() throws SQLException {
+        ScheduleService scheduleService = (ScheduleService) sf.getService(sf.SCHEDULE_SERVICE);
+        return scheduleService.getAllSchedules();
+    }
+    public List<Schedule> getSchedulesByUsername(BaseUser baseUser){
         List <Schedule> schedules = new ArrayList<>();
         if(baseUser.isValid()){
             ScheduleService scheduleService = (ScheduleService) sf.getService(sf.SCHEDULE_SERVICE);
             try{
-                schedules = scheduleService.getSchedules(baseUser);
+                schedules = scheduleService.getSchedulesByUsername(baseUser);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
@@ -748,6 +760,10 @@ public class Engine {
             }
     }
 
+    public String getExerciseNameById(int id) throws SQLException {
+        ExerciseService exerciseService = (ExerciseService) sf.getService(sf.EXERCISE_SERVICE);
+        return exerciseService.getExerciseNameById(id);
+    }
     // Solo PT (Personal Trainer)
     public void deleteExercise(Exercise exercise) {
 

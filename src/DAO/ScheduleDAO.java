@@ -103,6 +103,26 @@ public class ScheduleDAO {
         }
     }
 
+    public List<Schedule> getAllSchedules() throws SQLException {
+        String query = "SELECT * FROM Schedule";
+        List<Schedule> schedules = new ArrayList<>(); // Lista per contenere i risultati
+
+        try (PreparedStatement stmt = connection.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Schedule schedule = new Schedule(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("customer")
+                );
+                schedules.add(schedule); // Aggiungi alla lista
+            }
+        }
+
+        return schedules; // Restituisce la lista di schedule
+    }
+
 
 
 }

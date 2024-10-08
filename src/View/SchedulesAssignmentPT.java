@@ -22,7 +22,7 @@ public class SchedulesAssignmentPT extends JFrame {
     private List<Schedule> schedules;
     private NavigationManager navigationManager = NavigationManager.getIstance(this);
 
-    public SchedulesAssignmentPT(Engine engine, BaseUser baseUser) {
+    public SchedulesAssignmentPT(Engine engine, BaseUser baseUser) throws SQLException {
         this.engine = engine;
         this.baseUser = baseUser;
         setupWindow();
@@ -38,7 +38,7 @@ public class SchedulesAssignmentPT extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    private JPanel createMainPanel() {
+    private JPanel createMainPanel() throws SQLException {
         JPanel mainPanel = new JPanel(new BorderLayout());
         listModel = new DefaultListModel<>();
         scheduleList = new JList<>(listModel);
@@ -72,7 +72,11 @@ public class SchedulesAssignmentPT extends JFrame {
                 if (selectedIndex != -1) {
                     Schedule selectedSchedule = schedules.get(selectedIndex);
                     engine.removeSchedule(baseUser, selectedSchedule);
-                    loadSchedules();
+                    try {
+                        loadSchedules();
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 } else {
                     JOptionPane.showMessageDialog(SchedulesAssignmentPT.this, "Please select a schedule to delete.");
                 }
@@ -111,8 +115,8 @@ public class SchedulesAssignmentPT extends JFrame {
         return mainPanel;
     }
 
-    private void loadSchedules() {
-        schedules = engine.getSchedules(baseUser);  // Recupera le schedule per l'utente corrente
+    private void loadSchedules() throws SQLException {
+        schedules = engine.getAllSchedules();  // Recupera le schedule per l'utente corrente
         if (schedules != null) {
             listModel.clear();
             for (Schedule schedule : schedules) {
@@ -154,10 +158,19 @@ public class SchedulesAssignmentPT extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String scheduleName = nameField.getText();
                 String customerUsername = (String) customerComboBox.getSelectedItem();
-                BaseUser customer = engine.getCustomerByUsername(customerUsername);
+                BaseUser customer = null;
+                try {
+                    customer = engine.getCustomerByUsername(customerUsername);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
 
                 engine.createSchedule(customer, scheduleName);
-                loadSchedules();
+                try {
+                    loadSchedules();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
                 dialog.dispose();
             }
         });
@@ -184,7 +197,11 @@ public class SchedulesAssignmentPT extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 schedule.setName(nameField.getText());
                 engine.updateSchedule(baseUser, schedule);
-                loadSchedules();
+                try {
+                    loadSchedules();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
                 dialog.dispose();
             }
         });

@@ -228,6 +228,36 @@ public class CustomerDAO {
         }
     }
 
+    public Customer getCustomerByUsername(String username) throws SQLException {
+        String query = "SELECT * " +
+                "FROM User " +
+                "JOIN Customer ON User.id = Customer.id " +
+                "WHERE User.username = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, username);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    int fetchedId = rs.getInt("id");
+                    Customer customer = new Customer(
+                            fetchedId,
+                            rs.getString("username"),
+                            rs.getString("password"),
+                            rs.getString("email")
+                    );
+                    customer.setHeight(rs.getFloat("height"));
+                    customer.setWeight(rs.getFloat("weight"));
+                    customer.setAge(rs.getInt("age"));
+                    customer.setGender(rs.getString("gender"));
+                    customer.setGoal(rs.getString("goal"));
+                    return customer;
+                } else {
+                    return null; // Return null if no customer is found with the given username
+                }
+            }
+        }
+    }
+
     public List<Customer> getAllCustomers() throws SQLException {
         String query = "SELECT * FROM User";
         List<Customer> customers = new ArrayList<>();
