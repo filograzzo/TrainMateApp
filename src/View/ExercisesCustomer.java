@@ -81,8 +81,8 @@ public class ExercisesCustomer extends JFrame {
     private void updateExerciseList() {
         listModel.clear();
         for (Exercise exercise : exercises) {
-            String exerciseDetail = String.format("Name: %s, Category: %s, Machine: %s",
-                    exercise.getName(), exercise.getCategory(),
+            String exerciseDetail = String.format("Name: %s, Category: %s, Description: %s, Machine: %s",
+                    exercise.getName(), exercise.getCategory(), exercise.getDescription(),
                     exercise.getMachine().isEmpty() ? "None" : exercise.getMachine());
             listModel.addElement(exerciseDetail);
         }

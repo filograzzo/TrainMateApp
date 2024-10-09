@@ -10,7 +10,7 @@ public class Exercise {
     private String machine;
     private String description;
 
-    private static final List<String> validCategories = Arrays.asList("Legs", "Arms", "Abdomen", "Back", "Chest");
+    private static final List<String> validCategories = Arrays.asList("Legs", "Arms", "Abdomen", "Back", "Chest", "Shoulders");
 
     public Exercise(int id, String name, String category, String machine, String description) {
         this.id = id;
