@@ -5,6 +5,7 @@ import Controller.NavigationManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.sql.SQLException;
 
 public class HomeCustomer extends JFrame {
     private Engine engine;
@@ -62,7 +63,17 @@ public class HomeCustomer extends JFrame {
         centralPanel.add(viewBookAppointment);
 
         centralPanel.add(new JButton("View Schedule"));
-        centralPanel.add(new JButton("View Trainings"));
+
+        JButton viewTrainingCustomerView = new JButton("View Trainings");
+        viewTrainingCustomerView.addActionListener(e -> {
+            try {
+                navigationManager.navigateToTrainingCustomerView();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+        centralPanel.add(viewTrainingCustomerView);
+
         centralPanel.add(new JButton("View Exercises"));
 
         // Add the central panel to the main panel

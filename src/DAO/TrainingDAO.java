@@ -23,8 +23,8 @@ public class TrainingDAO {
                     return new Training(
                             rs.getInt("id"),
                             rs.getDate("date"),
-                            rs.getTimestamp("start_time"),
-                            rs.getTimestamp("end_time"),
+                            rs.getTime("start_time"),
+                            rs.getTime("end_time"),
                             rs.getString("note"),
                             rs.getInt("schedule_id"),
                             rs.getString("username")
@@ -36,12 +36,12 @@ public class TrainingDAO {
         }
     }
 
-    public boolean addTraining(Date date, Timestamp startTime, Timestamp endTime, String note, int scheduleId, String username) throws SQLException {
+    public boolean addTraining(Date date, Time startTime, Time endTime, String note, int scheduleId, String username) throws SQLException {
         String query = "INSERT INTO Training (date, start_time, end_time, note, schedule_id, username) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setDate(1, date);
-            stmt.setTimestamp(2, startTime);
-            stmt.setTimestamp(3, endTime);
+            stmt.setTime(2, startTime);
+            stmt.setTime(3, endTime);
             stmt.setString(4, note);
             stmt.setInt(5, scheduleId);
             stmt.setString(6, username);
@@ -57,6 +57,20 @@ public class TrainingDAO {
         }
     }
 
+    public boolean updateTraining(Training training) throws SQLException {
+        String query = "UPDATE Training SET date = ?, start_time = ?, end_time = ?, note = ?, schedule_id = ? WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setDate(1, training.getDate());
+            stmt.setTime(2, training.getStartTime());
+            stmt.setTime(3, training.getEndTime());
+            stmt.setString(4, training.getNote());
+            stmt.setInt(5, training.getSchedule());
+            stmt.setInt(6, training.getId());
+
+            return stmt.executeUpdate() > 0; // Restituisce true se la modifica è stata effettuata
+        }
+    }
+
     // Metodo per ottenere tutti i Training di un determinato utente (username)
     public List<Training> getAllTrainingsByUsername(String username) throws SQLException {
         String query = "SELECT * FROM Training WHERE username = ?";
@@ -69,8 +83,8 @@ public class TrainingDAO {
                     Training training = new Training(
                             rs.getInt("id"),
                             rs.getDate("date"),
-                            rs.getTimestamp("start_time"),
-                            rs.getTimestamp("end_time"),
+                            rs.getTime("start_time"),
+                            rs.getTime("end_time"),
                             rs.getString("note"),
                             rs.getInt("schedule_id"),
                             rs.getString("username")
@@ -94,8 +108,8 @@ public class TrainingDAO {
                     Training training = new Training(
                             rs.getInt("id"),
                             rs.getDate("date"),
-                            rs.getTimestamp("start_time"),
-                            rs.getTimestamp("end_time"),
+                            rs.getTime("start_time"),
+                            rs.getTime("end_time"),
                             rs.getString("note"),
                             rs.getInt("schedule_id"),
                             rs.getString("username")

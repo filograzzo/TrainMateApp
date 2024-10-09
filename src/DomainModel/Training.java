@@ -1,19 +1,20 @@
 package DomainModel;
 
 import java.sql.Date;
+import java.sql.Time;
 import java.sql.Timestamp;
 
 //allnamento cliente
 public class Training {
     private int id;
     private Date date;
-    private Timestamp startTime;
-    private Timestamp endTime;
+    private Time startTime;
+    private Time endTime;
     private String note;
     private int scheduleId;
     private String username;
 
-    public Training(int id, Date date, Timestamp startTime, Timestamp endTime, String note, int scheduleId, String username) {
+    public Training(int id, Date date, Time startTime, Time endTime, String note, int scheduleId, String username) {
         this.id = id;
         this.date = date;
         this.startTime = startTime;
@@ -40,19 +41,19 @@ public class Training {
         this.date = date;
     }
 
-    public Timestamp getStartTime() {
+    public Time getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(Timestamp startTime) {
+    public void setStartTime(Time startTime) {
         this.startTime = startTime;
     }
 
-    public Timestamp getEndTime() {
+    public Time getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(Timestamp endTime) {
+    public void setEndTime(Time endTime) {
         this.endTime = endTime;
     }
 

@@ -218,4 +218,13 @@ public class NavigationManager {
         bookAppointment.setSize(frameSize);
         bookAppointment.setLocation(frameLocation);
     }
+
+    public void navigateToTrainingCustomerView() throws SQLException {
+        frameSize = currentFrame.getSize();
+        frameLocation = currentFrame.getLocation();
+        currentFrame.dispose();
+        TrainingCustomerView trainingCustomerView = new TrainingCustomerView(engine, currentUser);
+        trainingCustomerView.setSize(frameSize);
+        trainingCustomerView.setLocation(frameLocation);
+    }
 }

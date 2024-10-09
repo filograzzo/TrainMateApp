@@ -538,54 +538,15 @@ public class Engine {
         return schedules;
     }
     //TRAININGS
-    public void createTraining(BaseUser baseUser) {
-        if (baseUser.isValid()) {
+    public void createTraining(Date date, Time startTime, Time endTime, String note, int scheduleID, String username) {
             TrainingService trainingService = (TrainingService) sf.getService(sf.TRAINING_SERVICE);
 
             try {
-                // Formattatore per la data
-                DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-
-                // Richiesta data
-                System.out.println("What is the date of the training? (yyyy-MM-dd)");
-                String dateInput = input.nextLine();
-                LocalDate date = LocalDate.parse(dateInput, dateFormatter);  // Parsing della data
-
-                // Richiesta orario di inizio
-                System.out.println("What is the start time of the training? (HH:mm)");
-                String startTimeInput = input.nextLine();
-                LocalDateTime startTime = date.atTime(LocalDateTime.parse(startTimeInput, timeFormatter).toLocalTime());
-
-                // Richiesta orario di fine
-                System.out.println("What is the end time of the training? (HH:mm)");
-                String endTimeInput = input.nextLine();
-                LocalDateTime endTime = date.atTime(LocalDateTime.parse(endTimeInput, timeFormatter).toLocalTime());
-
-                // Conversione dei tempi in Timestamp
-                Timestamp startTimestamp = Timestamp.valueOf(startTime);
-                Timestamp endTimestamp = Timestamp.valueOf(endTime);
-
-                // Richiesta note
-                System.out.println("Please enter any notes for the training:");
-                String note = input.nextLine();
-
-                // Richiesta schedule ID
-                System.out.println("Enter the schedule ID:");
-                int scheduleID = Integer.parseInt(input.nextLine());
-
-                // Richiesta username
-                System.out.println("Enter the username for the training:");
-                String username = input.nextLine();
-
-                // Creazione del training
-                boolean done = trainingService.createTraining(
-                        java.sql.Date.valueOf(date), startTimestamp, endTimestamp, note, scheduleID, username
-                );
+                boolean done = trainingService.createTraining((java.sql.Date) date, startTime, endTime, note, scheduleID, username);
 
                 if (!done) {
                     throw new CustomizedException("There has been an error in the creation of the training.");
-                }
+                }else System.out.println("The training has been created successfully.");
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             } catch (CustomizedException e) {
@@ -593,7 +554,7 @@ public class Engine {
             } catch (DateTimeParseException e) {
                 System.err.println("Invalid date or time format. Please use the correct format: yyyy-MM-dd for date and HH:mm for time.");
             }
-        }
+
     }
 
     public void deleteTraining(BaseUser baseUser, Training training) {
@@ -605,6 +566,24 @@ public class Engine {
                     throw new CustomizedException("There has been an error in the deletion of the training.");
                 } else {
                     System.out.println("Training successfully deleted.");
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (CustomizedException e) {
+                System.err.println(e.getMessage());
+            }
+        }
+    }
+
+    public void updateTraining(BaseUser baseUser, Training training){
+        if (baseUser.isValid()) {
+            TrainingService trainingService = (TrainingService) sf.getService(sf.TRAINING_SERVICE);
+            try {
+                boolean done = trainingService.updateTraining(training);
+                if (!done) {
+                    throw new CustomizedException("There has been an error in the update of the training.");
+                } else {
+                    System.out.println("Training successfully updated.");
                 }
             } catch (SQLException e) {
                 throw new RuntimeException(e);
