@@ -7,14 +7,14 @@ import DomainModel.Schedule;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.List;
 
 public class ScheduleCustomer extends JFrame {
     private Engine engine;
-    private BaseUser baseUser; // L'utente corrente
+    private BaseUser baseUser;
     private JList<String> scheduleList;
     private DefaultListModel<String> listModel;
     private List<Schedule> schedules;
@@ -55,56 +55,48 @@ public class ScheduleCustomer extends JFrame {
         buttonPanel.add(createBackButton());
 
         // Azione per aggiungere una schedule
-        addButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                showAddSchedulePanel();
-            }
-        });
+        addButton.addActionListener(e -> showAddSchedulePanel());
 
         // Azione per eliminare una schedule
-        deleteButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int selectedIndex = scheduleList.getSelectedIndex();
-                if (selectedIndex != -1) {
-                    Schedule selectedSchedule = schedules.get(selectedIndex);
-                    engine.removeSchedule(baseUser, selectedSchedule);
-                    try {
-                        loadSchedules();
-                    } catch (SQLException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(ScheduleCustomer.this, "Please select a schedule to delete.");
+        deleteButton.addActionListener(e -> {
+            int selectedIndex = scheduleList.getSelectedIndex();
+            if (selectedIndex != -1) {
+                Schedule selectedSchedule = schedules.get(selectedIndex);
+                engine.removeSchedule(baseUser, selectedSchedule);
+                try {
+                    loadSchedules();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
                 }
+            } else {
+                JOptionPane.showMessageDialog(ScheduleCustomer.this, "Please select a schedule to delete.");
             }
         });
 
         // Azione per aggiornare una schedule
-        updateButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int selectedIndex = scheduleList.getSelectedIndex();
-                if (selectedIndex != -1) {
-                    Schedule selectedSchedule = schedules.get(selectedIndex);
-                    showUpdateSchedulePanel(selectedSchedule);
-                } else {
-                    JOptionPane.showMessageDialog(ScheduleCustomer.this, "Please select a schedule to update.");
-                }
+        updateButton.addActionListener(e -> {
+            int selectedIndex = scheduleList.getSelectedIndex();
+            if (selectedIndex != -1) {
+                Schedule selectedSchedule = schedules.get(selectedIndex);
+                showUpdateSchedulePanel(selectedSchedule);
+            } else {
+                JOptionPane.showMessageDialog(ScheduleCustomer.this, "Please select a schedule to update.");
             }
         });
 
-        // Azione per navigare ai dettagli di una schedule
-        scheduleList.addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) {
-                int selectedIndex = scheduleList.getSelectedIndex();
-                if (selectedIndex != -1) {
-                    Schedule selectedSchedule = schedules.get(selectedIndex);
-                    try {
-                        navigationManager.navigateToExerciseDetailCustomerView(selectedSchedule);
-                    } catch (SQLException ex) {
-                        throw new RuntimeException(ex);
+        // Aggiunge un listener per il doppio click
+        scheduleList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    int selectedIndex = scheduleList.locationToIndex(e.getPoint());
+                    if (selectedIndex != -1) {
+                        Schedule selectedSchedule = schedules.get(selectedIndex);
+                        try {
+                            navigationManager.navigateToExerciseDetailCustomerView(selectedSchedule);
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
                     }
                 }
             }
@@ -114,8 +106,7 @@ public class ScheduleCustomer extends JFrame {
     }
 
     private void loadSchedules() throws SQLException {
-        // Carica solo le schedule dell'utente corrente (baseUser)
-        schedules = engine.getSchedulesByUsername(baseUser);  // Metodo che recupera solo le schedule dell'utente
+        schedules = engine.getSchedulesByUsername(baseUser);
         if (schedules != null) {
             listModel.clear();
             for (Schedule schedule : schedules) {
@@ -142,18 +133,15 @@ public class ScheduleCustomer extends JFrame {
         dialog.pack();
         dialog.setLocationRelativeTo(this);
 
-        submitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String scheduleName = nameField.getText();
-                engine.createSchedule(baseUser, scheduleName);  // Crea la schedule per l'utente corrente
-                try {
-                    loadSchedules();
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                }
-                dialog.dispose();
+        submitButton.addActionListener(e -> {
+            String scheduleName = nameField.getText();
+            engine.createSchedule(baseUser, scheduleName);
+            try {
+                loadSchedules();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
             }
+            dialog.dispose();
         });
 
         dialog.setVisible(true);
@@ -173,18 +161,15 @@ public class ScheduleCustomer extends JFrame {
         dialog.pack();
         dialog.setLocationRelativeTo(this);
 
-        submitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                schedule.setName(nameField.getText());
-                engine.updateSchedule(baseUser, schedule);  // Aggiorna la schedule per l'utente corrente
-                try {
-                    loadSchedules();
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                }
-                dialog.dispose();
+        submitButton.addActionListener(e -> {
+            schedule.setName(nameField.getText());
+            engine.updateSchedule(baseUser, schedule);
+            try {
+                loadSchedules();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
             }
+            dialog.dispose();
         });
 
         dialog.setVisible(true);
