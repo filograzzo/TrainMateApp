@@ -2,10 +2,8 @@ package View;
 
 import Controller.Engine;
 import Controller.NavigationManager;
-import DomainModel.Customer;
-import DomainModel.Schedule;
-import DomainModel.ExerciseDetail;
 import DomainModel.BaseUser;
+import DomainModel.Schedule;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,7 +12,7 @@ import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.List;
 
-public class SchedulesAssignmentPT extends JFrame {
+public class ScheduleCustomer extends JFrame {
     private Engine engine;
     private BaseUser baseUser; // L'utente corrente
     private JList<String> scheduleList;
@@ -22,7 +20,7 @@ public class SchedulesAssignmentPT extends JFrame {
     private List<Schedule> schedules;
     private NavigationManager navigationManager = NavigationManager.getIstance(this);
 
-    public SchedulesAssignmentPT(Engine engine, BaseUser baseUser) throws SQLException {
+    public ScheduleCustomer(Engine engine, BaseUser baseUser) throws SQLException {
         this.engine = engine;
         this.baseUser = baseUser;
         setupWindow();
@@ -32,7 +30,7 @@ public class SchedulesAssignmentPT extends JFrame {
     }
 
     private void setupWindow() {
-        setTitle("Schedules Assignment");
+        setTitle("My Schedules");
         setSize(1000, 600);
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -78,7 +76,7 @@ public class SchedulesAssignmentPT extends JFrame {
                         throw new RuntimeException(ex);
                     }
                 } else {
-                    JOptionPane.showMessageDialog(SchedulesAssignmentPT.this, "Please select a schedule to delete.");
+                    JOptionPane.showMessageDialog(ScheduleCustomer.this, "Please select a schedule to delete.");
                 }
             }
         });
@@ -92,7 +90,7 @@ public class SchedulesAssignmentPT extends JFrame {
                     Schedule selectedSchedule = schedules.get(selectedIndex);
                     showUpdateSchedulePanel(selectedSchedule);
                 } else {
-                    JOptionPane.showMessageDialog(SchedulesAssignmentPT.this, "Please select a schedule to update.");
+                    JOptionPane.showMessageDialog(ScheduleCustomer.this, "Please select a schedule to update.");
                 }
             }
         });
@@ -104,7 +102,7 @@ public class SchedulesAssignmentPT extends JFrame {
                 if (selectedIndex != -1) {
                     Schedule selectedSchedule = schedules.get(selectedIndex);
                     try {
-                        navigationManager.navigateToExerciseDetailPTView( selectedSchedule);
+                        navigationManager.navigateToExerciseDetailCustomerView(selectedSchedule);
                     } catch (SQLException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -116,12 +114,12 @@ public class SchedulesAssignmentPT extends JFrame {
     }
 
     private void loadSchedules() throws SQLException {
-        schedules = engine.getAllSchedules();  // Recupera le schedule per l'utente corrente
+        // Carica solo le schedule dell'utente corrente (baseUser)
+        schedules = engine.getSchedulesByUsername(baseUser);  // Metodo che recupera solo le schedule dell'utente
         if (schedules != null) {
             listModel.clear();
             for (Schedule schedule : schedules) {
-                String scheduleInfo = String.format("Schedule Name: %s, Customer: %s",
-                        schedule.getName(), schedule.getCustomer());
+                String scheduleInfo = String.format("Schedule Name: %s", schedule.getName());
                 listModel.addElement(scheduleInfo);
             }
         } else {
@@ -133,19 +131,10 @@ public class SchedulesAssignmentPT extends JFrame {
     private void showAddSchedulePanel() {
         JPanel addSchedulePanel = new JPanel();
         JTextField nameField = new JTextField(20);
-        JComboBox<String> customerComboBox = new JComboBox<>();
-
-        List<Customer> customers = engine.getAllCustomers();  // Recupera tutti i customer esistenti
-        for (Customer customer : customers) {
-            customerComboBox.addItem(customer.getUsername());
-        }
-
         JButton submitButton = new JButton("Submit");
 
         addSchedulePanel.add(new JLabel("Schedule Name:"));
         addSchedulePanel.add(nameField);
-        addSchedulePanel.add(new JLabel("Customer:"));
-        addSchedulePanel.add(customerComboBox);
         addSchedulePanel.add(submitButton);
 
         JDialog dialog = new JDialog(this, "Add Schedule", true);
@@ -157,15 +146,7 @@ public class SchedulesAssignmentPT extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String scheduleName = nameField.getText();
-                String customerUsername = (String) customerComboBox.getSelectedItem();
-                BaseUser customer = null;
-                try {
-                    customer = engine.getCustomerByUsername(customerUsername);
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                }
-
-                engine.createSchedule(customer, scheduleName);
+                engine.createSchedule(baseUser, scheduleName);  // Crea la schedule per l'utente corrente
                 try {
                     loadSchedules();
                 } catch (SQLException ex) {
@@ -196,7 +177,7 @@ public class SchedulesAssignmentPT extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 schedule.setName(nameField.getText());
-                engine.updateSchedule(baseUser, schedule);
+                engine.updateSchedule(baseUser, schedule);  // Aggiorna la schedule per l'utente corrente
                 try {
                     loadSchedules();
                 } catch (SQLException ex) {
@@ -211,7 +192,7 @@ public class SchedulesAssignmentPT extends JFrame {
 
     private JButton createBackButton() {
         JButton backButton = new JButton("Back");
-        backButton.addActionListener(e -> navigationManager.navigateToHomePT());
+        backButton.addActionListener(e -> navigationManager.navigateToHomeCustomer());
         return backButton;
     }
 }

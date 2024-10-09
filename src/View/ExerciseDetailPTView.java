@@ -12,7 +12,7 @@ import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.List;
 
-public class ExerciseDetailView extends JFrame {
+public class ExerciseDetailPTView extends JFrame {
     private Engine engine;
     private int scheduleID; // Viene passato dal contesto della schedule
     private JList<String> exerciseDetailList;
@@ -20,7 +20,7 @@ public class ExerciseDetailView extends JFrame {
     private List<ExerciseDetail> exerciseDetails;
     private NavigationManager navigationManager = NavigationManager.getIstance(this);
 
-    public ExerciseDetailView(Engine engine, int scheduleID) throws SQLException {
+    public ExerciseDetailPTView(Engine engine, int scheduleID) throws SQLException {
         this.engine = engine;
         this.scheduleID = scheduleID;
         setupWindow();
@@ -76,7 +76,7 @@ public class ExerciseDetailView extends JFrame {
                         throw new RuntimeException(ex);
                     }
                 } else {
-                    JOptionPane.showMessageDialog(ExerciseDetailView.this, "Please select an exercise detail to delete.");
+                    JOptionPane.showMessageDialog(ExerciseDetailPTView.this, "Please select an exercise detail to delete.");
                 }
             }
         });
@@ -90,7 +90,7 @@ public class ExerciseDetailView extends JFrame {
                     ExerciseDetail selectedExerciseDetail = exerciseDetails.get(selectedIndex);
                     showUpdateExerciseDetailPanel(selectedExerciseDetail);
                 } else {
-                    JOptionPane.showMessageDialog(ExerciseDetailView.this, "Please select an exercise detail to update.");
+                    JOptionPane.showMessageDialog(ExerciseDetailPTView.this, "Please select an exercise detail to update.");
                 }
             }
         });
@@ -227,7 +227,13 @@ public class ExerciseDetailView extends JFrame {
 
     private JButton createBackButton() {
         JButton backButton = new JButton("Back");
-        backButton.addActionListener(e -> navigationManager.navigateToHomePT());
+        backButton.addActionListener(e -> {
+            try {
+                navigationManager.navigateToSchedulesAssignmentPT();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
         return backButton;
     }
 }

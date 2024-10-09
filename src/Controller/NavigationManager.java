@@ -7,7 +7,6 @@ import View.*;
 import javax.swing.*;
 import java.awt.*;
 import java.sql.SQLException;
-import java.util.Stack;
 
 public class NavigationManager {
     static NavigationManager istance;
@@ -202,14 +201,25 @@ public class NavigationManager {
         schedulesAssignmentPT.setSize(frameSize);
         schedulesAssignmentPT.setLocation(frameLocation);
     }
-    public void navigateToExerciseDetailView(Schedule schedule) throws SQLException {
+    public void navigateToExerciseDetailPTView(Schedule schedule) throws SQLException {
         frameSize = currentFrame.getSize();
         frameLocation = currentFrame.getLocation();
         currentFrame.dispose();
-        ExerciseDetailView exerciseDetailView = new ExerciseDetailView(engine, schedule.getId());
-        exerciseDetailView.setSize(frameSize);
-        exerciseDetailView.setLocation(frameLocation);
+        ExerciseDetailPTView exerciseDetailPTView = new ExerciseDetailPTView(engine, schedule.getId());
+        exerciseDetailPTView.setSize(frameSize);
+        exerciseDetailPTView.setLocation(frameLocation);
     }
+
+    public void navigateToExerciseDetailCustomerView(Schedule schedule) throws SQLException {
+        frameSize = currentFrame.getSize();
+        frameLocation = currentFrame.getLocation();
+        currentFrame.dispose();
+        ExerciseDetailCustomerView exerciseDetailCustomerView = new ExerciseDetailCustomerView(engine, schedule.getId());
+        exerciseDetailCustomerView.setSize(frameSize);
+        exerciseDetailCustomerView.setLocation(frameLocation);
+    }
+
+
     public void navigateToBookAppointment(){
         frameSize = currentFrame.getSize();
         frameLocation = currentFrame.getLocation();
@@ -235,5 +245,14 @@ public class NavigationManager {
         ExercisesCustomer exercisesCustomer = new ExercisesCustomer(engine);
         exercisesCustomer.setSize(frameSize);
         exercisesCustomer.setLocation(frameLocation);
+    }
+
+    public void navigateToScheduleCustomer() throws SQLException{
+        frameSize = currentFrame.getSize();
+        frameLocation = currentFrame.getLocation();
+        currentFrame.dispose();
+        ScheduleCustomer scheduleCustomer = new ScheduleCustomer(engine, currentUser);
+        scheduleCustomer.setSize(frameSize);
+        scheduleCustomer.setLocation(frameLocation);
     }
 }

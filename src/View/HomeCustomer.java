@@ -62,7 +62,15 @@ public class HomeCustomer extends JFrame {
         });
         centralPanel.add(viewBookAppointment);
 
-        centralPanel.add(new JButton("View Schedule"));
+        JButton viewScheduleCustomer = new JButton("View Schedule");
+        viewScheduleCustomer.addActionListener(e -> {
+            try {
+                navigationManager.navigateToScheduleCustomer();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+        centralPanel.add(viewScheduleCustomer);
 
         JButton viewTrainingCustomerView = new JButton("View Trainings");
         viewTrainingCustomerView.addActionListener(e -> {
