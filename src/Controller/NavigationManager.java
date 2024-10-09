@@ -227,4 +227,13 @@ public class NavigationManager {
         trainingCustomerView.setSize(frameSize);
         trainingCustomerView.setLocation(frameLocation);
     }
+
+    public void navigateToExercisesCustomer() throws SQLException{
+        frameSize = currentFrame.getSize();
+        frameLocation = currentFrame.getLocation();
+        currentFrame.dispose();
+        ExercisesCustomer exercisesCustomer = new ExercisesCustomer(engine);
+        exercisesCustomer.setSize(frameSize);
+        exercisesCustomer.setLocation(frameLocation);
+    }
 }

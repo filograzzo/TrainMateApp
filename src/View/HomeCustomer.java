@@ -74,7 +74,15 @@ public class HomeCustomer extends JFrame {
         });
         centralPanel.add(viewTrainingCustomerView);
 
-        centralPanel.add(new JButton("View Exercises"));
+        JButton viewExerciseCustomer = new JButton("View Exercises");
+        viewExerciseCustomer.addActionListener(e -> {
+            try{
+                navigationManager.navigateToExercisesCustomer();
+            }catch(SQLException ex ){
+                throw new RuntimeException(ex);
+            }
+        });
+        centralPanel.add(viewExerciseCustomer);
 
         // Add the central panel to the main panel
         mainPanel.add(centralPanel, BorderLayout.CENTER);
