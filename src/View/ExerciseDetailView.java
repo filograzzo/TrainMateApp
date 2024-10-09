@@ -103,8 +103,8 @@ public class ExerciseDetailView extends JFrame {
         if (exerciseDetails != null) {
             listModel.clear();
             for (ExerciseDetail exerciseDetail : exerciseDetails) {
-                String exerciseDetailInfo = String.format("Series: %d, Reps: %d, Weight: %d, Exercise: %s",
-                        exerciseDetail.getSerie(), exerciseDetail.getReps(), exerciseDetail.getWeight(), engine.getExerciseNameById(exerciseDetail.getExercise()));
+                String exerciseDetailInfo = String.format("Series: %d, Reps: %d, Weight: %d, Exercise ID: %d",
+                        exerciseDetail.getSerie(), exerciseDetail.getReps(), exerciseDetail.getWeight(), exerciseDetail.getExercise());
                 listModel.addElement(exerciseDetailInfo);
             }
         } else {
@@ -227,13 +227,7 @@ public class ExerciseDetailView extends JFrame {
 
     private JButton createBackButton() {
         JButton backButton = new JButton("Back");
-        backButton.addActionListener(e -> {
-            try {
-                navigationManager.navigateToSchedulesAssignmentPT();
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
-            }
-        });
+        backButton.addActionListener(e -> navigationManager.navigateToHomePT());
         return backButton;
     }
 }

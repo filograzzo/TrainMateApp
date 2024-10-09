@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.List;
 
 import DomainModel.Appointment;
+import DomainModel.PersonalTrainer;
+
 //DAO where there is the personaltrainerid and the clientid and the day and time they have to meet
 public class AppointmentDAO {
     private final Connection connection;
@@ -14,22 +16,84 @@ public class AppointmentDAO {
         this.connection = connection;
     }
 
-    public List<Appointment> getAppointmentsPT(int personalTrainerId) throws SQLException {
+    public ArrayList<Appointment> getAppointmentsPT(int personalTrainerId) throws SQLException {
         String query = "SELECT * FROM Appointment WHERE trainer_id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, personalTrainerId);
             try (ResultSet rs = stmt.executeQuery()) {
-                List<Appointment> appointments = new ArrayList<>();
+                ArrayList<Appointment> appointments = new ArrayList<>();
                 while (rs.next()) {
                     appointments.add(new Appointment(
                             rs.getInt("id"),
-                            rs.getInt("personal_trainer_id"),
+                            rs.getInt("trainer_id"),
                             rs.getInt("customer_id"),
-                            rs.getDate("day"),
-                            rs.getTime("time")
+                            rs.getString("appointment_day"),
+                            rs.getTime("appointment_time")
                     ));
                 }
                 return appointments;
+            }
+        }
+    }
+    public int getAppointmentidByDayandTime(String day,Time time){
+        String query = "SELECT id FROM Appointment WHERE appointment_day = ? AND appointment_time = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, day);
+            stmt.setTime(2, time);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id");
+                } else {
+                    return -1;
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return -1;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    public int getPTidByAppointmentId(int id){
+        String query = "SELECT trainer_id FROM Appointment WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("trainer_id");
+                } else {
+                    return -1;
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return -1;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+    public Appointment getAppointment(int personalTrainerId, int customerId, String day, Time time) throws SQLException {
+        String query = "SELECT * FROM Appointment WHERE trainer_id = ? AND customer_id = ? AND appointment_day = ? AND appointment_time = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, personalTrainerId);
+            stmt.setInt(2, customerId);
+            stmt.setString(3, day);
+            stmt.setTime(4, time);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new Appointment(
+                            rs.getInt("id"),
+                            rs.getInt("trainer_id"),
+                            rs.getInt("customer_id"),
+                            rs.getString("appointment_day"),
+                            rs.getTime("appointment_time")
+                    );
+                } else {
+                    return null;
+                }
             }
         }
     }
@@ -43,10 +107,10 @@ public class AppointmentDAO {
                 while (rs.next()) {
                     Appointment appointment=new Appointment(
                             rs.getInt("id"),
-                            rs.getInt("personal_trainer_id"),
+                            rs.getInt("trainer_id"),
                             rs.getInt("customer_id"),
-                            rs.getDate("day"),
-                            rs.getTime("time"));
+                            rs.getString("appointment_day"),
+                            rs.getTime("appointment_time"));
                     appointments.add(appointment);
                 }
                 return appointments;
@@ -55,15 +119,13 @@ public class AppointmentDAO {
     }
 
 
-    public boolean addAppointment(int id, int personalTrainerId, int customerId, Date day, Time time) throws SQLException {
-        String query = "INSERT INTO Appointment (id,trainer_id, customer_id, appointment_day, appointment_time) VALUES (?, ?, ?, ?)";
+    public boolean addAppointment(int personalTrainerId, int customerId, String day, Time time) throws SQLException {
+        String query = "INSERT INTO Appointment (trainer_id, customer_id, appointment_day, appointment_time) VALUES (?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            java.sql.Date sqlDate = new java.sql.Date(day.getTime());
-            stmt.setInt(1, id);
-            stmt.setInt(2, personalTrainerId);
-            stmt.setInt(3, customerId);
-            stmt.setDate(4, sqlDate);
-            stmt.setTime(5, time);
+            stmt.setInt(1, personalTrainerId);
+            stmt.setInt(2, customerId);
+            stmt.setString(3, day);
+            stmt.setTime(4, time);
             return stmt.executeUpdate() > 0;
         }
     }

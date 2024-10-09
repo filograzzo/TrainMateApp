@@ -1,6 +1,9 @@
 package BusinessLogic.Service;
 
+import BusinessLogic.Service.Customer.BookAppointmentService;
 import BusinessLogic.Service.Customer.ProfileService;
+import BusinessLogic.Service.PersonalTrainer.AgendaService;
+import BusinessLogic.Service.PersonalTrainer.MachineService;
 import BusinessLogic.Service.PersonalTrainer.ProfilePTService;
 import DAO.*;
 import DomainModel.BaseUser;
@@ -9,6 +12,8 @@ import DomainModel.Customer;
 import DomainModel.PersonalTrainer;
 
 import java.sql.SQLException;
+import java.sql.Time;
+import java.util.ArrayList;
 import java.util.List;
 
 public class BaseUserService {
@@ -17,13 +22,18 @@ public class BaseUserService {
     public ScheduleDAO scheduleDAO;
     public ExerciseDetailDAO exerciseDetailDAO;
     private ProfileService profileService;
+    private AgendaService agendaService;
+    private MachineService machineService;
+    private BookAppointmentService bookAppointmentService;
     private BaseUser currentUser;
     private ProfilePTService profilePTService;
-    public BaseUserService(CustomerDAO customerDAO, PersonalTrainerDAO personalTrainerDAO, ProfileService profileService,ProfilePTService profilePTService) {
+    public BaseUserService(CustomerDAO customerDAO, PersonalTrainerDAO personalTrainerDAO, ProfileService profileService,ProfilePTService profilePTService,BookAppointmentService bookAppointmentService,AgendaService agendaService) {
         this.profileService = profileService;
         this.profilePTService = profilePTService;
         this.customerDAO = customerDAO;
         this.personalTrainerDAO = personalTrainerDAO;
+        this.bookAppointmentService=bookAppointmentService;
+        this.agendaService=agendaService;
     }
 
     public Customer loginUser(String username, String password,String email) {
@@ -33,6 +43,7 @@ public class BaseUserService {
                 return null;
             } else {
                 profileService.setCustomer((Customer)currentUser);
+                bookAppointmentService.setCurrentUser(currentUser);
                 return (Customer) currentUser;
 
             }
@@ -49,8 +60,27 @@ public class BaseUserService {
                 return null;
             } else {
                 profilePTService.setPersonalTrainer((PersonalTrainer)currentUser);
+                agendaService.setPersonalTrainer((PersonalTrainer)currentUser);
                 return (PersonalTrainer) currentUser;
+
+
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    public String getPTnamebyId(int id){
+        try {
+            return personalTrainerDAO.getNamePersonalTrainerbyId(id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    public String getCustomerNameById(int id){
+        try {
+            return customerDAO.getNameCustomerbyId(id);
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -62,11 +92,11 @@ public class BaseUserService {
                 System.err.println("This username has already been taken. Please choose another one.");
                 return false;
             } else {
-                    if(customerDAO.insertUser(username, password, email)) {
-                        int id=customerDAO.getIdUserCustomer(username);
-                        customerDAO.insertCustomer(id);
-                        currentUser = customerDAO.getCustomer(username, password,email);
-                    }
+                if(customerDAO.insertUser(username, password, email)) {
+                    int id=customerDAO.getIdUserCustomer(username);
+                    customerDAO.insertCustomer(id);
+                    currentUser = customerDAO.getCustomer(username, password,email);
+                }
                 System.out.println("The user has been registered successfully.");
                 return true;
             }
@@ -118,6 +148,10 @@ public class BaseUserService {
             return false;
         }
     }
+    public Customer getCustomerByUsername(String username) throws SQLException {
+        return customerDAO.getCustomerByUsername(username);
+    }
+
 
     public Customer getCustomerByUsername(String username) throws SQLException {
         return customerDAO.getCustomerByUsername(username);
@@ -163,7 +197,7 @@ public class BaseUserService {
         }
     }
 
-    public List<PersonalTrainer> getAllPersonalTrainers() {
+    public ArrayList<PersonalTrainer> getAllPersonalTrainers() {
         try {
             return personalTrainerDAO.getAllPersonalTrainers();
         } catch (SQLException e) {
@@ -193,6 +227,14 @@ public class BaseUserService {
             }else{
                 return false;
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    public boolean checkIfFreePT(int idPT, String day, Time time) {
+        try {
+            return personalTrainerDAO.checkIfFree(idPT, day, time);
         } catch (SQLException e) {
             e.printStackTrace();
             return false;

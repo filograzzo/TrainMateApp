@@ -20,9 +20,11 @@ public class AgendaService {
     private AppointmentDAO appointmentDAO;
 
     BaseUser currentUser;
-    public AgendaService(PersonalTrainerDAO personalTrainerDAO,CourseDAO courseDAO, ScheduleDAO scheduleDAO) {
+    public AgendaService(PersonalTrainerDAO personalTrainerDAO,CourseDAO courseDAO, ScheduleDAO scheduleDAO, AppointmentDAO appointmentDAO) {
         this.personalTrainerDAO = personalTrainerDAO;
         this.courseDAO = courseDAO;
+        this.appointmentDAO = appointmentDAO;
+
     }
     public void setPersonalTrainer(BaseUser currentUser) {
         this.currentUser = currentUser;
@@ -41,16 +43,6 @@ public class AgendaService {
         return appointmentDAO.getAppointmentsPT(currentUser.getId());
     }
 
-
-    public boolean addCourse(String name, int maxParticipants, int trainerID, String bodyPartsTrained, String day,Time time) throws SQLException {
-        courseDAO.addCourse(name, maxParticipants, trainerID, bodyPartsTrained,day,time);
-        int id = courseDAO.getMaxCourseId();
-        if(((PersonalTrainer)currentUser).addCourseToList(new Course(id, name, maxParticipants, trainerID, bodyPartsTrained,time,day))){
-            return true;
-        }else{
-            return false;
-        }
-    }
     public boolean deleteCourse(int courseId) throws SQLException {
         return courseDAO.deleteCourse(courseId);
     }
@@ -69,8 +61,16 @@ public class AgendaService {
         }
 
     }
-    public boolean addAppointment(int id, int customerId, Date day, Time time) throws SQLException {
-        return appointmentDAO.addAppointment(id, currentUser.getId(), customerId, day, time);
+
+
+    public boolean addCourse(String name, int maxParticipants, int trainerID, String bodyPartsTrained, String day,Time time) throws SQLException {
+        courseDAO.addCourse(name, maxParticipants, trainerID, bodyPartsTrained,day,time);
+        int id = courseDAO.getMaxCourseId();
+        if(((PersonalTrainer)currentUser).addCourseToList(new Course(id, name, maxParticipants, trainerID, bodyPartsTrained,time,day))){
+            return true;
+        }else{
+            return false;
+        }
     }
     public boolean removeAppointment(int appointmentId) throws SQLException {
         return appointmentDAO.removeAppointment(appointmentId);

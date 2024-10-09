@@ -9,10 +9,10 @@ public class Appointment {
     private static int id;
     private int personalTrainerId;
     private int customerId;
-    private Date day;
+    private String day;
     private Time time;
 
-    public Appointment( int id, int personalTrainerId, int customerId, Date day, Time time) {
+    public Appointment( int id, int personalTrainerId, int customerId, String day, Time time) {
         this.id=id;
         this.personalTrainerId = personalTrainerId;
         this.customerId = customerId;
@@ -43,11 +43,11 @@ public class Appointment {
         this.customerId = customerId;
     }
 
-    public Date getDay() {
+    public String getDay() {
         return day;
     }
 
-    public void setDay(Date day) {
+    public void setDay(String day) {
         this.day = day;
     }
 

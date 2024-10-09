@@ -210,4 +210,12 @@ public class NavigationManager {
         exerciseDetailView.setSize(frameSize);
         exerciseDetailView.setLocation(frameLocation);
     }
+    public void navigateToBookAppointment(){
+        frameSize = currentFrame.getSize();
+        frameLocation = currentFrame.getLocation();
+        currentFrame.dispose();
+        BookAppointment bookAppointment = new BookAppointment(engine);
+        bookAppointment.setSize(frameSize);
+        bookAppointment.setLocation(frameLocation);
+    }
 }

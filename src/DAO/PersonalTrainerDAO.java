@@ -3,10 +3,7 @@ package DAO;
 import DomainModel.BaseUser;
 import DomainModel.PersonalTrainer;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -125,6 +122,25 @@ public class PersonalTrainerDAO {
             }
         }
     }
+    public PersonalTrainer getPTbyId(int id)throws SQLException{
+        String query = "SELECT * FROM User JOIN PersonalTrainer ON User.id = PersonalTrainer.id WHERE User.id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new PersonalTrainer(
+                            rs.getInt("id"),
+                            rs.getString("username"),
+                            rs.getString("password"),
+                            rs.getString("email")
+                    );
+                } else {
+                    return null;
+                }
+            }
+        }
+
+    }
 
     // Delete a user from the User table
     public boolean deleteUserPT(String username, String password, String email) throws SQLException {
@@ -190,9 +206,9 @@ public class PersonalTrainerDAO {
     }
 
     // Retrieve all personal trainers from the PersonalTrainer table
-    public List<PersonalTrainer> getAllPersonalTrainers() throws SQLException {
+    public ArrayList<PersonalTrainer> getAllPersonalTrainers() throws SQLException {
         String query = "SELECT * FROM PersonalTrainer";
-        List<PersonalTrainer> personalTrainers = new ArrayList<>();
+        ArrayList<PersonalTrainer> personalTrainers = new ArrayList<>();
 
         try (PreparedStatement stmt = connection.prepareStatement(query);
              ResultSet rs = stmt.executeQuery()) {
@@ -220,6 +236,30 @@ public class PersonalTrainerDAO {
                 e.printStackTrace();
                 throw e;
             }
+        }
+    }
+
+    public boolean checkIfFree(int id, String day, Time time) throws SQLException {
+        boolean result = false;
+        boolean result2 = false;
+        String query = "SELECT * FROM Appointment WHERE trainer_id = ? AND appointment_day = ? AND appointment_time = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, id);
+            stmt.setString(2, day);
+            stmt.setTime(3, time);
+            try (ResultSet rs = stmt.executeQuery()) {
+                result = !rs.next();
+            }
+        }
+        String query2 = "SELECT * FROM Course WHERE trainer_id = ? AND day = ? AND time = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query2)) {
+            stmt.setInt(1, id);
+            stmt.setString(2, day);
+            stmt.setTime(3, time);
+            try (ResultSet rs2 = stmt.executeQuery()) {
+                result2 = !rs2.next();
+            }
+            return result && result2;
         }
     }
 }

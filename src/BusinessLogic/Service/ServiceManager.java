@@ -70,10 +70,10 @@ public class ServiceManager {
 
         profileService= new ProfileService(customerDAO);
         profilePTService= new ProfilePTService(personalTrainerDAO);
-        baseUserService = new BaseUserService(customerDAO, personalTrainerDAO, profileService, profilePTService);
-        agendaService = new AgendaService(personalTrainerDAO,courseDAO, scheduleDAO);
+        bookAppointmentService = new BookAppointmentService(appointmentDAO, personalTrainerDAO);
+        agendaService = new AgendaService(personalTrainerDAO,courseDAO, scheduleDAO, appointmentDAO);
+        baseUserService = new BaseUserService(customerDAO, personalTrainerDAO, profileService, profilePTService, bookAppointmentService, agendaService);
         bookCourseService = new BookCourseService(courseDAO, signedDAO);
-        bookAppointmentService = new BookAppointmentService(appointmentDAO);
         scheduleService = new ScheduleService(scheduleDAO, excerciseDetailDAO);
         trainingService = new TrainingService(trainingDAO);
         exerciseDetailService = new ExerciseDetailService(excerciseDetailDAO, exerciseDAO);

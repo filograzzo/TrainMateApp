@@ -2,7 +2,6 @@ package View;
 
 import Controller.Engine;
 import Controller.NavigationManager;
-import DomainModel.BaseUser;
 
 import javax.swing.*;
 import java.awt.*;
@@ -44,7 +43,7 @@ public class HomePT extends JFrame {
         logoutButton.addActionListener(e -> {
             // Logic to handle logout
             engine.logout();
-                navigationManager.navigateToLoginPage();
+            navigationManager.navigateToLoginPage();
         });
         topPanel.add(logoutButton);
 
