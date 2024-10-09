@@ -233,7 +233,7 @@ public class TrainingCustomerView extends JFrame {
 
     private JButton createBackButton() {
         JButton backButton = new JButton("Back");
-        backButton.addActionListener(e -> navigationManager.navigateToHomePT());
+        backButton.addActionListener(e -> navigationManager.navigateToHomeCustomer());
         return backButton;
     }
 }
