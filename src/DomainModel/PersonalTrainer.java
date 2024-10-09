@@ -10,12 +10,19 @@ public class PersonalTrainer extends BaseUser {
 
     //fixme: trovare un metodo per rendere questo costruttore non pubblico ma allo stesso tempo accedibile solo da service e dao
 
+
+
     //TODO:aggiungere una classe agenda e avere un oggetto agenda come attributo del PT
     public PersonalTrainer(int id, String username, String password, String email) {
         super(id, username, password, email);
     }
 
     ArrayList<Course> courses = new ArrayList<>();
+    ArrayList<Appointment> appointments= new ArrayList<>();
+    public boolean addAppointmentToList(Appointment appointment) {
+        appointments.add(appointment);
+        return true;
+    }
     public boolean addCourseToList(Course course) {
         courses.add(course);
         return true;
@@ -28,7 +35,9 @@ public class PersonalTrainer extends BaseUser {
         }
         return null;
     }
-
+    public ArrayList<Appointment> getAppointmentList(){
+        return appointments;
+    }
 
 
 }

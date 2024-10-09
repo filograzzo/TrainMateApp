@@ -39,6 +39,14 @@ public class HomePT extends JFrame {
         });
         mainPanel.add(topPanel, BorderLayout.NORTH);
 
+        JButton logoutButton = new JButton("Logout");
+        logoutButton.addActionListener(e -> {
+            // Logic to handle logout
+            engine.logout();
+            navigationManager.navigateToLoginPage();
+        });
+        topPanel.add(logoutButton);
+
         // Create the central panel with a GridLayout
         JPanel centralPanel = new JPanel(new GridLayout(5, 1, 10, 10));
         JButton viewAgendaButton = new JButton("View Agenda");//nella pagina agenda visualizza corsi da tenere e gestisce qui gli appuntamenti con clienti
@@ -61,9 +69,19 @@ public class HomePT extends JFrame {
 
         JButton assignSchedulesButton = new JButton("Assign Schedules");
         assignSchedulesButton.addActionListener(e -> {
-            //#TODO
+            try {
+                navigationManager.navigateToSchedulesAssignmentPT();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
         });
         centralPanel.add(assignSchedulesButton);
+
+        JButton manageExercisesButton = new JButton("Manage Exercises");
+        manageExercisesButton.addActionListener(e -> {
+            navigationManager.navigateToExercisesPT();
+        });
+        centralPanel.add(manageExercisesButton);
 
         // Add the central panel to the main panel
         mainPanel.add(centralPanel, BorderLayout.CENTER);

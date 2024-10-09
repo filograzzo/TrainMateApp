@@ -7,7 +7,6 @@ public class Customer extends BaseUser {
     //Questa classe è una classe di oggetti temporanei: i dati restano sempre salvati nel database e solo al momento del login
     //voglio compiere un'azione allora viene creato un oggetto User che, essendo il costruttore package private,
     //può essere chiamato solo all'interno dello stesso package da altri metodi (nel nostro caso solo dal metodo per il login).
-    private AppointmentList appointmentList;
     private ArrayList<Course> courses;
     private PersonalTrainer personalTrainer;
     private float height;
@@ -23,6 +22,7 @@ public class Customer extends BaseUser {
       super(id,username, password, email);
 
     }
+    private AppointmentList appointmentList=new AppointmentList(this.getId());
     public AppointmentList getAppointmentList() {
         return appointmentList;
     }
@@ -63,11 +63,6 @@ public class Customer extends BaseUser {
 
     public void setGoal(String goal){
         this.goal = goal;
-    }
-    // Calcolo del BMI
-    private double calculateBMI() {
-        double heightInMeters = height / 100.0;
-        return weight / (heightInMeters * heightInMeters);
     }
 
 

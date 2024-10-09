@@ -24,6 +24,22 @@ public class CustomerDAO {
             }
         }
     }
+    public String getNameCustomerbyId(int id)throws SQLException{
+        String query = "SELECT username FROM User WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("username");
+                } else {
+                    return null;
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+    }
 
     public boolean emailExists(String email)throws SQLException {//checkCredentials
         String query = "SELECT * FROM User WHERE email = ?";
@@ -225,6 +241,35 @@ public class CustomerDAO {
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, clientId);
             return stmt.executeUpdate() > 0;
+        }
+    }
+    public Customer getCustomerByUsername(String username) throws SQLException {
+        String query = "SELECT * " +
+                "FROM User " +
+                "JOIN Customer ON User.id = Customer.id " +
+                "WHERE User.username = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, username);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    int fetchedId = rs.getInt("id");
+                    Customer customer = new Customer(
+                            fetchedId,
+                            rs.getString("username"),
+                            rs.getString("password"),
+                            rs.getString("email")
+                    );
+                    customer.setHeight(rs.getFloat("height"));
+                    customer.setWeight(rs.getFloat("weight"));
+                    customer.setAge(rs.getInt("age"));
+                    customer.setGender(rs.getString("gender"));
+                    customer.setGoal(rs.getString("goal"));
+                    return customer;
+                } else {
+                    return null; // Return null if no customer is found with the given username
+                }
+            }
         }
     }
 

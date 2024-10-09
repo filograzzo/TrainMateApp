@@ -7,6 +7,7 @@ import BusinessLogic.Service.Customer.ProfileService;
 import BusinessLogic.Service.PersonalTrainer.AgendaService;
 import BusinessLogic.Service.PersonalTrainer.MachineService;
 import BusinessLogic.Service.PersonalTrainer.ProfilePTService;
+import BusinessLogic.Service.BaseUserService;
 import DomainModel.*;
 
 import java.sql.SQLException;
@@ -51,14 +52,18 @@ public class Engine {
             if(baseUserService.checkCredentialsCustomer(username,password,email)){
                 this.user = baseUserService.getCurrentUser();
                 System.out.println("The user has been logged in successfully.");
+
+                NavigationManager navigationManager = NavigationManager.getIstance(null);  // Supponiamo di passare null temporaneamente
+                navigationManager.setEngine(this);
+                navigationManager.setCurrentUser(this.user);
+
                 ProfileService ps = (ProfileService) sf.getService(sf.PROFILE_SERVICE);
                 ps.setCustomer((Customer)user);
-                logged = true;
                 BookAppointmentService bas = (BookAppointmentService) sf.getService(sf.BOOKAPPOINTMENT_SERVICE);
                 bas.setCurrentUser(user);
                 BookCourseService bcs = (BookCourseService) sf.getService(sf.BOOKCOURSE_SERVICE);
                 bcs.setCurrentUser(user);
-
+                logged = true;
 
             }else{
                 System.out.println("Credenziali errate");
@@ -76,6 +81,11 @@ public class Engine {
             if(baseUserService.checkCredentialsPT(username,password,email)){
                 this.user = baseUserService.getCurrentUser();
                 System.out.println("The Personal Trainer has been logged in successfully.");
+
+                NavigationManager navigationManager = NavigationManager.getIstance(null);  // Supponiamo di passare null temporaneamente
+                navigationManager.setEngine(this);
+                navigationManager.setCurrentUser(this.user);
+
                 ProfilePTService pps = (ProfilePTService) sf.getService(sf.PROFILEPT_SERVICE);
                 pps.setPersonalTrainer((PersonalTrainer)user);
                 AgendaService as = (AgendaService) sf.getService(sf.AGENDA_SERVICE);
@@ -113,6 +123,14 @@ public class Engine {
         return user;
     }
     /*Personal Trainer*/
+    public String getPTname(int id){
+        BaseUserService baseUserService = (BaseUserService) sf.getService(sf.USER_SERVICE);
+        return baseUserService.getPTnamebyId(id);
+    }
+    public String getClientname(int id){
+        BaseUserService baseUserService = (BaseUserService) sf.getService(sf.USER_SERVICE);
+        return baseUserService.getCustomerNameById(id);
+    }
     public void modifyUsernamePT(String oldUsername, String username) {
         ProfilePTService profilePTService = (ProfilePTService) sf.getService(sf.PROFILEPT_SERVICE);
         try {
@@ -216,6 +234,24 @@ public class Engine {
             throw new RuntimeException(e);
         }
     }
+    public ArrayList<PersonalTrainer> getAllPersonalTrainers(){
+        BaseUserService baseUserService = (BaseUserService) sf.getService(sf.USER_SERVICE);
+        ArrayList<PersonalTrainer> personalTrainers = baseUserService.getAllPersonalTrainers();
+        if (personalTrainers.isEmpty()) {
+            System.out.println("No personal trainers found.");
+            return null;
+        } else {
+            return personalTrainers;
+        }
+    }
+    public boolean checkifFreePT(int id, String day, Time time){
+        BaseUserService baseUserService = (BaseUserService) sf.getService(sf.USER_SERVICE);
+        if(baseUserService.checkIfFreePT(id,day,time)){
+            return true;
+        }else{
+            return false;
+        }
+    }
     //TODO:AGENDA
     //COURSES
     public  ArrayList<Course> viewAvailableCourses(){
@@ -247,6 +283,32 @@ public class Engine {
             throw new RuntimeException(e);
         }
         return null;
+    }
+    public ArrayList<Appointment> viewAppointmentsToHave(){
+        AgendaService agendaService= (AgendaService) sf.getService(sf.AGENDA_SERVICE);
+        try {
+            ArrayList<Appointment> appointments = (ArrayList<Appointment>) agendaService.viewAppointments();
+            if (appointments.isEmpty()) {
+                System.out.println("No appointments found.");
+            } else {
+                return appointments;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+    public List<Machine> viewMachinesToTake(){
+        MachineService machineService = (MachineService) sf.getService(sf.MACHINE_SERVICE);
+        try{
+            List<Machine> machines = machineService.getAllMachines();
+            if(machines.isEmpty()) {
+                System.out.println("No machines to take.");
+            }else{return machines;}
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }return null;
     }
 
 
@@ -291,22 +353,63 @@ public class Engine {
             return null;
         }
     }
-
-
-    public void addAppointment(int id, int customerId, Date day, Time time){
-        AgendaService agendaService = (AgendaService) sf.getService(sf.AGENDA_SERVICE);
+    public boolean bookAppointment(int PTid, int customerId, String day, Time time){
+        BookAppointmentService bookAppointmentService = (BookAppointmentService) sf.getService(sf.BOOKAPPOINTMENT_SERVICE);
         try{
-            agendaService.addAppointment(id,customerId, (java.sql.Date) day,time);
+            if(bookAppointmentService.bookAppointment(customerId,PTid,day,time)){
+                System.out.println("Appointment successfully booked.");
+                return true;
+            }else{
+                System.out.println("Appointment not booked.");
+                return false;
+            }
         }catch(Exception e){
             e.printStackTrace();
         }
+        return false;
     }
-    public void removeAppointment(int id){
-        AgendaService agendaService = (AgendaService) sf.getService(sf.AGENDA_SERVICE);
+    public int getAppointmentIdbyDAYandTime(String day, Time time){
+        BookAppointmentService bookAppointmentService = (BookAppointmentService) sf.getService(sf.BOOKAPPOINTMENT_SERVICE);
         try{
-            agendaService.removeAppointment(id);
+            return bookAppointmentService.getAppointmentidByDayandTime(day,time);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+
+    public int getPTidByAppointmentId(int id){
+        BookAppointmentService bookAppointmentService = (BookAppointmentService) sf.getService(sf.BOOKAPPOINTMENT_SERVICE);
+        try{
+            return bookAppointmentService.getPTidByAppointmentId(id);
+        }catch(Exception e){
+            e.printStackTrace();
+        } return 0;
+    }
+
+    public ArrayList<Appointment> getAllAppointments(int customerId){
+        BookAppointmentService bookAppointmentService = (BookAppointmentService) sf.getService(sf.BOOKAPPOINTMENT_SERVICE);
+        try{
+            return (ArrayList<Appointment>) bookAppointmentService.viewAppointments(customerId);
         }catch(Exception e){
             e.printStackTrace();}
+        return null;
+    }
+    public boolean removeAppointment(int id,int PTid){
+        BookAppointmentService bookAppointmentService = (BookAppointmentService) sf.getService(sf.BOOKAPPOINTMENT_SERVICE);
+        try{
+            if(bookAppointmentService.cancelAppointment(id,PTid)){
+                System.out.println("Appointment successfully canceled.");
+                return true;
+            }else{
+                System.out.println("Appointment not canceled.");
+                return false;
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return false;
     }
     //CUSTOMER
     public boolean bookCourse(int courseId){
@@ -341,26 +444,47 @@ public class Engine {
             throw new RuntimeException(e);
         }
     }
-    //TODO: BOOK APPOINTMENT, BOOK COURSES
+
+    public Customer getCustomerByUsername(String username) throws SQLException {
+        BaseUserService baseUserService = (BaseUserService) sf.getService(sf.USER_SERVICE);
+        return baseUserService.getCustomerByUsername(username);
+    }
+
+    public List<Customer> getAllCustomers(){
+        BaseUserService baseUserService = (BaseUserService) sf.getService(sf.USER_SERVICE);
+        List<Customer> customers = baseUserService.getAllCustomers();
+        List<Customer> customerToRemove = new ArrayList<Customer>();
+        for(Customer customer : customers){
+            boolean pt = baseUserService.isPersonalTrainer(customer);
+            if(pt){
+                customerToRemove.add(customer);
+            }
+        }
+        customers.removeAll(customerToRemove);
+        return customers;
+    }
+
 
     //SCHEDULE
 
-    public void createSchedule(BaseUser baseUser){
-        if(baseUser.isValid()) {
+    public void createSchedule(BaseUser baseUser, String newName) {
+        if (baseUser.isValid()) {
             ScheduleService scheduleService = (ScheduleService) sf.getService(sf.SCHEDULE_SERVICE);
             try {
-                System.out.println("What would you like to call your new schedule?");
-                String scheduleName = input.nextLine();
-
-                boolean done = scheduleService.createSchedule(baseUser, scheduleName);
+                boolean done = scheduleService.createSchedule(baseUser, newName);
                 if (!done) {
                     throw new CustomizedException("There has been an error in the creation of the schedule.");
+                } else {
+                    // Messaggio di successo
+                    System.out.println("Schedule created successfully.");
                 }
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             } catch (CustomizedException e) {
                 System.err.println(e.getMessage());
             }
+        } else {
+            System.err.println("User is not valid. Schedule creation aborted.");
         }
     }
 
@@ -380,36 +504,39 @@ public class Engine {
     }
 
     public void updateSchedule(BaseUser baseUser, Schedule schedule){
-        if(baseUser.isValid()){
-            ScheduleService scheduleService = (ScheduleService) sf.getService(sf.SCHEDULE_SERVICE);
-            try{
-                System.out.println("What do you want to change the name of the schedule to?");
+
+        ScheduleService scheduleService = (ScheduleService) sf.getService(sf.SCHEDULE_SERVICE);
+        try{
+                /*System.out.println("What do you want to change the name of the schedule to?");
                 String newName = input.nextLine();
                 schedule.setName(newName);
-                boolean done = scheduleService.updateSchedule(schedule);
-                if(!done)
-                    throw new CustomizedException("The update failed. You did not change the name of your schedule.");
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            } catch (CustomizedException e) {
-                throw new RuntimeException(e);
-            }
+                 */
+            boolean done = scheduleService.updateSchedule(schedule);
+            if(!done)
+                throw new CustomizedException("The update failed. You did not change the name of your schedule.");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (CustomizedException e) {
+            throw new RuntimeException(e);
         }
-    }
 
-    public List<Schedule> getSchedules(BaseUser baseUser){
+    }
+    public List<Schedule> getAllSchedules() throws SQLException {
+        ScheduleService scheduleService = (ScheduleService) sf.getService(sf.SCHEDULE_SERVICE);
+        return scheduleService.getAllSchedules();
+    }
+    public List<Schedule> getSchedulesByUsername(BaseUser baseUser){
         List <Schedule> schedules = new ArrayList<>();
         if(baseUser.isValid()){
             ScheduleService scheduleService = (ScheduleService) sf.getService(sf.SCHEDULE_SERVICE);
             try{
-                schedules = scheduleService.getSchedules(baseUser);
+                schedules = scheduleService.getSchedulesByUsername(baseUser);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
         }
         return schedules;
     }
-
     //TRAININGS
     public void createTraining(BaseUser baseUser) {
         if (baseUser.isValid()) {
@@ -521,11 +648,11 @@ public class Engine {
 
     //EXERCISEDETAIL
 
-    public void createExerciseDetail(BaseUser baseUser, Schedule schedule) {
-        if (baseUser.isValid()) {
-            ExerciseDetailService exerciseDetailService = (ExerciseDetailService) sf.getService(sf.EXERCISEDETAIL_SERVICE   );
-            try {
-                // Richiesta dati per l'ExerciseDetail
+    public void createExerciseDetail(int serie, int reps, int weight, int scheduleID, int exerciseID) {
+
+        ExerciseDetailService exerciseDetailService = (ExerciseDetailService) sf.getService(sf.EXERCISEDETAIL_SERVICE   );
+        try {
+                /*// Richiesta dati per l'ExerciseDetail
                 System.out.println("Enter the number of series:");
                 int serie = Integer.parseInt(input.nextLine());
 
@@ -553,46 +680,45 @@ public class Engine {
                     throw new CustomizedException("There has been some problem with the acquisition of the exercise id");
                 else {
                     done = exerciseDetailService.createExerciseDetail(serie, reps, weight, scheduleID, exerciseID);
-                }
+                }*/
+            boolean done = exerciseDetailService.createExerciseDetail(serie, reps, weight, scheduleID, exerciseID);
 
-                if (!done) {
-                    throw new RuntimeException("There has been an error in the creation of the exercise detail.");
-                } else {
-                    System.out.println("ExerciseDetail successfully created.");
-                }
-
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            } catch (NumberFormatException e) {
-                System.err.println("Invalid input. Please enter valid numbers for serie, reps, weight, scheduleID, and exerciseID.");
-            } catch (CustomizedException e) {
-                throw new RuntimeException(e);
+            if (!done) {
+                throw new RuntimeException("There has been an error in the creation of the exercise detail.");
+            } else {
+                System.out.println("ExerciseDetail successfully created.");
             }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (NumberFormatException e) {
+            System.err.println("Invalid input. Please enter valid numbers for serie, reps, weight, scheduleID, and exerciseID.");
         }
+
     }
 
-    public void deleteExerciseDetail(BaseUser baseUser, ExerciseDetail exerciseDetail) {
-        if (baseUser.isValid()) {
-            ExerciseDetailService exerciseDetailService = (ExerciseDetailService) sf.getService(sf.EXERCISEDETAIL_SERVICE   );
+    public void deleteExerciseDetail( ExerciseDetail exerciseDetail) {
 
-            try {
-                boolean done = exerciseDetailService.removeExerciseDetail(exerciseDetail);
-                if (!done) {
-                    throw new RuntimeException("There has been an error in the deletion of the exercise detail.");
-                } else {
-                    System.out.println("ExerciseDetail successfully deleted.");
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
+        ExerciseDetailService exerciseDetailService = (ExerciseDetailService) sf.getService(sf.EXERCISEDETAIL_SERVICE   );
+
+        try {
+            boolean done = exerciseDetailService.removeExerciseDetail(exerciseDetail);
+            if (!done) {
+                throw new RuntimeException("There has been an error in the deletion of the exercise detail.");
+            } else {
+                System.out.println("ExerciseDetail successfully deleted.");
             }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
+
     }
 
-    public void updateExerciseDetail(BaseUser baseUser, ExerciseDetail exerciseDetail) {
-        if (baseUser.isValid()) {
-            ExerciseDetailService exerciseDetailService = (ExerciseDetailService) sf.getService(sf.EXERCISEDETAIL_SERVICE   );
-            try {
-                System.out.println("Enter the new number of series:");
+    public void updateExerciseDetail(int id, int serie, int reps, int weight, int scheduleID, int exerciseID) {
+
+        ExerciseDetailService exerciseDetailService = (ExerciseDetailService) sf.getService(sf.EXERCISEDETAIL_SERVICE   );
+        try {
+                /*System.out.println("Enter the new number of series:");
                 int serie = Integer.parseInt(input.nextLine());
 
                 System.out.println("Enter the new number of repetitions:");
@@ -617,22 +743,21 @@ public class Engine {
                     throw new CustomizedException("There has been some problem with the acquisition of the exercise id");
                 else {
                     done = exerciseDetailService.updateExerciseDetail(exerciseDetail.getId(), serie, reps, weight, exerciseID);
-                }
+                }*/
 
-                if (!done) {
-                    throw new RuntimeException("There has been an error in the update of the exercise detail.");
-                } else {
-                    System.out.println("ExerciseDetail successfully updated.");
-                }
-
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            } catch (NumberFormatException e) {
-                System.err.println("Invalid input. Please enter valid numbers for serie, reps, weight, scheduleID, and exerciseID.");
-            } catch (CustomizedException e) {
-                throw new RuntimeException(e);
+            boolean done = exerciseDetailService.updateExerciseDetail(id, serie, reps, weight, exerciseID);
+            if (!done) {
+                throw new RuntimeException("There has been an error in the update of the exercise detail.");
+            } else {
+                System.out.println("ExerciseDetail successfully updated.");
             }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (NumberFormatException e) {
+            System.err.println("Invalid input. Please enter valid numbers for serie, reps, weight, scheduleID, and exerciseID.");
         }
+
     }
 
     public void getExerciseDetailById(BaseUser baseUser, int exerciseDetailID) {
@@ -661,14 +786,20 @@ public class Engine {
         }
     }
 
+    public List<ExerciseDetail> getExerciseDetailsBySchedule(int schedule_id) throws SQLException {
+        ExerciseDetailService exerciseDetailService =  (ExerciseDetailService) sf.getService(sf.EXERCISEDETAIL_SERVICE);
+        return exerciseDetailService.getExerciseDetailsBySchedule(schedule_id);
+
+    }
+
     // EXERCISES
 
     // Solo PT (Personal Trainer)
-    public void createExercise(PersonalTrainer personalTrainer) {
-        if (personalTrainer.isValid()) {
-            ExerciseService exerciseService = (ExerciseService) sf.getService(sf.EXERCISE_SERVICE);
-            try {
-                // Inserimento dei dati per l'esercizio
+    public void createExercise(String name, String category, String machine, String description) {
+
+        ExerciseService exerciseService = (ExerciseService) sf.getService(sf.EXERCISE_SERVICE);
+        try {
+                /*// Inserimento dei dati per l'esercizio
                 System.out.println("Enter exercise name:");
                 String name = input.nextLine();
 
@@ -692,47 +823,46 @@ public class Engine {
 
                 System.out.println("Enter a description:");
                 String description = input.nextLine();
-
-                // Creazione dell'esercizio
-                boolean done = exerciseService.createExercise(name, category, machine, description);
-                if (!done) {
-                    throw new CustomizedException("There has been an error in the creation of the exercise.");
-                } else {
-                    System.out.println("Exercise successfully created.");
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            } catch (CustomizedException e) {
-                System.err.println(e.getMessage());
+*/
+            // Creazione dell'esercizio
+            boolean done = exerciseService.createExercise(name, category, machine, description);
+            if (!done) {
+                throw new CustomizedException("There has been an error in the creation of the exercise.");
+            } else {
+                System.out.println("Exercise successfully created.");
             }
-        } else {
-            System.out.println("Only personal trainers can create exercises.");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (CustomizedException e) {
+            System.err.println(e.getMessage());
         }
     }
 
+    public String getExerciseNameById(int id) throws SQLException {
+        ExerciseService exerciseService = (ExerciseService) sf.getService(sf.EXERCISE_SERVICE);
+        return exerciseService.getExerciseNameById(id);
+    }
     // Solo PT (Personal Trainer)
-    public void deleteExercise(PersonalTrainer personalTrainer, Exercise exercise) {
-        if (personalTrainer.isValid()) {
-            ExerciseService exerciseService = (ExerciseService) sf.getService(sf.EXERCISE_SERVICE);
-            try {
-                if (exercise == null) {
-                    throw new CustomizedException("The exercise does not exist.");
-                }
+    public void deleteExercise(Exercise exercise) {
 
-                boolean done = exerciseService.deleteExercise(exercise);
-                if (!done) {
-                    throw new CustomizedException("There has been an error in the deletion of the exercise.");
-                } else {
-                    System.out.println("Exercise successfully deleted.");
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            } catch (CustomizedException e) {
-                System.err.println(e.getMessage());
+        ExerciseService exerciseService = (ExerciseService) sf.getService(sf.EXERCISE_SERVICE);
+        try {
+            if (exercise == null) {
+                throw new CustomizedException("The exercise does not exist.");
             }
-        } else {
-            System.out.println("Only personal trainers can delete exercises.");
+
+            boolean done = exerciseService.deleteExercise(exercise);
+            if (!done) {
+                throw new CustomizedException("There has been an error in the deletion of the exercise.");
+            } else {
+                System.out.println("Exercise successfully deleted.");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (CustomizedException e) {
+            System.err.println(e.getMessage());
         }
+
     }
 
 
@@ -789,6 +919,11 @@ public class Engine {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public int getExerciseIdByName(String name) throws SQLException {
+        ExerciseDetailService exerciseDetailService =  (ExerciseDetailService) sf.getService(sf.EXERCISEDETAIL_SERVICE);
+        return exerciseDetailService.getExerciseIdByName(name);
     }
 
     //MACHINE
@@ -1001,20 +1136,6 @@ public class Engine {
 
         return exercises;
     }
-
-    public List<Machine> viewMachinesToTake(){
-        MachineService machineService = (MachineService) sf.getService(sf.MACHINE_SERVICE);
-        try{
-            List<Machine> machines = machineService.getAllMachines();
-            if(machines.isEmpty()) {
-                System.out.println("No machines to take.");
-            }else{return machines;}
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }return null;
-    }
-
-
 
 
 }

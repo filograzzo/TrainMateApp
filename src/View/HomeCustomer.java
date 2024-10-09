@@ -38,6 +38,15 @@ public class HomeCustomer extends JFrame {
         });
         mainPanel.add(topPanel, BorderLayout.NORTH);
 
+        JButton logoutButton = new JButton("Logout");
+        logoutButton.addActionListener(e -> {
+            // Logic to handle logout
+            engine.logout();
+            navigationManager.navigateToLoginPage();
+        });
+        topPanel.add(logoutButton);
+
+
         // Create the central panel with a GridLayout
         JPanel centralPanel = new JPanel(new GridLayout(5, 1, 10, 10));
         JButton viewCoursesButton = new JButton("View Courses");
@@ -46,7 +55,12 @@ public class HomeCustomer extends JFrame {
         });
         centralPanel.add(viewCoursesButton);
 
-        centralPanel.add(new JButton("Book Appointment"));
+        JButton viewBookAppointment = new JButton("Book Appointment");
+        viewBookAppointment.addActionListener(e -> {
+            navigationManager.navigateToBookAppointment();
+        });
+        centralPanel.add(viewBookAppointment);
+
         centralPanel.add(new JButton("View Schedule"));
         centralPanel.add(new JButton("View Trainings"));
         centralPanel.add(new JButton("View Exercises"));

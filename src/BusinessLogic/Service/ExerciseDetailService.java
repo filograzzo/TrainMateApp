@@ -6,6 +6,7 @@ import DomainModel.BaseUser;
 import DomainModel.ExerciseDetail;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public class ExerciseDetailService {
     private ExerciseDetailDAO exerciseDetailDAO;
@@ -41,5 +42,9 @@ public class ExerciseDetailService {
 
     public int getExerciseIdByName(String exerciseName) throws SQLException {
         return exerciseDAO.getExerciseIdByName(exerciseName);
+    }
+
+    public List<ExerciseDetail> getExerciseDetailsBySchedule(int schedule_id) throws SQLException {
+        return exerciseDetailDAO.getExerciseDetailsByScheduleId(schedule_id);
     }
 }

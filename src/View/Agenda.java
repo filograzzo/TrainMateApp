@@ -2,13 +2,17 @@ package View;
 
 import Controller.Engine;
 import Controller.NavigationManager;
+import DomainModel.Appointment;
 import DomainModel.Course;
 
 import javax.swing.*;
 import java.awt.*;
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.text.SimpleDateFormat;
+
 
 public class Agenda extends JFrame {
     private Engine engine;
@@ -22,7 +26,8 @@ public class Agenda extends JFrame {
         setupWindow();
         JPanel mainPanel = createMainPanel();
         add(mainPanel);
-        populateAgenda(); // Call this method to populate the agenda on load
+        populateAgendawithCourses(); // Call this method to populate the agenda on load
+        populateAgendawithAppointments();
         setVisible(true);
     }
 
@@ -37,7 +42,7 @@ public class Agenda extends JFrame {
         calendarPanel = new JPanel(new GridBagLayout()); // Use GridBagLayout for flexible positioning
         GridBagConstraints gbc = new GridBagConstraints();
         days = Arrays.asList("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday");
-        times = new String[]{"9:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"};
+        times = new String[]{"09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"};
 
         // Add empty top-left corner
         gbc.gridx = 0;
@@ -87,31 +92,59 @@ public class Agenda extends JFrame {
     }
 
     // Method to populate the agenda with courses
-    public void populateAgenda() {
+    public void populateAgendawithCourses() {
         List<Course> courses = engine.viewCoursesToTake();  // Retrieve courses via Engine
-
         if (courses == null || courses.isEmpty()) {
             System.out.println("No courses to display.");
             return;
-        }
+        }else{
+            for (Course course : courses) {
+                // Extract the day and time information from the course
+                int dayIndex = getDayIndex(course.getDay());
+                int timeIndex = getTimeIndex(course.getTime());
 
-        for (Course course : courses) {
-            // Extract the day and time information from the course
-            int dayIndex = getDayIndex(course.getDay());
-            int timeIndex = getTimeIndex(course.getTime());
+                // Ensure indices are valid before populating the panel
+                if (dayIndex != -1 && timeIndex != -1) {
+                    JPanel slotPanel = getSlotPanel(dayIndex, timeIndex);
+                    slotPanel.setLayout(new BorderLayout());
 
-            // Ensure indices are valid before populating the panel
-            if (dayIndex != -1 && timeIndex != -1) {
-                JPanel slotPanel = getSlotPanel(dayIndex, timeIndex);
-                slotPanel.setLayout(new BorderLayout());
-
-                JLabel courseLabel = new JLabel("<html><b>" + course.getName(), SwingConstants.CENTER);
-                slotPanel.add(courseLabel, BorderLayout.CENTER);
-                slotPanel.setBackground(Color.LIGHT_GRAY); // Optional: highlight the slot for a course
+                    JLabel courseLabel = new JLabel("<html><b>" + course.getName(), SwingConstants.CENTER);
+                    slotPanel.add(courseLabel, BorderLayout.CENTER);
+                    slotPanel.setBackground(Color.LIGHT_GRAY); // Optional: highlight the slot for a course
+                }
             }
+
         }
     }
+    public void populateAgendawithAppointments(){
+        ArrayList<Appointment> appointments = engine.viewAppointmentsToHave();
+        if(appointments == null || appointments.isEmpty()){
+            System.out.println("No appointments to display.");
+            return;
+        }else{
+            System.out.println("Appointments to display.");
+            for(Appointment appointment: appointments){
+                // Extract the day and time information from the course
+                int dayIndex = getDayIndex(appointment.getDay());
+                int timeIndex = getTimeIndex(appointment.getTime());
 
+                System.out.println("Appointment for Day: " + appointment.getDay() + " has Day Index: " + dayIndex);
+                System.out.println("Appointment for Time: " + appointment.getTime() + " has Time Index: " + timeIndex);
+
+
+                // Ensure indices are valid before populating the panel
+                if (dayIndex != -1 && timeIndex != -1) {
+                    JPanel slotPanel = getSlotPanel(dayIndex, timeIndex);
+                    slotPanel.setLayout(new BorderLayout());
+
+                    JLabel appointmentLabel = new JLabel("<html>Appointment with<b>" +engine.getClientname( appointment.getCustomerId()), SwingConstants.CENTER);
+                    slotPanel.add(appointmentLabel, BorderLayout.CENTER);
+                    slotPanel.setBackground(Color.LIGHT_GRAY); // Optional: highlight the slot for a course
+                }
+            }
+        }
+
+    }
     // Helper method to map the course's day to the day index
     private int getDayIndex(String day) {
         List<String> daysOfWeek = Arrays.asList("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday");
@@ -120,14 +153,18 @@ public class Agenda extends JFrame {
 
     // Helper method to map the course's time to the time index
     private int getTimeIndex(Time time) {
-        String timeStr = time.toString().substring(0, 5);  // Extract "HH:mm" format
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+        String timeStr = timeFormat.format(time);  // Properly format the Time object
+        System.out.println("Comparing Time: " + timeStr);
         for (int i = 0; i < times.length; i++) {
             if (times[i].equals(timeStr)) {
                 return i;
             }
         }
+        System.out.println("Time index not found for: " + timeStr);
         return -1;
     }
+
     private JButton createBackButton() {
         JButton backButton = new JButton("Back");
         backButton.addActionListener(e -> navigationManager.navigateToHomePT());

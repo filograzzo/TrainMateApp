@@ -34,7 +34,16 @@ public class ScheduleService {
         return done;
     }
 
-    public List<Schedule> getSchedules(BaseUser baseUser) throws SQLException {
+    public List<Schedule> getAllSchedules() throws SQLException{
+        List<Schedule> schedules = scheduleDAO.getAllSchedules();
+
+        for (Schedule schedule : schedules){
+            schedule.setExercises(exerciseDetailDAO.getExerciseDetailsByScheduleId(schedule.getId()));
+        }
+
+        return schedules;
+    }
+    public List<Schedule> getSchedulesByUsername(BaseUser baseUser) throws SQLException {
         List<Schedule> schedules = scheduleDAO.getSchedulesByUsername(baseUser.getUsername());
 
         for (Schedule schedule : schedules){

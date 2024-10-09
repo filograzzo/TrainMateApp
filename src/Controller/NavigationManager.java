@@ -1,4 +1,6 @@
 package Controller;
+import DomainModel.BaseUser;
+import DomainModel.Schedule;
 import View.*;
 
 
@@ -13,6 +15,15 @@ public class NavigationManager {
     private Dimension frameSize;
     private Point frameLocation;
     private Engine engine;
+    private BaseUser currentUser;
+
+    public void setCurrentUser(BaseUser user) {
+        this.currentUser = user;
+    }
+
+    public BaseUser getCurrentUser() {
+        return currentUser;
+    }
 
     public void setEngine(Engine engine){
         this.engine = engine;
@@ -174,5 +185,37 @@ public class NavigationManager {
         MachinesPT machinesPT = new MachinesPT(engine);
         machinesPT.setSize(frameSize);
         machinesPT.setLocation(frameLocation);
+    }
+    public void navigateToExercisesPT(){
+        frameSize = currentFrame.getSize();
+        frameLocation = currentFrame.getLocation();
+        currentFrame.dispose();
+        ExercisesPT exercisesPT = new ExercisesPT(engine);
+        exercisesPT.setSize(frameSize);
+        exercisesPT.setLocation(frameLocation);
+    }
+    public void navigateToSchedulesAssignmentPT() throws SQLException {
+        frameSize = currentFrame.getSize();
+        frameLocation = currentFrame.getLocation();
+        currentFrame.dispose();
+        SchedulesAssignmentPT schedulesAssignmentPT = new SchedulesAssignmentPT(engine, currentUser);
+        schedulesAssignmentPT.setSize(frameSize);
+        schedulesAssignmentPT.setLocation(frameLocation);
+    }
+    public void navigateToExerciseDetailView(Schedule schedule) throws SQLException {
+        frameSize = currentFrame.getSize();
+        frameLocation = currentFrame.getLocation();
+        currentFrame.dispose();
+        ExerciseDetailView exerciseDetailView = new ExerciseDetailView(engine, schedule.getId());
+        exerciseDetailView.setSize(frameSize);
+        exerciseDetailView.setLocation(frameLocation);
+    }
+    public void navigateToBookAppointment(){
+        frameSize = currentFrame.getSize();
+        frameLocation = currentFrame.getLocation();
+        currentFrame.dispose();
+        BookAppointment bookAppointment = new BookAppointment(engine);
+        bookAppointment.setSize(frameSize);
+        bookAppointment.setLocation(frameLocation);
     }
 }
