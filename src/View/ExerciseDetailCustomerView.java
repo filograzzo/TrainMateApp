@@ -103,8 +103,8 @@ public class ExerciseDetailCustomerView extends JFrame {
         if (exerciseDetails != null) {
             listModel.clear();
             for (ExerciseDetail exerciseDetail : exerciseDetails) {
-                String exerciseDetailInfo = String.format("Series: %d, Reps: %d, Weight: %d, Exercise ID: %d",
-                        exerciseDetail.getSerie(), exerciseDetail.getReps(), exerciseDetail.getWeight(), exerciseDetail.getExercise());
+                String exerciseDetailInfo = String.format("Series: %d, Reps: %d, Weight: %d, Exercise: %s",
+                        exerciseDetail.getSerie(), exerciseDetail.getReps(), exerciseDetail.getWeight(), engine.getExerciseNameById(exerciseDetail.getExercise()));
                 listModel.addElement(exerciseDetailInfo);
             }
         } else {
