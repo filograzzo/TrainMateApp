@@ -631,35 +631,7 @@ public class Engine {
 
         ExerciseDetailService exerciseDetailService = (ExerciseDetailService) sf.getService(sf.EXERCISEDETAIL_SERVICE   );
         try {
-                /*// Richiesta dati per l'ExerciseDetail
-                System.out.println("Enter the number of series:");
-                int serie = Integer.parseInt(input.nextLine());
 
-                System.out.println("Enter the number of repetitions:");
-                int reps = Integer.parseInt(input.nextLine());
-
-                System.out.println("Enter the weight:");
-                int weight = Integer.parseInt(input.nextLine());
-
-                int scheduleID = schedule.getId();
-
-                boolean ok = false;
-                int exerciseID = 0;
-                while(!ok) {
-                    System.out.println("Enter the new exercise name:");
-                    String exerciseName = input.nextLine();
-
-                    exerciseID = exerciseDetailService.getExerciseIdByName(exerciseName);
-                    if (exerciseID == -1) {
-                        throw new CustomizedException("The exercise name you entered does not match any existing exercise name.");
-                    }else ok = true;
-                }
-                boolean done = false;
-                if(exerciseID == 0)
-                    throw new CustomizedException("There has been some problem with the acquisition of the exercise id");
-                else {
-                    done = exerciseDetailService.createExerciseDetail(serie, reps, weight, scheduleID, exerciseID);
-                }*/
             boolean done = exerciseDetailService.createExerciseDetail(serie, reps, weight, scheduleID, exerciseID);
 
             if (!done) {
@@ -697,33 +669,6 @@ public class Engine {
 
         ExerciseDetailService exerciseDetailService = (ExerciseDetailService) sf.getService(sf.EXERCISEDETAIL_SERVICE   );
         try {
-                /*System.out.println("Enter the new number of series:");
-                int serie = Integer.parseInt(input.nextLine());
-
-                System.out.println("Enter the new number of repetitions:");
-                int reps = Integer.parseInt(input.nextLine());
-
-                System.out.println("Enter the new weight:");
-                int weight = Integer.parseInt(input.nextLine());
-
-                boolean ok = false;
-                int exerciseID = 0;
-                while(!ok) {
-                    System.out.println("Enter the new exercise name:");
-                    String exerciseName = input.nextLine();
-
-                    exerciseID = exerciseDetailService.getExerciseIdByName(exerciseName);
-                    if (exerciseID == -1) {
-                        throw new CustomizedException("The exercise name you entered does not match any existing exercise name.");
-                    }else ok = true;
-                }
-                boolean done = false;
-                if(exerciseID == 0)
-                    throw new CustomizedException("There has been some problem with the acquisition of the exercise id");
-                else {
-                    done = exerciseDetailService.updateExerciseDetail(exerciseDetail.getId(), serie, reps, weight, exerciseID);
-                }*/
-
             boolean done = exerciseDetailService.updateExerciseDetail(id, serie, reps, weight, exerciseID);
             if (!done) {
                 throw new RuntimeException("There has been an error in the update of the exercise detail.");
@@ -778,31 +723,6 @@ public class Engine {
 
         ExerciseService exerciseService = (ExerciseService) sf.getService(sf.EXERCISE_SERVICE);
         try {
-                /*// Inserimento dei dati per l'esercizio
-                System.out.println("Enter exercise name:");
-                String name = input.nextLine();
-
-                boolean ok = false;
-                String category = "";
-                while (!ok) {
-                    // Inserimento e validazione della categoria
-                    System.out.println("Enter exercise category (Valid categories: " + Exercise.getValidCategories() + "):");
-                    category = input.nextLine();
-
-                    // Verifica se la categoria inserita è valida
-                    if (Exercise.getValidCategories().contains(category)) {
-                        ok = true;
-                    } else {
-                        System.out.println("Invalid category. Please enter one of the valid categories.");
-                    }
-                }
-
-                System.out.println("Enter machine used (or 'None' if no machine):");
-                String machine = input.nextLine();
-
-                System.out.println("Enter a description:");
-                String description = input.nextLine();
-*/
             // Creazione dell'esercizio
             boolean done = exerciseService.createExercise(name, category, machine, description);
             if (!done) {
@@ -845,13 +765,10 @@ public class Engine {
     }
 
 
-    public Exercise getExerciseByName() {
+    public Exercise getExerciseByName(String exerciseName) {
         ExerciseService exerciseService = (ExerciseService) sf.getService(sf.EXERCISE_SERVICE);
         try {
-            System.out.println("Enter the name of the exercise:");
-            String name = input.nextLine();
-
-            Exercise exercise = exerciseService.getExerciseByName(name);
+            Exercise exercise = exerciseService.getExerciseByName(exerciseName);
             if (exercise == null) {
                 throw new CustomizedException("This name does not refer to any existing exercise.");
             }else return exercise;

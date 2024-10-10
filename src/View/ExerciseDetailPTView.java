@@ -7,14 +7,13 @@ import DomainModel.ExerciseDetail;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.sql.SQLException;
 import java.util.List;
 
 public class ExerciseDetailPTView extends JFrame {
     private Engine engine;
-    private int scheduleID; // Viene passato dal contesto della schedule
+    private int scheduleID;
     private JList<String> exerciseDetailList;
     private DefaultListModel<String> listModel;
     private List<ExerciseDetail> exerciseDetails;
@@ -54,44 +53,47 @@ public class ExerciseDetailPTView extends JFrame {
         loadExerciseDetails();
         buttonPanel.add(createBackButton());
 
-        // Azione per aggiungere un dettaglio esercizio
-        addButton.addActionListener(new ActionListener() {
+        // Listener per doppio clic
+        exerciseDetailList.addMouseListener(new MouseAdapter() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                showAddExerciseDetailPanel();
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    int selectedIndex = exerciseDetailList.getSelectedIndex();
+                    if (selectedIndex != -1) {
+                        ExerciseDetail selectedExerciseDetail = exerciseDetails.get(selectedIndex);
+                        showExerciseDetails(selectedExerciseDetail);
+                    }
+                }
             }
         });
 
+        // Azione per aggiungere un dettaglio esercizio
+        addButton.addActionListener(e -> showAddExerciseDetailPanel());
+
         // Azione per eliminare un dettaglio esercizio
-        deleteButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int selectedIndex = exerciseDetailList.getSelectedIndex();
-                if (selectedIndex != -1) {
-                    ExerciseDetail selectedExerciseDetail = exerciseDetails.get(selectedIndex);
-                    engine.deleteExerciseDetail(selectedExerciseDetail);
-                    try {
-                        loadExerciseDetails();
-                    } catch (SQLException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(ExerciseDetailPTView.this, "Please select an exercise detail to delete.");
+        deleteButton.addActionListener(e -> {
+            int selectedIndex = exerciseDetailList.getSelectedIndex();
+            if (selectedIndex != -1) {
+                ExerciseDetail selectedExerciseDetail = exerciseDetails.get(selectedIndex);
+                engine.deleteExerciseDetail(selectedExerciseDetail);
+                try {
+                    loadExerciseDetails();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
                 }
+            } else {
+                JOptionPane.showMessageDialog(ExerciseDetailPTView.this, "Please select an exercise detail to delete.");
             }
         });
 
         // Azione per aggiornare un dettaglio esercizio
-        updateButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int selectedIndex = exerciseDetailList.getSelectedIndex();
-                if (selectedIndex != -1) {
-                    ExerciseDetail selectedExerciseDetail = exerciseDetails.get(selectedIndex);
-                    showUpdateExerciseDetailPanel(selectedExerciseDetail);
-                } else {
-                    JOptionPane.showMessageDialog(ExerciseDetailPTView.this, "Please select an exercise detail to update.");
-                }
+        updateButton.addActionListener(e -> {
+            int selectedIndex = exerciseDetailList.getSelectedIndex();
+            if (selectedIndex != -1) {
+                ExerciseDetail selectedExerciseDetail = exerciseDetails.get(selectedIndex);
+                showUpdateExerciseDetailPanel(selectedExerciseDetail);
+            } else {
+                JOptionPane.showMessageDialog(ExerciseDetailPTView.this, "Please select an exercise detail to update.");
             }
         });
 
@@ -99,7 +101,7 @@ public class ExerciseDetailPTView extends JFrame {
     }
 
     private void loadExerciseDetails() throws SQLException {
-        exerciseDetails = engine.getExerciseDetailsBySchedule(scheduleID);  // Recupera i dettagli degli esercizi per la schedule corrente
+        exerciseDetails = engine.getExerciseDetailsBySchedule(scheduleID);
         if (exerciseDetails != null) {
             listModel.clear();
             for (ExerciseDetail exerciseDetail : exerciseDetails) {
@@ -113,6 +115,17 @@ public class ExerciseDetailPTView extends JFrame {
         }
     }
 
+    private void showExerciseDetails(ExerciseDetail exerciseDetail) {
+        try {
+            Exercise exercise = engine.getExerciseByName(engine.getExerciseNameById(exerciseDetail.getExercise()));
+            String details = String.format("Name: %s\nCategory: %s\nDescription: %s\nMachine: %s",
+                    exercise.getName(), exercise.getCategory(), exercise.getDescription(), exercise.getMachine());
+            JOptionPane.showMessageDialog(this, details, "Exercise Details", JOptionPane.INFORMATION_MESSAGE);
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
     private void showAddExerciseDetailPanel() {
         JPanel addExerciseDetailPanel = new JPanel();
         JTextField serieField = new JTextField(5);
@@ -120,7 +133,7 @@ public class ExerciseDetailPTView extends JFrame {
         JTextField weightField = new JTextField(5);
         JComboBox<String> exerciseComboBox = new JComboBox<>();
 
-        List<Exercise> exercises = engine.getAllExercises();  // Recupera tutti gli esercizi esistenti
+        List<Exercise> exercises = engine.getAllExercises();
         for (Exercise exercise : exercises) {
             exerciseComboBox.addItem(exercise.getName());
         }
@@ -142,27 +155,19 @@ public class ExerciseDetailPTView extends JFrame {
         dialog.pack();
         dialog.setLocationRelativeTo(this);
 
-        submitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int serie = Integer.parseInt(serieField.getText());
-                int reps = Integer.parseInt(repsField.getText());
-                int weight = Integer.parseInt(weightField.getText());
-                String exerciseName = (String) exerciseComboBox.getSelectedItem();
-                int exerciseID = 0;
-                try {
-                    exerciseID = engine.getExerciseIdByName(exerciseName);
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                }
-
+        submitButton.addActionListener(e -> {
+            int serie = Integer.parseInt(serieField.getText());
+            int reps = Integer.parseInt(repsField.getText());
+            int weight = Integer.parseInt(weightField.getText());
+            String exerciseName = (String) exerciseComboBox.getSelectedItem();
+            int exerciseID;
+            try {
+                exerciseID = engine.getExerciseIdByName(exerciseName);
                 engine.createExerciseDetail(serie, reps, weight, scheduleID, exerciseID);
-                try {
-                    loadExerciseDetails();
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                }
+                loadExerciseDetails();
                 dialog.dispose();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
             }
         });
 
@@ -176,7 +181,7 @@ public class ExerciseDetailPTView extends JFrame {
         JTextField weightField = new JTextField(String.valueOf(exerciseDetail.getWeight()), 5);
         JComboBox<String> exerciseComboBox = new JComboBox<>();
 
-        List<Exercise> exercises = engine.getAllExercises();  // Recupera tutti gli esercizi esistenti
+        List<Exercise> exercises = engine.getAllExercises();
         for (Exercise exercise : exercises) {
             exerciseComboBox.addItem(exercise.getName());
         }
@@ -198,27 +203,19 @@ public class ExerciseDetailPTView extends JFrame {
         dialog.pack();
         dialog.setLocationRelativeTo(this);
 
-        submitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int serie = Integer.parseInt(serieField.getText());
-                int reps = Integer.parseInt(repsField.getText());
-                int weight = Integer.parseInt(weightField.getText());
-                String exerciseName = (String) exerciseComboBox.getSelectedItem();
-                int exerciseID = 0;
-                try {
-                    exerciseID = engine.getExerciseIdByName(exerciseName);
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                }
-
+        submitButton.addActionListener(e -> {
+            int serie = Integer.parseInt(serieField.getText());
+            int reps = Integer.parseInt(repsField.getText());
+            int weight = Integer.parseInt(weightField.getText());
+            String exerciseName = (String) exerciseComboBox.getSelectedItem();
+            int exerciseID;
+            try {
+                exerciseID = engine.getExerciseIdByName(exerciseName);
                 engine.updateExerciseDetail(exerciseDetail.getId(), serie, reps, weight, scheduleID, exerciseID);
-                try {
-                    loadExerciseDetails();
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                }
+                loadExerciseDetails();
                 dialog.dispose();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
             }
         });
 
