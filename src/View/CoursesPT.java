@@ -170,6 +170,7 @@ public class CoursesPT extends JFrame {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5); // Margini tra i componenti
         gbc.fill = GridBagConstraints.HORIZONTAL;
+        JDialog dialog = new JDialog(this, "Add Course", true);
 
         // Crea i campi di input
         JTextField nameField = new JTextField(20);
@@ -239,6 +240,8 @@ public class CoursesPT extends JFrame {
 
                     // Ricarica la lista dei corsi
                     loadCourses();
+                    dialog.dispose();
+
                 } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(CoursesPT.this, "Please enter valid data for Max Participants and Time.");
                 } catch (IllegalArgumentException ex) {
@@ -248,11 +251,12 @@ public class CoursesPT extends JFrame {
         });
 
         // Crea e mostra il dialogo per aggiungere il corso
-        JDialog dialog = new JDialog(this, "Add Course", true);
+
         dialog.setContentPane(addCoursePanel);
         dialog.pack();
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
+
     }
 
     private void loadCourses() {

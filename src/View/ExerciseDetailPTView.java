@@ -119,7 +119,7 @@ public class ExerciseDetailPTView extends JFrame {
         try {
             Exercise exercise = engine.getExerciseByName(engine.getExerciseNameById(exerciseDetail.getExercise()));
             String details = String.format("Name: %s\nCategory: %s\nDescription: %s\nMachine: %s",
-                    exercise.getName(), exercise.getCategory(), exercise.getDescription(), exercise.getMachine());
+                    exercise.getName(), exercise.getCategory(), exercise.getDescription(), engine.getMachineNameById(exercise.getMachine()));
             JOptionPane.showMessageDialog(this, details, "Exercise Details", JOptionPane.INFORMATION_MESSAGE);
         } catch (SQLException ex) {
             throw new RuntimeException(ex);
