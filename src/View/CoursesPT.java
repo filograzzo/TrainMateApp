@@ -93,38 +93,42 @@ public class CoursesPT extends JFrame {
                     JTextField nameField = new JTextField(selectedCourse.getName(), 20);
                     JTextField bodyPartsField = new JTextField(selectedCourse.getBodyPartsTrained(), 20);
                     JTextField maxParticipantsField = new JTextField(String.valueOf(selectedCourse.getMaxParticipants()), 20);
-                    JTextField dayField = new JTextField(selectedCourse.getDay(), 20);
                     JTextField timeField = new JTextField(selectedCourse.getTime().toString().substring(0, 5), 20);
 
-                    // Prima riga
+                    // Creiamo una JComboBox per selezionare il giorno (Monday - Sunday)
+                    String[] days = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+                    JComboBox<String> dayComboBox = new JComboBox<>(days);
+                    dayComboBox.setSelectedItem(selectedCourse.getDay()); // Imposta il giorno attualmente selezionato
+
+                    // Prima riga: Course Name
                     gbc.gridx = 0;
                     gbc.gridy = 0;
                     updateCoursePanel.add(new JLabel("Course Name:"), gbc);
                     gbc.gridx = 1;
                     updateCoursePanel.add(nameField, gbc);
 
-                    // Seconda riga
+                    // Seconda riga: Body Parts Trained
                     gbc.gridx = 0;
                     gbc.gridy = 1;
                     updateCoursePanel.add(new JLabel("Body Parts Trained:"), gbc);
                     gbc.gridx = 1;
                     updateCoursePanel.add(bodyPartsField, gbc);
 
-                    // Terza riga
+                    // Terza riga: Max Participants
                     gbc.gridx = 0;
                     gbc.gridy = 2;
                     updateCoursePanel.add(new JLabel("Max Participants:"), gbc);
                     gbc.gridx = 1;
                     updateCoursePanel.add(maxParticipantsField, gbc);
 
-                    // Quarta riga
+                    // Quarta riga: Selezione giorno con JComboBox
                     gbc.gridx = 0;
                     gbc.gridy = 3;
                     updateCoursePanel.add(new JLabel("On what day?:"), gbc);
                     gbc.gridx = 1;
-                    updateCoursePanel.add(dayField, gbc);
+                    updateCoursePanel.add(dayComboBox, gbc); // Aggiungi la JComboBox per il giorno
 
-                    // Quinta riga
+                    // Quinta riga: At what time? (HH:mm)
                     gbc.gridx = 0;
                     gbc.gridy = 4;
                     updateCoursePanel.add(new JLabel("At what time?(HH:mm):"), gbc);
@@ -144,11 +148,11 @@ public class CoursesPT extends JFrame {
                         String newName = nameField.getText();
                         int newMaxParticipants = Integer.parseInt(maxParticipantsField.getText());
                         String newBodyPartsTrained = bodyPartsField.getText();
-                        String newDate = dayField.getText();
+                        String newDay = (String) dayComboBox.getSelectedItem(); // Ottieni il nuovo giorno selezionato
                         String newTimeStr = timeField.getText() + ":00";
                         Time newTime = Time.valueOf(newTimeStr);
 
-                        engine.updateCourse(selectedCourse.getId(), newName, newMaxParticipants, selectedCourse.getIDTrainer(), newBodyPartsTrained, newDate, newTime);
+                        engine.updateCourse(selectedCourse.getId(), newName, newMaxParticipants, selectedCourse.getIDTrainer(), newBodyPartsTrained, newDay, newTime);
                         loadCourses();
                     }
                 } else {
@@ -156,6 +160,7 @@ public class CoursesPT extends JFrame {
                 }
             }
         });
+
 
 
 
@@ -176,14 +181,17 @@ public class CoursesPT extends JFrame {
         JTextField nameField = new JTextField(20);
         JTextField bodyPartsTrainedField = new JTextField(20);
         JTextField maxParticipantsField = new JTextField(20);
-        JTextField dayField = new JTextField(20);
         JTextField timeField = new JTextField(20);
 
+        // Creiamo una JComboBox per selezionare il giorno (Monday - Saturday)
+        String[] days = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+        JComboBox<String> dayComboBox = new JComboBox<>(days);
+
         // Prima riga: Course Name
-        gbc.gridx = 0; // Colonna 0
-        gbc.gridy = 0; // Riga 0
+        gbc.gridx = 0;
+        gbc.gridy = 0;
         addCoursePanel.add(new JLabel("Course Name:"), gbc);
-        gbc.gridx = 1; // Colonna 1
+        gbc.gridx = 1;
         addCoursePanel.add(nameField, gbc);
 
         // Seconda riga: Body Parts Trained
@@ -200,12 +208,12 @@ public class CoursesPT extends JFrame {
         gbc.gridx = 1;
         addCoursePanel.add(maxParticipantsField, gbc);
 
-        // Quarta riga (vai a capo): On what day?
+        // Quarta riga: Selezione giorno con JComboBox
         gbc.gridx = 0;
         gbc.gridy = 3;
         addCoursePanel.add(new JLabel("On what day?:"), gbc);
         gbc.gridx = 1;
-        addCoursePanel.add(dayField, gbc);
+        addCoursePanel.add(dayComboBox, gbc); // Aggiungi la JComboBox per il giorno
 
         // Quinta riga: At what time? (HH:mm)
         gbc.gridx = 0;
@@ -217,8 +225,8 @@ public class CoursesPT extends JFrame {
         // Aggiungi il bottone "Submit" alla fine
         gbc.gridx = 0;
         gbc.gridy = 5;
-        gbc.gridwidth = 2; // Estendi il bottone su entrambe le colonne
-        gbc.anchor = GridBagConstraints.CENTER; // Centra il bottone
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
         JButton submitButton = new JButton("Submit");
         addCoursePanel.add(submitButton, gbc);
 
@@ -231,7 +239,7 @@ public class CoursesPT extends JFrame {
                     String name = nameField.getText();
                     int maxParticipants = Integer.parseInt(maxParticipantsField.getText());
                     String bodyPartsTrained = bodyPartsTrainedField.getText();
-                    String day = dayField.getText();
+                    String day = (String) dayComboBox.getSelectedItem(); // Ottieni il giorno selezionato
                     String timeStr = timeField.getText() + ":00"; // Aggiungi i secondi
                     Time time = Time.valueOf(timeStr);
 
@@ -251,13 +259,12 @@ public class CoursesPT extends JFrame {
         });
 
         // Crea e mostra il dialogo per aggiungere il corso
-
         dialog.setContentPane(addCoursePanel);
         dialog.pack();
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
-
     }
+
 
     private void loadCourses() {
         courses = engine.viewCoursesToTake();
