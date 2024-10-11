@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class ExercisesCustomer extends JFrame {
     private List<Exercise> exercises;
     private NavigationManager navigationManager = NavigationManager.getIstance(this);
 
-    public ExercisesCustomer(Engine engine) {
+    public ExercisesCustomer(Engine engine) throws SQLException {
         this.engine = engine;
         setupWindow();
         JPanel mainPanel = createMainPanel();
@@ -33,7 +34,7 @@ public class ExercisesCustomer extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    private JPanel createMainPanel() {
+    private JPanel createMainPanel() throws SQLException {
         JPanel mainPanel = new JPanel(new BorderLayout());
         listModel = new DefaultListModel<>();
         exerciseList = new JList<>(listModel);
@@ -58,7 +59,11 @@ public class ExercisesCustomer extends JFrame {
                 } else if ("Ordina per Categoria".equals(selectedSort)) {
                     exercises.sort(Comparator.comparing(Exercise::getCategory));
                 }
-                updateExerciseList();
+                try {
+                    updateExerciseList();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         });
 
@@ -68,7 +73,7 @@ public class ExercisesCustomer extends JFrame {
         return mainPanel;
     }
 
-    private void loadExercises() {
+    private void loadExercises() throws SQLException {
         exercises = engine.getAllExercises();
         if (exercises != null) {
             updateExerciseList();
@@ -78,12 +83,17 @@ public class ExercisesCustomer extends JFrame {
         }
     }
 
-    private void updateExerciseList() {
+    private void updateExerciseList() throws SQLException {
         listModel.clear();
         for (Exercise exercise : exercises) {
+            // Ottieni l'ID della macchina
+            int machineId = exercise.getMachine();
+            // Ottieni il nome della macchina tramite l'engine
+            String machineName = (machineId == 0) ? "None" : engine.getMachineNameById(machineId);
+
+            // Aggiorna i dettagli dell'esercizio
             String exerciseDetail = String.format("Name: %s, Category: %s, Description: %s, Machine: %s",
-                    exercise.getName(), exercise.getCategory(), exercise.getDescription(),
-                    exercise.getMachine().isEmpty() ? "None" : exercise.getMachine());
+                    exercise.getName(), exercise.getCategory(), exercise.getDescription(), machineName);
             listModel.addElement(exerciseDetail);
         }
     }

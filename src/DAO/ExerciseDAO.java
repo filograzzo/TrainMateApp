@@ -28,7 +28,7 @@ public class ExerciseDAO {
                             rs.getInt("id"),
                             rs.getString("name"),
                             rs.getString("category_name"),
-                            rs.getString("machine_name"),
+                            rs.getInt("machine_id"),
                             rs.getString("description")
                     );
                 } else {
@@ -38,12 +38,12 @@ public class ExerciseDAO {
         }
     }
 
-    public boolean addExercise(String name, String category, String machine, String description) throws SQLException {
-        String query = "INSERT INTO Exercise ( name, category_name, machine_name, description) VALUES ( ?, ?, ?, ?)";
+    public boolean addExercise(String name, String category, int machine, String description) throws SQLException {
+        String query = "INSERT INTO Exercise ( name, category_name, machine_id, description) VALUES ( ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, name);
             stmt.setString(2, category);
-            stmt.setString(3, machine);
+            stmt.setInt(3, machine);
             stmt.setString(4, description);
             return stmt.executeUpdate() > 0;
         }
@@ -88,7 +88,7 @@ public class ExerciseDAO {
                             rs.getInt("id"),
                             rs.getString("name"),
                             rs.getString("category_name"),
-                            rs.getString("machine_name"),
+                            rs.getInt("machine_id"),
                             rs.getString("description")
                     );
                 } else {
@@ -112,7 +112,7 @@ public class ExerciseDAO {
                         rs.getInt("id"),
                         rs.getString("name"),
                         rs.getString("category_name"),
-                        rs.getString("machine_name"),
+                        rs.getInt("machine_id"),
                         rs.getString("description")
                 );
                 exercises.add(exercise);
@@ -135,7 +135,7 @@ public class ExerciseDAO {
                             rs.getInt("id"),
                             rs.getString("name"),
                             rs.getString("category_name"),
-                            rs.getString("machine_name"),
+                            rs.getInt("machine_id"),
                             rs.getString("description")
                     );
                     exercises.add(exercise);
@@ -146,7 +146,7 @@ public class ExerciseDAO {
     }
 
     public List<Exercise> getExercisesByMachine(Machine machine) throws SQLException {
-        String query = "SELECT * FROM Exercise WHERE machine_name = ?";
+        String query = "SELECT * FROM Exercise WHERE machine_id = ?";
         List<Exercise> exercises = new ArrayList<>();
 
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -158,7 +158,7 @@ public class ExerciseDAO {
                             rs.getInt("id"),
                             rs.getString("name"),
                             rs.getString("category_name"),
-                            rs.getString("machine_name"),
+                            rs.getInt("machine_id"),
                             rs.getString("description")
                     );
                     exercises.add(exercise);

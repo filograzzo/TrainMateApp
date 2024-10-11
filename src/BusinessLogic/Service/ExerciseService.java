@@ -21,7 +21,7 @@ public class ExerciseService {
         this.baseUser = baseUser;
     }
 
-    public boolean createExercise(String name, String category, String machine, String description) throws SQLException {
+    public boolean createExercise(String name, String category, int machine, String description) throws SQLException {
         return exerciseDAO.addExercise(name, category, machine, description);
     }
 

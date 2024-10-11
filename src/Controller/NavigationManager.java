@@ -185,7 +185,7 @@ public class NavigationManager {
         machinesPT.setSize(frameSize);
         machinesPT.setLocation(frameLocation);
     }
-    public void navigateToExercisesPT(){
+    public void navigateToExercisesPT() throws SQLException {
         frameSize = currentFrame.getSize();
         frameLocation = currentFrame.getLocation();
         currentFrame.dispose();

@@ -118,4 +118,19 @@ public class MachineDAO {
         return machines;
     }
 
+    public String getMachineNameById(int machineId) throws SQLException {
+        String query = "SELECT name FROM Machine WHERE id = ?"; // Query per ottenere solo il nome della macchina
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, machineId); // Imposta l'ID come parametro della query
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("name"); // Restituisce il nome della macchina
+                } else {
+                    return "Unknown"; // Se la macchina non è trovata, restituisce "Unknown"
+                }
+            }
+        }
+    }
+
 }

@@ -9,6 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.util.List;
 
 public class ExercisesPT extends JFrame {
@@ -18,7 +19,7 @@ public class ExercisesPT extends JFrame {
     private List<Exercise> exercises;
     private NavigationManager navigationManager = NavigationManager.getIstance(this);
 
-    public ExercisesPT(Engine engine) {
+    public ExercisesPT(Engine engine) throws SQLException {
         this.engine = engine;
         setupWindow();
         JPanel mainPanel = createMainPanel();
@@ -33,7 +34,7 @@ public class ExercisesPT extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    private JPanel createMainPanel() {
+    private JPanel createMainPanel() throws SQLException {
         JPanel mainPanel = new JPanel(new BorderLayout());
         listModel = new DefaultListModel<>();
         exerciseList = new JList<>(listModel);
@@ -65,7 +66,11 @@ public class ExercisesPT extends JFrame {
                 if (selectedIndex != -1) {
                     Exercise selectedExercise = exercises.get(selectedIndex);
                     engine.deleteExercise(selectedExercise);
-                    loadExercises();
+                    try {
+                        loadExercises();
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 } else {
                     JOptionPane.showMessageDialog(ExercisesPT.this, "Please select an exercise to delete.");
                 }
@@ -75,14 +80,19 @@ public class ExercisesPT extends JFrame {
         return mainPanel;
     }
 
-    private void loadExercises() {
+    private void loadExercises() throws SQLException {
         exercises = engine.getAllExercises();
         if (exercises != null) {
             listModel.clear();
             for (Exercise exercise : exercises) {
+                // Ottieni l'ID della macchina dall'esercizio
+                int machineId = exercise.getMachine();
+                // Ottieni il nome della macchina utilizzando l'ID
+                String machineName = (machineId == 0) ? "None" : engine.getMachineNameById(machineId);
+
+                // Crea la stringa dettagli dell'esercizio
                 String exerciseDetail = String.format("Name: %s, Category: %s, Description: %s, Machine: %s",
-                        exercise.getName(), exercise.getCategory(), exercise.getDescription(),
-                        exercise.getMachine().isEmpty() ? "None" : exercise.getMachine());
+                        exercise.getName(), exercise.getCategory(), exercise.getDescription(), machineName);
                 listModel.addElement(exerciseDetail);
             }
         } else {
@@ -96,12 +106,12 @@ public class ExercisesPT extends JFrame {
         JTextField nameField = new JTextField(20);
         JComboBox<String> categoryComboBox = new JComboBox<>(Exercise.getValidCategories().toArray(new String[0]));
         JTextField descriptionField = new JTextField(20);
-        JComboBox<String> machineComboBox = new JComboBox<>();
+        JComboBox<String> machineComboBox = new JComboBox<>(); // Ora contiene oggetti Machine
 
-        machineComboBox.addItem("None");
+        machineComboBox.addItem("None"); // Aggiungi "None" come opzione
         List<Machine> machines = engine.getAllMachines();
         for (Machine machine : machines) {
-            machineComboBox.addItem(machine.getName());
+            machineComboBox.addItem(machine.getName()); // Aggiungi l'intero oggetto Machine
         }
 
         JButton submitButton = new JButton("Submit");
@@ -127,11 +137,16 @@ public class ExercisesPT extends JFrame {
                 String name = nameField.getText();
                 String category = (String) categoryComboBox.getSelectedItem();
                 String description = descriptionField.getText();
-                String machine = machineComboBox.getSelectedItem().toString();
-                if (machine.equals("None")) machine = "";
+                Machine selectedMachine = (Machine) machineComboBox.getSelectedItem(); // Ottieni l'oggetto Machine selezionato
+                int machineId = selectedMachine != null ? selectedMachine.getId() : 0; // Ottieni l'ID della macchina o 0 se è "None"
 
-                engine.createExercise(name, category, machine, description);
-                loadExercises();
+                // Crea l'esercizio con il machineId
+                engine.createExercise(name, category, machineId, description);
+                try {
+                    loadExercises();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
                 dialog.dispose();
             }
         });

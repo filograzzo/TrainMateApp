@@ -7,12 +7,12 @@ public class Exercise {
     private int id;
     private String name;
     private String category;
-    private String machine;
+    private int machine;
     private String description;
 
     private static final List<String> validCategories = Arrays.asList("Legs", "Arms", "Abdomen", "Back", "Chest", "Shoulders");
 
-    public Exercise(int id, String name, String category, String machine, String description) {
+    public Exercise(int id, String name, String category, int machine, String description) {
         this.id = id;
         this.name = name;
         setCategory(category); // Validate category
@@ -63,10 +63,10 @@ public class Exercise {
     }
 
     // Getter and Setter for machine
-    public String getMachine() {
+    public int getMachine() {
         return machine;
     }
-    public void setMachine(String machine) {
+    public void setMachine(int machine) {
         this.machine = machine;
     }
 

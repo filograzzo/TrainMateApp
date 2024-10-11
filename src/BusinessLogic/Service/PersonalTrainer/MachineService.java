@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class MachineService {
     MachineDAO machineDAO;
     ExerciseDAO exerciseDAO;
@@ -79,5 +80,9 @@ public class MachineService {
             }
         }
         return inactiveMachines;
+    }
+
+    public String getMachineNameById(int machine_id) throws SQLException {
+        return machineDAO.getMachineNameById(machine_id);
     }
 }

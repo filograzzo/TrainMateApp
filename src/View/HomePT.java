@@ -79,7 +79,11 @@ public class HomePT extends JFrame {
 
         JButton manageExercisesButton = new JButton("Manage Exercises");
         manageExercisesButton.addActionListener(e -> {
-            navigationManager.navigateToExercisesPT();
+            try {
+                navigationManager.navigateToExercisesPT();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
         });
         centralPanel.add(manageExercisesButton);
 

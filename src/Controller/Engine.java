@@ -721,7 +721,7 @@ public class Engine {
     // EXERCISES
 
     // Solo PT (Personal Trainer)
-    public void createExercise(String name, String category, String machine, String description) {
+    public void createExercise(String name, String category, int machine, String description) {
 
         ExerciseService exerciseService = (ExerciseService) sf.getService(sf.EXERCISE_SERVICE);
         try {
@@ -829,32 +829,6 @@ public class Engine {
     public void createMachine(String name, String description, boolean state) {
         MachineService machineService = (MachineService) sf.getService(sf.MACHINE_SERVICE);
         try {
-            /*System.out.println("Enter machine name:");
-            String name = input.nextLine();
-
-            System.out.println("Enter machine description:");
-            String description = input.nextLine();
-
-            boolean state = false;
-            boolean validInput = false;
-            while (!validInput) {
-                System.out.println("Is the machine active? (true/false):");
-                String stateInput = input.nextLine();
-
-                if (stateInput.equalsIgnoreCase("true") || stateInput.equalsIgnoreCase("false")) {
-                    state = Boolean.parseBoolean(stateInput);
-                    validInput = true;
-                } else {
-                    System.out.println("Invalid input. Please enter 'true' or 'false'.");
-                }
-            }
-
-            boolean done = machineService.createMachine(name, description, state);
-            if (!done) {
-                throw new CustomizedException("There has been an error in the creation of the machine.");
-            } else {
-                System.out.println("Machine successfully created.");
-            }*/
             machineService.createMachine(name, description, state);
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -888,36 +862,6 @@ public class Engine {
             if (machine == null) {
                 throw new CustomizedException("The machine does not exist.");
             }
-            /*System.out.println("Enter the new name:");
-            String newName = input.nextLine();
-            machine.setName(newName);
-
-            System.out.println("Enter the new description:");
-            String newDescription = input.nextLine();
-
-
-            boolean newState = false;
-            boolean validInput = false;
-            while (!validInput) {
-                System.out.println("Is the machine active? (true/false):");
-                String stateInput = input.nextLine();
-
-                if (stateInput.equalsIgnoreCase("true") || stateInput.equalsIgnoreCase("false")) {
-                    newState = Boolean.parseBoolean(stateInput);
-                    validInput = true;  // Esce dal ciclo quando l'input è valido
-                } else {
-                    System.out.println("Invalid input. Please enter 'true' or 'false'.");
-                }
-            }
-
-            machine.setDescription(newDescription);
-            machine.setState(newState);
-            boolean done = machineService.updateMachine(machine);
-            if (!done) {
-                throw new CustomizedException("There has been an error in the update of the machine.");
-            } else {
-                System.out.println("Machine successfully updated.");
-            }*/
             boolean done = machineService.updateMachine(machine);
             if (!done) {
                 throw new CustomizedException("There has been an error in the update of the machine.");
@@ -1035,5 +979,9 @@ public class Engine {
         return exercises;
     }
 
+    public String getMachineNameById(int machine_id) throws SQLException {
+        MachineService machineService = (MachineService) sf.getService(sf.MACHINE_SERVICE);
+        return machineService.getMachineNameById(machine_id);
+    }
 
 }
