@@ -333,17 +333,19 @@ public class Engine {
             e.printStackTrace();}
     }
 
-    public void updateCourse(int id, String name, int maxParticipants, int trainerID, String bodyPartsTrained, String day, Time time){
+    public boolean updateCourse(int id, String name, int maxParticipants, int trainerID, String bodyPartsTrained, String day, Time time){
         AgendaService agendaService = (AgendaService) sf.getService(sf.AGENDA_SERVICE);
         try{
             if(agendaService.updateCourse(id,name,maxParticipants,trainerID,bodyPartsTrained, day,time)){
                 System.out.println("Course successfully updated.");
+                return true;
             }else{
                 System.out.println("Course not updated.");
             }
         }catch(Exception e){
             e.printStackTrace();
         }
+        return false;
     }
     public String getCoursePTname(int id){
         AgendaService agendaService = (AgendaService) sf.getService(sf.AGENDA_SERVICE);

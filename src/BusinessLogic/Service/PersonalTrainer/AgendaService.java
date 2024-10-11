@@ -47,19 +47,7 @@ public class AgendaService {
         return courseDAO.deleteCourse(courseId);
     }
     public boolean updateCourse(int courseId, String name, int maxParticipants, int trainerID, String bodyPartsTrained,String day,Time time) throws SQLException {
-        if(courseDAO.updateCourseValues(courseId, name, maxParticipants, trainerID, bodyPartsTrained,day,time)){
-            Course course = ((PersonalTrainer)currentUser).getCoursebyId(courseId);
-            course.setName(name);
-            course.setMaxParticipants(maxParticipants);
-            course.setTrainerID(trainerID);
-            course.setBodyPartsTrained(bodyPartsTrained);
-            course.setDay(day);
-            course.setTime(time);
-            return true;
-        }else{
-            return false;
-        }
-
+        return courseDAO.updateCourseValues(courseId, name, maxParticipants, trainerID, bodyPartsTrained, day, time);
     }
 
 
