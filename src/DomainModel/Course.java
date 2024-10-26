@@ -25,6 +25,7 @@ public class Course {
         this.bodyPartsTrained = bodyPartsTrained;
         this.time=time;
         this.day=day;
+        this.participants = 0;
     }
     public int getId() {
         return id;

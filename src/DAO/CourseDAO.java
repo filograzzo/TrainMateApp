@@ -1,7 +1,6 @@
 package DAO;
 
 import DomainModel.Course;
-import View.Courses;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -142,6 +141,31 @@ public class CourseDAO {
                     return rs.getInt(1);
                 } else {
                     return 0;
+                }
+            }
+        }
+    }
+
+    public Course getCourseByDayAndTime(String day, Time time) throws SQLException {
+        String query = "SELECT * FROM Course WHERE day = ? AND time = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, day);
+            stmt.setTime(2, time);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Course course = new Course(
+                            rs.getInt("id"),
+                            rs.getString("name"),
+                            rs.getInt("max_participants"),
+                            rs.getInt("trainer_id"),
+                            rs.getString("bodyPartsTrained"),
+                            rs.getTime("time"),
+                            rs.getString("day")
+                    );
+                    course.setParticipants(rs.getInt("participants"));
+                    return course;
+                } else {
+                    return null;  // Ritorna null se non esiste alcun corso con il giorno e l'ora specificati
                 }
             }
         }

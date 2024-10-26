@@ -4,6 +4,7 @@ import BusinessLogic.Service.*;
 import BusinessLogic.Service.Customer.BookAppointmentService;
 import BusinessLogic.Service.Customer.BookCourseService;
 import BusinessLogic.Service.Customer.ProfileService;
+import BusinessLogic.Service.Customer.TrainingService;
 import BusinessLogic.Service.PersonalTrainer.AgendaService;
 import BusinessLogic.Service.PersonalTrainer.MachineService;
 import BusinessLogic.Service.PersonalTrainer.ProfilePTService;
@@ -12,10 +13,6 @@ import DomainModel.*;
 
 import java.sql.SQLException;
 import java.sql.Time;
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Date;
