@@ -91,7 +91,7 @@ public class MachineDAO {
     }
 
     public boolean removeMachineByName(String name) throws SQLException {
-        String query = "DELETE FROM Machine WHERE id = ?";
+        String query = "DELETE FROM Machine WHERE name = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, name);
             return stmt.executeUpdate() > 0;

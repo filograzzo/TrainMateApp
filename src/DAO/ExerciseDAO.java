@@ -150,7 +150,7 @@ public class ExerciseDAO {
         List<Exercise> exercises = new ArrayList<>();
 
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setString(1, machine.getName());
+            stmt.setInt(1, machine.getId());
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {

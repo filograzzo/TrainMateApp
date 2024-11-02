@@ -92,4 +92,26 @@ public class ExerciseDetailDAO {
         return exerciseDetails;
     }
 
+    public List<ExerciseDetail> getAll() throws SQLException {
+        String query = "SELECT * FROM ExerciseDetail";
+        List<ExerciseDetail> exerciseDetails = new ArrayList<>();
+
+        try (PreparedStatement stmt = connection.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                ExerciseDetail exerciseDetail = new ExerciseDetail(
+                        rs.getInt("id"),
+                        rs.getInt("serie"),
+                        rs.getInt("reps"),
+                        rs.getInt("weight"),
+                        rs.getInt("schedule_id"),
+                        rs.getInt("exercise_id")
+                );
+                exerciseDetails.add(exerciseDetail);
+            }
+        }
+        return exerciseDetails;
+    }
+
 }
