@@ -96,7 +96,7 @@ public class Engine {
     }
     /*Register*/
 
-    public boolean registerCustomer( String username, String password, String email){
+    public boolean registerCustomer(String username, String password, String email){
         boolean registered = false;
         BaseUserService baseUserService = (BaseUserService) sf.getService(sf.USER_SERVICE);
         registered= baseUserService.registerUser(username,password,email);
@@ -205,27 +205,29 @@ public class Engine {
             e.printStackTrace();
         }
     }
-    public void updatePersonalData(int id, float height, float weight, int age, String gender, String goal){
+    public boolean updatePersonalData(int id, float height, float weight, int age, String gender, String goal){
         ProfileService profileService = (ProfileService) sf.getService(sf.PROFILE_SERVICE);
         try {
             if(profileService.updatePersonalData(id, height, weight,age,gender,goal)){
                 System.out.println("Personal data added successfully.");
+                return true;
             }else{
                 System.out.println("Personal data not added.");
-
+                return false;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
-    public void deletePersonalData(int id){
+    public boolean deletePersonalData(int id){
         ProfileService profileService = (ProfileService) sf.getService(sf.PROFILE_SERVICE);
         try {
             if(profileService.deletePersonalData(id)){
                 System.out.println("Personal data deleted successfully.");
+                return true;
             }else{
                 System.out.println("Personal data not deleted.");
-
+                return false;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -249,7 +251,6 @@ public class Engine {
             return false;
         }
     }
-    //TODO:AGENDA
     //COURSES
     public  ArrayList<Course> viewAvailableCourses(){
         BookCourseService bookCourseService = (BookCourseService) sf.getService(sf.BOOKCOURSE_SERVICE);

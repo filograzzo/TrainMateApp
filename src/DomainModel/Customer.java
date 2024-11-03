@@ -16,7 +16,6 @@ public class Customer extends BaseUser {
     private String gender;
     // creare oggetto scheda
     private String goal;  //cosa vuoi ottenere
-    //todo aggiungere lista di corsi prenotati
 
     public Customer(int id, String username, String password, String email) {
       super(id,username, password, email);

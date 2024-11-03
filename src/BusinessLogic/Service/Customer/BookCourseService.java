@@ -9,7 +9,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class BookCourseService {
-    //Todo aggiungere un modo affinchè il client possa visualizzare tutti i corsi a cui si è iscritto
     private CourseDAO courseDAO;
     private SignedDAO signedDAO;
     private BaseUser currentUser;
