@@ -1,9 +1,6 @@
 import BusinessLogic.Service.ServiceFactory;
 import Controller.Engine;
-import DAO.AppointmentDAO;
-import DAO.CourseDAO;
-import DAO.CustomerDAO;
-import DAO.PersonalTrainerDAO;
+import DAO.*;
 import DomainModel.BaseUser;
 import BusinessLogic.Service.*;
 import BusinessLogic.Service.Customer.BookAppointmentService;
@@ -39,6 +36,7 @@ public class Engine_tst {
     private BaseUser user;
     private static AppointmentDAO appointmentDAO;
     private static PersonalTrainerDAO personalTrainerDAO;
+    private static ScheduleDAO scheduleDAO;
     private static CustomerDAO customerDAO;
     private static CourseDAO courseDAO;
     private static BookAppointmentService bookAppointmentService;
@@ -58,6 +56,7 @@ public class Engine_tst {
     private static String testBodyPartsTrained = "All body";
     private static String testDay = "Monday";
     private static Time testTime = Time.valueOf("09:00:00");
+    private static Schedule testSchedule;
 
 
 
@@ -151,9 +150,19 @@ public class Engine_tst {
     }
 
     @Test
-    public void bookAndCancelCourse() throws SQLException{
+    public void createAndDestroySchedulePT() throws SQLException{
+        String scheduleName = "testSchedule";
+        assertTrue(engine.createSchedule(testCustomer, scheduleName));
+        testSchedule = scheduleDAO.getScheduleByName(scheduleName);
 
+        List<Schedule> schedules1 = engine.getSchedulesByUsername(testCustomer);
+        assertFalse(schedules1.isEmpty());
+
+        assertTrue(engine.removeSchedule(testCustomer, testSchedule));
+        List<Schedule> schedules2 = engine.getSchedulesByUsername(testCustomer);
+        assertTrue(schedules1.size() > schedules2.size());
     }
+
 
 
 }

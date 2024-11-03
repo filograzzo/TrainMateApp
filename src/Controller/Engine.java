@@ -467,7 +467,7 @@ public class Engine {
 
     //SCHEDULE
 
-    public void createSchedule(BaseUser baseUser, String newName) {
+    public boolean createSchedule(BaseUser baseUser, String newName) {
         if (baseUser.isValid()) {
             ScheduleService scheduleService = (ScheduleService) sf.getService(sf.SCHEDULE_SERVICE);
             try {
@@ -477,6 +477,7 @@ public class Engine {
                 } else {
                     // Messaggio di successo
                     System.out.println("Schedule created successfully.");
+                    return true;
                 }
             } catch (SQLException e) {
                 throw new RuntimeException(e);
@@ -485,22 +486,26 @@ public class Engine {
             }
         } else {
             System.err.println("User is not valid. Schedule creation aborted.");
+            return false;
         }
+        return false;
     }
 
-    public void removeSchedule(BaseUser baseUser, Schedule schedule){
+    public boolean removeSchedule(BaseUser baseUser, Schedule schedule){
         if(baseUser.isValid()){
             ScheduleService scheduleService = (ScheduleService) sf.getService(sf.SCHEDULE_SERVICE);
             try{
                 boolean done = scheduleService.removeSchedule(schedule);
                 if(!done)
                     throw new CustomizedException("There has been an error. Your schedule has not been eliminated.");
+                else return true;
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             } catch (CustomizedException e) {
                 throw new RuntimeException(e);
             }
         }
+        return false;
     }
 
     public void updateSchedule(BaseUser baseUser, Schedule schedule){
