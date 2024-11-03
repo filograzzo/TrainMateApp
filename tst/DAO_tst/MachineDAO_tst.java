@@ -30,7 +30,7 @@ public class MachineDAO_tst {
 
     @Test
     public void testAddAndRemoveMachine() throws SQLException {
-        String name = "Leg Press";
+        String name = "Leg Bress";
         String description = "Machine for leg exercises";
         boolean state = true;
 
@@ -99,6 +99,7 @@ public class MachineDAO_tst {
 
     @Test
     public void testGetAllMachines() throws SQLException {
+        // Aggiungi le macchine necessarie per il test
         machineDAO.addMachine("Treadmill", "Cardio machine", true);
         machineDAO.addMachine("Rowing Machine", "Full body workout machine", false);
 
@@ -110,11 +111,11 @@ public class MachineDAO_tst {
         assertTrue(machines.stream().anyMatch(m -> m.getName().equals("Treadmill")), "Treadmill should be in the list.");
         assertTrue(machines.stream().anyMatch(m -> m.getName().equals("Rowing Machine")), "Rowing Machine should be in the list.");
 
-        // Pulisce i dati
-        for (Machine machine : machines) {
-            machineDAO.removeMachineBy(machine);
-        }
+        // Pulisce i dati inseriti nel test usando `removeMachineByName`
+        machineDAO.removeMachineByName("Treadmill");
+        machineDAO.removeMachineByName("Rowing Machine");
     }
+
 
     @Test
     public void testGetMachineNameById() throws SQLException {

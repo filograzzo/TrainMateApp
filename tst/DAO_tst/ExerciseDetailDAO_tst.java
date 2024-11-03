@@ -35,7 +35,7 @@ public class ExerciseDetailDAO_tst {
         int reps = 10;
         int weight = 50;
         int scheduleId = 5;
-        int exerciseId = 2;
+        int exerciseId = 63; // Aggiornato con ID valido nel range
 
         boolean added = exerciseDetailDAO.addExerciseDetail(serie, reps, weight, scheduleId, exerciseId);
         assertTrue(added, "Exercise detail should be added successfully.");
@@ -62,7 +62,7 @@ public class ExerciseDetailDAO_tst {
         int reps = 12;
         int weight = 60;
         int scheduleId = 5;
-        int exerciseId = 2;
+        int exerciseId = 64; // Aggiornato con ID valido nel range
 
         exerciseDetailDAO.addExerciseDetail(serie, reps, weight, scheduleId, exerciseId);
         List<ExerciseDetail> details = exerciseDetailDAO.getAll();
@@ -81,7 +81,7 @@ public class ExerciseDetailDAO_tst {
         int reps = 8;
         int weight = 40;
         int scheduleId = 5;
-        int exerciseId = 2;
+        int exerciseId = 65; // Aggiornato con ID valido nel range
 
         exerciseDetailDAO.addExerciseDetail(serie, reps, weight, scheduleId, exerciseId);
         List<ExerciseDetail> details = exerciseDetailDAO.getAll();
@@ -90,7 +90,7 @@ public class ExerciseDetailDAO_tst {
         int updatedSerie = 5;
         int updatedReps = 15;
         int updatedWeight = 70;
-        int updatedExerciseId = 5;
+        int updatedExerciseId = 66; // Aggiornato con ID valido nel range
 
         boolean updated = exerciseDetailDAO.updateExerciseDetail(detail.getId(), updatedSerie, updatedReps, updatedWeight, updatedExerciseId);
         assertTrue(updated, "Exercise detail should be updated successfully.");
@@ -106,13 +106,16 @@ public class ExerciseDetailDAO_tst {
     @Test
     public void testGetExerciseDetailsByScheduleId() throws SQLException {
         int scheduleId = 5;
-        exerciseDetailDAO.addExerciseDetail(2, 8, 45, scheduleId, 3);
+        int exerciseId1 = 67; // Aggiornato con ID valido nel range
+        int exerciseId2 = 68; // Aggiornato con ID valido nel range
+
+        exerciseDetailDAO.addExerciseDetail(2, 8, 45, scheduleId, exerciseId1);
 
         ExerciseDetail ex = exerciseDetailDAO.getAll().getLast();
         List<ExerciseDetail> exs = new ArrayList<>();
         exs.add(ex);
 
-        exerciseDetailDAO.addExerciseDetail(3, 10, 50, scheduleId, 3);
+        exerciseDetailDAO.addExerciseDetail(3, 10, 50, scheduleId, exerciseId2);
 
         ex = exerciseDetailDAO.getAll().getLast();
         exs.add(ex);

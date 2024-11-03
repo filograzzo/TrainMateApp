@@ -37,7 +37,7 @@ public class ExerciseDAO_tst {
     public void testAddAndRemoveExercise() throws SQLException {
         String name = "Squat";
         String category = "Legs";
-        int machineId = 1;
+        int machineId = 50; // Aggiornato con ID valido nel range
         String description = "A basic leg exercise";
 
         boolean added = exerciseDAO.addExercise(name, category, machineId, description);
@@ -57,7 +57,7 @@ public class ExerciseDAO_tst {
     public void testGetExerciseById() throws SQLException {
         String name = "Bench Press";
         String category = "Chest";
-        int machineId = 2;
+        int machineId = 51; // Aggiornato con ID valido nel range
         String description = "Chest strengthening exercise";
 
         exerciseDAO.addExercise(name, category, machineId, description);
@@ -74,11 +74,11 @@ public class ExerciseDAO_tst {
     @Test
     public void testGetAllExercises() throws SQLException {
         List<Exercise> newExercises = new ArrayList<Exercise>();
-        exerciseDAO.addExercise("Deadlift", "Back", 3, "Back and leg exercise");
-        exerciseDAO.addExercise("Push-Up", "Chest", 4, "Bodyweight chest exercise");
+        exerciseDAO.addExercise("Deadlift", "Back", 52, "Back and leg exercise"); // Aggiornato
+        exerciseDAO.addExercise("Push-Up", "Chest", 53, "Bodyweight chest exercise"); // Aggiornato
 
         Exercise exercise1 = exerciseDAO.getExerciseByName("Deadlift");
-        Exercise exercise2 = exerciseDAO.getExerciseByName("Push-up");
+        Exercise exercise2 = exerciseDAO.getExerciseByName("Push-Up");
 
         newExercises.add(exercise1);
         newExercises.add(exercise2);
@@ -95,8 +95,8 @@ public class ExerciseDAO_tst {
     @Test
     public void testGetExercisesByCategory() throws SQLException {
         String category = "Arms";
-        exerciseDAO.addExercise("Bicep Curl", category, 4, "Arm exercise");
-         int id = exerciseDAO.getExerciseIdByName("Bicep curl");
+        exerciseDAO.addExercise("Bicep Curl", category, 54, "Arm exercise"); // Aggiornato
+        int id = exerciseDAO.getExerciseIdByName("Bicep Curl");
 
         List<Exercise> exercises = exerciseDAO.getExercisesByCategory(category);
         assertFalse(exercises.isEmpty(), "Exercises list should not be empty for the category.");
@@ -107,8 +107,8 @@ public class ExerciseDAO_tst {
 
     @Test
     public void testGetExerciseIdByName() throws SQLException {
-        String name = "Lat Pulldown";
-        exerciseDAO.addExercise(name, "Back", 5, "Exercise for back muscles");
+        String name = "Lats Pulldown";
+        exerciseDAO.addExercise(name, "Back", 55, "Exercise for back muscles"); // Aggiornato
 
         int exerciseId = exerciseDAO.getExerciseIdByName(name);
         assertNotEquals(-1, exerciseId, "Exercise ID should be retrieved for the given name.");
@@ -119,7 +119,7 @@ public class ExerciseDAO_tst {
     @Test
     public void testGetExerciseNameById() throws SQLException {
         String name = "Shoulder Press with dumbells";
-        exerciseDAO.addExercise(name, "Shoulders", 6, "Shoulder strengthening exercise");
+        exerciseDAO.addExercise(name, "Shoulders", 56, "Shoulder strengthening exercise"); // Aggiornato
 
         Exercise exercise = exerciseDAO.getExerciseByName(name);
         String retrievedName = exerciseDAO.getExerciseNameById(exercise.getId());
@@ -130,7 +130,7 @@ public class ExerciseDAO_tst {
 
     @Test
     public void testGetExercisesByMachine() throws SQLException {
-        int machineId = 7;
+        int machineId = 57; // Aggiornato con ID valido nel range
         exerciseDAO.addExercise("Leg Press", "Legs", machineId, "Leg exercise using machine");
         int id = exerciseDAO.getExerciseIdByName("Leg Press");
         Machine machine = machineDAO.getMachineById(machineId);
