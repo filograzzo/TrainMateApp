@@ -829,17 +829,19 @@ public class Engine {
 
     //MACHINE
 
-    public void createMachine(String name, String description, boolean state) {
+    public boolean createMachine(String name, String description, boolean state) {
         MachineService machineService = (MachineService) sf.getService(sf.MACHINE_SERVICE);
+        boolean done;
         try {
-            machineService.createMachine(name, description, state);
+            done = machineService.createMachine(name, description, state);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        return done;
     }
 
 
-    public void deleteMachine(Machine machine) {
+    public boolean deleteMachine(Machine machine) {
         MachineService machineService = (MachineService) sf.getService(sf.MACHINE_SERVICE);
         try {
             if (machine == null) {
@@ -851,15 +853,17 @@ public class Engine {
                 throw new CustomizedException("There has been an error in the deletion of the machine.");
             } else {
                 System.out.println("Machine successfully deleted.");
+                return true;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } catch (CustomizedException e) {
             System.err.println(e.getMessage());
         }
+        return false;
     }
 
-    public void updateMachine(Machine machine) {
+    public boolean updateMachine(Machine machine) {
         MachineService machineService = (MachineService) sf.getService(sf.MACHINE_SERVICE);
         try {
             if (machine == null) {
@@ -870,6 +874,7 @@ public class Engine {
                 throw new CustomizedException("There has been an error in the update of the machine.");
             } else {
                 System.out.println("Machine successfully updated.");
+                return true;
             }
 
         } catch (SQLException e) {
@@ -877,6 +882,7 @@ public class Engine {
         } catch (CustomizedException e) {
             System.err.println(e.getMessage());
         }
+        return false;
     }
 
 

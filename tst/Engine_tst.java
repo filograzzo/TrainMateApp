@@ -12,9 +12,9 @@ import BusinessLogic.Service.PersonalTrainer.MachineService;
 import BusinessLogic.Service.PersonalTrainer.ProfilePTService;
 import BusinessLogic.Service.BaseUserService;
 import DomainModel.*;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.*;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.time.format.DateTimeParseException;
@@ -23,7 +23,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 import DomainModel.Constants;
-import org.junit.jupiter.api.Test;
+import trainmate.DatabaseUtil;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,16 +31,33 @@ import static org.junit.jupiter.api.Assertions.*;
 public class Engine_tst {
 
     private static Engine engine;
+    private static Connection connection;
     private ServiceFactory sf;
     private Scanner input = new Scanner(System.in);
     private BaseUser user;
     private static AppointmentDAO appointmentDAO;
     private static PersonalTrainerDAO personalTrainerDAO;
     private static ScheduleDAO scheduleDAO;
+    private static TrainingDAO trainingDAO;
     private static CustomerDAO customerDAO;
+    private static SignedDAO signedDAO;
     private static CourseDAO courseDAO;
     private static BookAppointmentService bookAppointmentService;
+    private static ProfileService profileService;
+    private static ProfilePTService profilePTService;
+    private static BookCourseService bookCourseService;
+    private static TrainingService trainingService;
+    private static AgendaService agendaService;
+    private static MachineService machineService;
+    private static BaseUserService baseUserService;
+    private static ExerciseDetailService exerciseDetailService;
+    private static ExerciseService exerciseService;
+    private static ScheduleService scheduleService;
+
+    private static MachineDAO machineDAO;
+    private static ExerciseDetailDAO exerciseDetailDAO;
     private static Customer testCustomer;
+    private static ExerciseDAO exerciseDAO;
     private static PersonalTrainer testTrainer;
     private static String testCustomerUsername = "testCustomer";
     private static String testCustomerPassword = "password";
@@ -57,8 +74,10 @@ public class Engine_tst {
     private static String testDay = "Monday";
     private static Time testTime = Time.valueOf("09:00:00");
     private static Schedule testSchedule;
-
-
+    private static String testMachineName = "testMachine";
+    private static String testMachineDescription = "testDescription";
+    private static boolean testMachineActive = true;
+    private static Machine testMachine;
 
     //CORE FUNCTION -------------------------------------------------------
     private Engine_tst() {
@@ -69,6 +88,29 @@ public class Engine_tst {
 
     @BeforeAll
     public static void setUp() throws SQLException {
+        connection = DatabaseUtil.getConnection();
+        appointmentDAO = new AppointmentDAO(connection);
+        scheduleDAO = new ScheduleDAO(connection);
+        personalTrainerDAO = new PersonalTrainerDAO(connection);
+        customerDAO = new CustomerDAO(connection);
+        machineDAO = new MachineDAO(connection);
+        courseDAO = new CourseDAO(connection);
+        trainingDAO = new TrainingDAO(connection);
+        signedDAO = new SignedDAO(connection);
+        exerciseDAO = new ExerciseDAO(connection);
+        exerciseDetailDAO = new ExerciseDetailDAO(connection);
+        bookAppointmentService = new BookAppointmentService(appointmentDAO, personalTrainerDAO);
+        bookCourseService = new BookCourseService(courseDAO,  signedDAO);
+        profileService = new ProfileService(customerDAO);
+        trainingService = new TrainingService(trainingDAO);
+        agendaService = new AgendaService(personalTrainerDAO, courseDAO, scheduleDAO, appointmentDAO);
+        machineService = new MachineService(machineDAO, exerciseDAO);
+        profilePTService = new ProfilePTService(personalTrainerDAO);
+        baseUserService = new BaseUserService(customerDAO, personalTrainerDAO, profileService, profilePTService, bookAppointmentService, agendaService);
+        exerciseDetailService = new ExerciseDetailService(exerciseDetailDAO, exerciseDAO);
+        exerciseService = new ExerciseService(exerciseDAO);
+        scheduleService = new ScheduleService(scheduleDAO, exerciseDetailDAO);
+
         //creo e prendo il customer
         customerDAO.insertUser(testCustomerUsername, testCustomerPassword, testCustomerMail);
         customerId = customerDAO.getIdUserCustomer(testCustomerUsername);
@@ -84,6 +126,17 @@ public class Engine_tst {
         //creo il corso
         courseDAO.addCourse(testCourseName, testMaxPartecipants, testTrainer.getId(), testBodyPartsTrained, testDay, testTime);
         testCourse = courseDAO.getCourseByDayAndTime(testDay, testTime);
+
+        bookCourseService.setCurrentUser(testCustomer);
+        bookCourseService.setCurrentUser(testCustomer);
+        trainingService.setCurrentUser(testCustomer);
+        machineService.setCurrentUser(testCustomer);
+        exerciseDetailService.setCurrentUser(testCustomer);
+        exerciseService.setCurrentUser(testCustomer);
+        scheduleService.setCurrentUser(testCustomer);
+        profileService.setCustomer(testCustomer);
+        profilePTService.setPersonalTrainer(testTrainer);
+        baseUserService.loginUser(testCustomerUsername, testCustomerPassword, testCustomerMail);
     }
 
     @AfterAll
@@ -93,9 +146,9 @@ public class Engine_tst {
         customerDAO.deleteUserCustomer(testCustomerUsername, testCustomerPassword, testCustomerMail);
 
         int idP = personalTrainerDAO.getIdUserPT(testPTUsername);
+        courseDAO.deleteCourse(testCourse.getId());
         personalTrainerDAO.deletePT(idP);
         personalTrainerDAO.deleteUserPT(testPTUsername, testPTPassword, testPTMail);
-        courseDAO.deleteCourse(testCourse.getId());
     }
 
     @Test
@@ -163,6 +216,16 @@ public class Engine_tst {
         assertTrue(schedules1.size() > schedules2.size());
     }
 
+    @Test
+    public void activeDisactiveMachine() throws SQLException{
+        assertTrue(engine.createMachine(testMachineName, testMachineDescription, testMachineActive));
+        testMachine = engine.getMachineByName(testMachineName);
 
+        assertTrue(engine.getMachineState(testMachine));
+        testMachine.setState(false);
+        assertTrue(engine.updateMachine(testMachine));
+        assertFalse(engine.getMachineState(testMachine));
 
+        assertTrue(engine.deleteMachine(testMachine));
+    }
 }
